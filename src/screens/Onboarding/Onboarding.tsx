@@ -11,10 +11,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Colors } from '../../theme/colors';
 
-import PrimaryButton from '../../components/PrimaryButton/PrimaryButton';
-import OutlineButton from '../../components/OutlineButton/OutlineButton';
-import IconButton from '../../components/IconButton/IconButton';
-import PaginationDots from '../../components/PaginationDots/PaginationDots';
+import PrimaryButton from '../../components/Common/PrimaryButton';
+import OutlineButton from '../../components/Onboarding/OutlineButton';
+import IconButton from '../../components/Onboarding/IconButton';
+import PaginationDots from '../../components/Onboarding/PaginationDots';
 
 export default function Onboarding(props: any) {
   const [page, setPage] = useState(props.initialPage || 1);

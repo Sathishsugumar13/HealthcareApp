@@ -11,11 +11,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '../../theme/colors';
 
-import Header from '../../components/Header/Header';
-import CustomInput from '../../components/CustomInput/CustomInput';
-import PrimaryButton from '../../components/PrimaryButton/PrimaryButton';
-import Divider from '../../components/Divider/Divider';
-import SocialButton from '../../components/SocialButton/SocialButton';
+import Header from '../../components/SignIn/Header';
+import CustomInput from '../../components/SignIn/CustomInput';
+import PrimaryButton from '../../components/Common/PrimaryButton';
+import Divider from '../../components/SignIn/Divider';
+import SocialButton from '../../components/SignIn/SocialButton';
 
 export default function SignIn(props: any) {
   const [email, setEmail] = useState('');
