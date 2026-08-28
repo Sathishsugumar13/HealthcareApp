@@ -181,7 +181,7 @@ export default function SignUp({ back, onSuccess, onSignIn }: any) {
         <View style={styles.signin}>
           <Text style={styles.bottomText}>Already have an account? </Text>
           <Pressable onPress={onSignIn}>
-            <Text style={styles.link}>Sign In</Text>
+            <Text style={styles.link}>Sign In.</Text>
           </Pressable>
         </View>
 
