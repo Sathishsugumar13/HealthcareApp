@@ -8,8 +8,10 @@ import SignUp from './src/screens/SignUp/SignUp';
 import SignIn from './src/screens/SignIn/SignIn';
 import ForgotPassword from './src/screens/ForgotPassword/ForgotPassword';
 import Dashboard from './src/screens/Dashboard/Dashboard';
+import { usePushNotifications } from './src/hooks/usePushNotifications';
 
 export default function App() {
+  const { expoPushToken, notification } = usePushNotifications();
   const [screen, setScreen] = useState('splash');
   const [onboardingPage, setOnboardingPage] = useState(1);
 

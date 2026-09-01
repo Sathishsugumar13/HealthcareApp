@@ -17,7 +17,10 @@ interface SocialButtonProps extends PressableProps {
 
 export default function SocialButton({ title, icon, color, provider, ...props }: SocialButtonProps) {
   return (
-    <Pressable style={styles.socialBtn} {...props}>
+    <Pressable 
+      style={({ pressed }) => [styles.socialBtn, pressed && { opacity: 0.7, backgroundColor: Colors.background }]} 
+      {...props}
+    >
       {provider === 'google' ? (
         <AntDesign name={icon as any} size={24} color={color} style={styles.socialIcon} />
       ) : (

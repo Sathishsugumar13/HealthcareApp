@@ -16,6 +16,7 @@ import CustomInput from '../../components/SignIn/CustomInput';
 import PrimaryButton from '../../components/Common/PrimaryButton';
 import Divider from '../../components/SignIn/Divider';
 import SocialButton from '../../components/SignIn/SocialButton';
+import AuthBottomLink from '../../components/Common/AuthBottomLink';
 
 export default function SignIn(props: any) {
   const [email, setEmail] = useState('');
@@ -99,12 +100,11 @@ export default function SignIn(props: any) {
 
         <PrimaryButton title="Sign In" onPress={signin} />
 
-        <View style={styles.signup}>
-          <Text style={styles.bottomText}>Don't have an account? </Text>
-          <Pressable onPress={props.onSignUp}>
-            <Text style={styles.link}>Sign up</Text>
-          </Pressable>
-        </View>
+        <AuthBottomLink 
+          text="Don't have an account? " 
+          linkText="Sign up" 
+          onPress={props.onSignUp} 
+        />
 
         <Divider text="OR" />
 
@@ -152,20 +152,5 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     fontWeight: '600',
     fontSize: 14,
-  },
-  signup: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 20,
-    marginBottom: 40,
-  },
-  bottomText: {
-    fontSize: 15,
-    color: Colors.text,
-  },
-  link: {
-    color: Colors.primary,
-    fontWeight: '700',
-    fontSize: 15,
   },
 });

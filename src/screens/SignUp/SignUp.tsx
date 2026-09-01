@@ -1,11 +1,8 @@
 import { useState } from 'react';
-
 import {
-  Alert,
   Pressable,
   ScrollView,
   Text,
-  TextInput,
   View,
   StyleSheet,
   Platform,
@@ -14,17 +11,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '../../theme/colors';
-import { Feather } from '@expo/vector-icons';
-import { styles } from './SignUp.styles';
-import SuccessModal from '../../components/SuccessModal/SuccessModal';
+
+import Header from '../../components/SignIn/Header';
+import CustomInput from '../../components/SignIn/CustomInput';
+import PrimaryButton from '../../components/Common/PrimaryButton';
+import TermsCheckbox from '../../components/SignUp/TermsCheckbox';
+import SuccessModal from '../../components/Common/SuccessModal';
+import AuthBottomLink from '../../components/Common/AuthBottomLink';
 
 export default function SignUp({ back, onSuccess, onSignIn }: any) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
-  const [showPass, setShowPass] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
   const [agree, setAgree] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
@@ -95,97 +94,86 @@ export default function SignUp({ back, onSuccess, onSignIn }: any) {
       <ScrollView
         contentContainerStyle={styles.contentContainer}
       >
-        <View style={styles.header}>
-          <Pressable onPress={back} style={styles.backBtn}>
-            <Feather name="chevron-left" size={32} color={Colors.text} />
-          </Pressable>
-          <Text style={styles.heading}>Sign Up</Text>
-          <View style={styles.backBtn} />
-        </View>
+        <Header title="Sign Up" onBackPress={back} />
 
         {!!errorMessage && (
           <Text style={styles.errorText}>{errorMessage}</Text>
         )}
 
-        <View style={styles.inputContainer}>
-          <Feather name="user" size={20} color={Colors.secondaryText} style={styles.icon} />
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your name"
-            placeholderTextColor={Colors.secondaryText}
-            value={name}
-            onChangeText={setName}
-          />
-        </View>
+        <CustomInput
+          icon="user"
+          placeholder="Enter your name"
+          value={name}
+          onChangeText={setName}
+        />
 
-        <View style={styles.inputContainer}>
-          <Feather name="mail" size={20} color={Colors.secondaryText} style={styles.icon} />
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your email id"
-            placeholderTextColor={Colors.secondaryText}
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-        </View>
+        <CustomInput
+          icon="mail"
+          placeholder="Enter your email id"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+        />
 
-        <View style={styles.inputContainer}>
-          <Feather name="lock" size={20} color={Colors.secondaryText} style={styles.icon} />
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your password"
-            placeholderTextColor={Colors.secondaryText}
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry={!showPass}
-          />
-          <Pressable onPress={() => setShowPass(!showPass)}>
-            <Feather name={showPass ? 'eye' : 'eye-off'} size={20} color={Colors.secondaryText} />
-          </Pressable>
-        </View>
+        <CustomInput
+          icon="lock"
+          placeholder="Enter your password"
+          value={password}
+          onChangeText={setPassword}
+          isPassword={true}
+        />
 
-        <View style={styles.inputContainer}>
-          <Feather name="lock" size={20} color={Colors.secondaryText} style={styles.icon} />
-          <TextInput
-            style={styles.input}
-            placeholder="Confirm your password"
-            placeholderTextColor={Colors.secondaryText}
-            value={confirm}
-            onChangeText={setConfirm}
-            secureTextEntry={!showConfirm}
-          />
-          <Pressable onPress={() => setShowConfirm(!showConfirm)}>
-            <Feather name={showConfirm ? 'eye' : 'eye-off'} size={20} color={Colors.secondaryText} />
-          </Pressable>
-        </View>
+        <CustomInput
+          icon="lock"
+          placeholder="Confirm your password"
+          value={confirm}
+          onChangeText={setConfirm}
+          isPassword={true}
+        />
 
-        <Pressable style={styles.terms} onPress={() => setAgree(!agree)}>
-          <View style={[styles.checkbox, agree && styles.checkboxActive]}>
-            {agree && <Feather name="check" size={14} color={Colors.white} />}
-          </View>
-          <Text style={styles.termsText}>
-            I agree to the healthcare{' '}
-            <Text style={styles.linkText}>Terms of Service</Text> and{' '}
-            <Text style={styles.linkText}>Privacy Policy</Text>
-          </Text>
-        </Pressable>
+        <TermsCheckbox 
+          agree={agree}
+          onToggle={() => setAgree(!agree)}
+        />
 
         <View style={styles.spacer} />
 
-        <Pressable style={styles.button} onPress={signup}>
-          <Text style={styles.buttonText}>Sign Up</Text>
-        </Pressable>
+        <PrimaryButton 
+          title="Sign Up" 
+          onPress={signup} 
+          style={{ marginTop: 30 }}
+        />
 
-        <View style={styles.signin}>
-          <Text style={styles.bottomText}>Already have an account? </Text>
-          <Pressable onPress={onSignIn}>
-            <Text style={styles.link}>Sign In</Text>
-          </Pressable>
-        </View>
+        <AuthBottomLink 
+          text="Already have an account? " 
+          linkText="Sign In" 
+          onPress={onSignIn} 
+        />
 
       </ScrollView>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.white,
+    padding: 25,
+  },
+  contentContainer: {
+    paddingBottom: 40,
+    flexGrow: 1,
+  },
+  errorText: {
+    color: Colors.error,
+    fontSize: 14,
+    marginBottom: 15,
+    textAlign: 'center',
+    fontWeight: '500',
+  },
+  spacer: {
+    flex: 1,
+    minHeight: 40,
+  },
+});

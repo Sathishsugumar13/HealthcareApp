@@ -15,6 +15,7 @@ import PrimaryButton from '../../components/Common/PrimaryButton';
 import OutlineButton from '../../components/Onboarding/OutlineButton';
 import IconButton from '../../components/Onboarding/IconButton';
 import PaginationDots from '../../components/Onboarding/PaginationDots';
+import Logo from '../../components/Common/Logo';
 
 export default function Onboarding(props: any) {
   const [page, setPage] = useState(props.initialPage || 1);
@@ -23,10 +24,7 @@ export default function Onboarding(props: any) {
     return (
       <SafeAreaView style={styles.last} edges={['top', 'bottom']}>
 
-        <Image
-          source={require('../../assets/images/healthcare-logo.png')}
-          style={styles.logo}
-        />
+        <Logo size={120} style={styles.logo} />
 
         <Text style={styles.healthcare}>
           Healthcare

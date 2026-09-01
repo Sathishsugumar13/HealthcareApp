@@ -13,7 +13,10 @@ interface OutlineButtonProps extends PressableProps {
 
 export default function OutlineButton({ title, ...props }: OutlineButtonProps) {
   return (
-    <Pressable style={styles.button} {...props}>
+    <Pressable 
+      style={({ pressed }) => [styles.button, pressed && { opacity: 0.7, backgroundColor: Colors.background }]} 
+      {...props}
+    >
       <Text style={styles.buttonText}>{title}</Text>
     </Pressable>
   );

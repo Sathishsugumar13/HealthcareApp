@@ -15,7 +15,10 @@ interface IconButtonProps extends PressableProps {
 
 export default function IconButton({ icon, size = 30, ...props }: IconButtonProps) {
   return (
-    <Pressable style={styles.button} {...props}>
+    <Pressable 
+      style={({ pressed }) => [styles.button, pressed && { opacity: 0.8 }]} 
+      {...props}
+    >
       <Feather name={icon} size={size} color={Colors.white} />
     </Pressable>
   );

@@ -1,27 +1,23 @@
 import { useState } from 'react';
 import {
-  Alert,
-  Pressable,
   ScrollView,
   Text,
-  TextInput,
-  View,
   StyleSheet,
   Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '../../theme/colors';
-import { Feather } from '@expo/vector-icons';
-import { styles } from './ForgotPassword.styles';
-import SuccessModal from '../../components/SuccessModal/SuccessModal';
+
+import Header from '../../components/SignIn/Header';
+import CustomInput from '../../components/SignIn/CustomInput';
+import PrimaryButton from '../../components/Common/PrimaryButton';
+import SuccessModal from '../../components/Common/SuccessModal';
 
 export default function ForgotPassword({ back, onSend }: any) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
-  const [showPass, setShowPass] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
 
@@ -109,13 +105,7 @@ export default function ForgotPassword({ back, onSend }: any) {
       />
       <ScrollView contentContainerStyle={styles.contentContainer}>
         
-        <View style={styles.header}>
-          <Pressable onPress={back} style={styles.backBtn}>
-            <Feather name="chevron-left" size={32} color={Colors.text} />
-          </Pressable>
-          <Text style={styles.heading}>Reset Password</Text>
-          <View style={styles.backBtn} />
-        </View>
+        <Header title="Reset Password" onBackPress={back} />
 
         {!!errorMessage && (
           <Text style={styles.errorText}>{errorMessage}</Text>
@@ -125,54 +115,63 @@ export default function ForgotPassword({ back, onSend }: any) {
           Enter your registered email id and create a new password.
         </Text>
 
-        <View style={styles.inputContainer}>
-          <Feather name="mail" size={20} color={Colors.secondaryText} style={styles.icon} />
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your Gmail ID"
-            placeholderTextColor={Colors.secondaryText}
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-        </View>
+        <CustomInput
+          icon="mail"
+          placeholder="Enter your Gmail ID"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+        />
 
-        <View style={styles.inputContainer}>
-          <Feather name="lock" size={20} color={Colors.secondaryText} style={styles.icon} />
-          <TextInput
-            style={styles.input}
-            placeholder="Enter new password"
-            placeholderTextColor={Colors.secondaryText}
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry={!showPass}
-          />
-          <Pressable onPress={() => setShowPass(!showPass)}>
-            <Feather name={showPass ? 'eye' : 'eye-off'} size={20} color={Colors.secondaryText} />
-          </Pressable>
-        </View>
+        <CustomInput
+          icon="lock"
+          placeholder="Enter new password"
+          value={password}
+          onChangeText={setPassword}
+          isPassword={true}
+        />
 
-        <View style={styles.inputContainer}>
-          <Feather name="lock" size={20} color={Colors.secondaryText} style={styles.icon} />
-          <TextInput
-            style={styles.input}
-            placeholder="Confirm new password"
-            placeholderTextColor={Colors.secondaryText}
-            value={confirm}
-            onChangeText={setConfirm}
-            secureTextEntry={!showConfirm}
-          />
-          <Pressable onPress={() => setShowConfirm(!showConfirm)}>
-            <Feather name={showConfirm ? 'eye' : 'eye-off'} size={20} color={Colors.secondaryText} />
-          </Pressable>
-        </View>
+        <CustomInput
+          icon="lock"
+          placeholder="Confirm new password"
+          value={confirm}
+          onChangeText={setConfirm}
+          isPassword={true}
+        />
 
-        <Pressable style={styles.button} onPress={sendLink}>
-          <Text style={styles.buttonText}>Reset Password</Text>
-        </Pressable>
+        <PrimaryButton 
+          title="Reset Password" 
+          onPress={sendLink} 
+          style={{ marginTop: 10 }} // Adjusted margin to visually compensate for original spacing difference
+        />
 
       </ScrollView>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.white,
+    padding: 25,
+  },
+  contentContainer: {
+    paddingBottom: 40,
+    flexGrow: 1,
+  },
+  errorText: {
+    color: Colors.error,
+    fontSize: 14,
+    marginBottom: 15,
+    textAlign: 'center',
+    fontWeight: '500',
+  },
+  description: {
+    fontSize: 15,
+    color: Colors.text,
+    lineHeight: 22,
+    marginBottom: 30,
+    textAlign: 'center',
+  },
+});

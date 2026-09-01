@@ -14,7 +14,10 @@ interface PrimaryButtonProps extends PressableProps {
 
 export default function PrimaryButton({ title, style, ...props }: PrimaryButtonProps) {
   return (
-    <Pressable style={[styles.button, style]} {...props}>
+    <Pressable 
+      style={({ pressed }) => [styles.button, style, pressed && { opacity: 0.8 }]} 
+      {...props}
+    >
       <Text style={styles.buttonText}>{title}</Text>
     </Pressable>
   );
