@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput, Pressable, Image, Modal, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TextInput, Pressable, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../../theme/colors';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import SectionHeader from '../../components/Common/SectionHeader/SectionHeader';
 import PharmacyCard from '../../components/Common/PharmacyCard/PharmacyCard';
 import ArticleCard from '../../components/Common/ArticleCard/ArticleCard';
 import HospitalCard from '../../components/Common/HospitalCard/HospitalCard';
