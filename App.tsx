@@ -7,13 +7,14 @@ import Onboarding from './src/screens/Onboarding/Onboarding';
 import SignUp from './src/screens/SignUp/SignUp';
 import SignIn from './src/screens/SignIn/SignIn';
 import ForgotPassword from './src/screens/ForgotPassword/ForgotPassword';
-import Dashboard from './src/screens/Dashboard/Dashboard';
+import HomeScreen from './src/screens/Home/HomeScreen';
 import { usePushNotifications } from './src/hooks/usePushNotifications';
 
 export default function App() {
-  const { expoPushToken, notification } = usePushNotifications();
+  usePushNotifications();
   const [screen, setScreen] = useState('splash');
   const [onboardingPage, setOnboardingPage] = useState(1);
+  const [user, setUser] = useState<any>(null);
 
   const goToOnboarding = (page = 1) => {
     setOnboardingPage(page);
@@ -32,8 +33,11 @@ export default function App() {
     setScreen('forgot');
   };
 
-  const goToDashboard = () => {
-    setScreen('dashboard');
+  const goToHome = (userData?: any) => {
+    if (userData) {
+      setUser(userData);
+    }
+    setScreen('home');
   };
 
   let currentScreen;
@@ -63,15 +67,15 @@ export default function App() {
       back={() => goToOnboarding(3)}
       onSignUp={goToSignUp}
       onForgot={goToForgot}
-      onLogin={goToDashboard}
+      onLogin={goToHome}
     />;
   } else if (screen === 'forgot') {
     currentScreen = <ForgotPassword 
       back={goToSignIn}
       onSend={goToSignIn}
     />;
-  } else if (screen === 'dashboard') {
-    currentScreen = <Dashboard onSignOut={() => goToOnboarding(3)} />;
+  } else if (screen === 'home') {
+    currentScreen = <HomeScreen user={user} onLogout={goToSignIn} />;
   }
 
   return (

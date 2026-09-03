@@ -32,6 +32,15 @@
         "projectId": "27238de2-cd8c-445f-ad5c-db22da1d219a"
       }
     },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you set a profile picture.",
+          "cameraPermission": "The app accesses your camera to let you take a profile picture."
+        }
+      ]
+    ],
     "owner": "sathishsugumar"
   }
 }

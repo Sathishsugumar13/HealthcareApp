@@ -64,7 +64,7 @@ export default function SignIn(props: any) {
     }
     
     if (props.onLogin) {
-      props.onLogin();
+      props.onLogin(storedUser);
     }
   };
 
