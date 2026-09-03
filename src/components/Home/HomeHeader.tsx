@@ -28,7 +28,7 @@ export default function HomeHeader({ user, profileImage, onProfilePress }: HomeH
       
       {/* Doctor Image Placeholder on the right */}
       <View style={styles.doctorImageWrapper}>
-         <Image source={require('../../assets/images/home_doctor.jpg')} style={styles.largeDoctorImage} />
+         <Image source={require('../../assets/images/home_doctor.png')} style={styles.largeDoctorImage} />
       </View>
     </SafeAreaView>
   );
