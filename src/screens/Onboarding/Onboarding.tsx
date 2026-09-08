@@ -18,9 +18,11 @@ import PaginationDots from '../../components/Onboarding/PaginationDots';
 import Logo from '../../components/Common/Logo';
 
 export default function Onboarding(props: any) {
-  const [page, setPage] = useState(props.initialPage || 1);
+  // state to track which page we are on
+  const [currentPage, setCurrentPage] = useState(props.initialPage || 1);
 
-  if (page === 3) {
+  // if user is on the last page (page 3)
+  if (currentPage === 3) {
     return (
       <SafeAreaView style={styles.last} edges={['top', 'bottom']}>
 
@@ -53,42 +55,46 @@ export default function Onboarding(props: any) {
     );
   }
 
-  const image =
-    page === 1
-      ? require('../../assets/images/onboarding-1.png')
-      : require('../../assets/images/onboarding-2.png');
+  // variables for image and title based on current page
+  let currentImage;
+  let currentTitle;
 
-  const title =
-    page === 1
-      ? 'Find a lot of specialist doctor in one place'
-      : 'Get advice only from a doctor you believe in.';
+  if (currentPage === 1) {
+    currentImage = require('../../assets/images/onboarding-1.png');
+    currentTitle = 'Find a lot of specialist doctor in one place';
+  } else {
+    currentImage = require('../../assets/images/onboarding-2.png');
+    currentTitle = 'Get advice only from a doctor you believe in.';
+  }
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
 
+      {/* Skip button jumps to page 3 */}
       <Pressable
         style={styles.skip}
-        onPress={() => setPage(3)}
+        onPress={() => setCurrentPage(3)}
       >
         <Text style={styles.skipText}>Skip</Text>
       </Pressable>
 
       <Image
-        source={image}
+        source={currentImage}
         style={styles.image}
       />
 
       <Text style={styles.title}>
-        {title}
+        {currentTitle}
       </Text>
 
       <View style={styles.bottom}>
         
-        <PaginationDots totalPages={2} currentPage={page} />
+        <PaginationDots totalPages={2} currentPage={currentPage} />
 
+        {/* Go to next page by adding 1 */}
         <IconButton 
           icon="arrow-right" 
-          onPress={() => setPage(page + 1)} 
+          onPress={() => setCurrentPage(currentPage + 1)} 
         />
 
       </View>

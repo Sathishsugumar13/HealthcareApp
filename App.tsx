@@ -6,82 +6,81 @@ import Splash from './src/screens/Splash/Splash';
 import Onboarding from './src/screens/Onboarding/Onboarding';
 import SignUp from './src/screens/SignUp/SignUp';
 import SignIn from './src/screens/SignIn/SignIn';
-import ForgotPassword from './src/screens/ForgotPassword/ForgotPassword';
 import HomeScreen from './src/screens/Home/HomeScreen';
 import { usePushNotifications } from './src/hooks/usePushNotifications';
 
 export default function App() {
+  // call push notification
   usePushNotifications();
-  const [screen, setScreen] = useState('splash');
-  const [onboardingPage, setOnboardingPage] = useState(1);
-  const [user, setUser] = useState<any>(null);
+  
+  // state to store which screen to show
+  const [currentScreenName, setCurrentScreenName] = useState('splash');
+  const [onboardingPageNumber, setOnboardingPageNumber] = useState(1);
+  const [userData, setUserData] = useState<any>(null);
 
-  const goToOnboarding = (page = 1) => {
-    setOnboardingPage(page);
-    setScreen('onboarding');
+  // function to go to onboarding screen
+  const goToOnboardingScreen = (pageNumber: number) => {
+    setOnboardingPageNumber(pageNumber);
+    setCurrentScreenName('onboarding');
   };
 
-  const goToSignIn = () => {
-    setScreen('signin');
+  // function to go to sign in screen
+  const goToSignInScreen = () => {
+    setCurrentScreenName('signin');
   };
 
-  const goToSignUp = () => {
-    setScreen('signup');
+  // function to go to sign up screen
+  const goToSignUpScreen = () => {
+    setCurrentScreenName('signup');
   };
 
-  const goToForgot = () => {
-    setScreen('forgot');
-  };
-
-  const goToHome = (userData?: any) => {
-    if (userData) {
-      setUser(userData);
+  // function to go to home screen
+  const goToHomeScreen = (data: any) => {
+    if (data !== undefined) {
+      setUserData(data);
     }
-    setScreen('home');
+    setCurrentScreenName('home');
   };
 
-  let currentScreen;
+  // variable to hold the screen UI
+  let screenUI;
 
-  if (screen === 'splash') {
-    currentScreen = <Splash next={() => goToOnboarding(1)} />;
-  } else if (screen === 'onboarding') {
-    currentScreen = <Onboarding 
-      initialPage={onboardingPage}
+  // check which screen name is active and set the UI
+  if (currentScreenName === 'splash') {
+    screenUI = <Splash next={() => goToOnboardingScreen(1)} />;
+  } else if (currentScreenName === 'onboarding') {
+    screenUI = <Onboarding 
+      initialPage={onboardingPageNumber}
       signUp={() => {
-        setOnboardingPage(3);
-        goToSignUp();
+        setOnboardingPageNumber(3);
+        goToSignUpScreen();
       }} 
       login={() => {
-        setOnboardingPage(3);
-        goToSignIn();
+        setOnboardingPageNumber(3);
+        goToSignInScreen();
       }}
     />;
-  } else if (screen === 'signup') {
-    currentScreen = <SignUp 
-      back={() => goToOnboarding(3)}
-      onSuccess={goToSignIn}
-      onSignIn={goToSignIn}
+  } else if (currentScreenName === 'signup') {
+    screenUI = <SignUp 
+      back={() => goToOnboardingScreen(3)}
+      onSuccess={goToSignInScreen}
+      onSignIn={goToSignInScreen}
     />;
-  } else if (screen === 'signin') {
-    currentScreen = <SignIn 
-      back={() => goToOnboarding(3)}
-      onSignUp={goToSignUp}
-      onForgot={goToForgot}
-      onLogin={goToHome}
+  } else if (currentScreenName === 'signin') {
+    screenUI = <SignIn 
+      back={() => goToOnboardingScreen(3)}
+      onSignUp={goToSignUpScreen}
+      onLogin={goToHomeScreen}
     />;
-  } else if (screen === 'forgot') {
-    currentScreen = <ForgotPassword 
-      back={goToSignIn}
-      onSend={goToSignIn}
-    />;
-  } else if (screen === 'home') {
-    currentScreen = <HomeScreen user={user} onLogout={goToSignIn} />;
+  } else if (currentScreenName === 'home') {
+    screenUI = <HomeScreen user={userData} onLogout={goToSignInScreen} />;
   }
 
+  // return the final UI
   return (
     <SafeAreaProvider>
       <PaperProvider>
-        {currentScreen}
+        {screenUI}
       </PaperProvider>
     </SafeAreaProvider>
   );

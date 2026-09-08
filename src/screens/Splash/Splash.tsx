@@ -7,16 +7,21 @@ import {
 } from 'react-native';
 import Logo from '../../components/Common/Logo';
 
-export default function Splash({
-  next,
-}: any) {
+export default function Splash(props: any) {
 
+  // wait for 5 seconds and go to next screen
   useEffect(() => {
-    const timer = setTimeout(next, 5000);
+    // create a timer
+    const myTimer = setTimeout(() => {
+      // call next function passed from App.tsx
+      props.next();
+    }, 5000);
 
-    return () => clearTimeout(timer);
+    // clear timer if component unmounts
+    return () => clearTimeout(myTimer);
   }, []);
 
+  // render the background image and text
   return (
     <ImageBackground
       source={require('../../assets/images/splash-new.png')}

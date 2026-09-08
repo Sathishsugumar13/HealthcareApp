@@ -1,126 +1,104 @@
 import { useState } from 'react';
-import {
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-  Platform,
-  StyleSheet
-} from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '../../theme/colors';
 
 import Header from '../../components/SignIn/Header';
-import CustomInput from '../../components/SignIn/CustomInput';
-import PrimaryButton from '../../components/Common/PrimaryButton';
-import Divider from '../../components/SignIn/Divider';
-import SocialButton from '../../components/SignIn/SocialButton';
-import AuthBottomLink from '../../components/Common/AuthBottomLink';
+import SuccessModal from '../../components/Common/SuccessModal';
+
+import SignInForm from '../../components/SignIn/SignInForm/SignInForm';
+import ForgotRegisterEmailId from '../../components/Forgot/ForgotRegisterEmailId/ForgotRegisterEmailId';
+import ForgotOtp from '../../components/Forgot/ForgotOtp/ForgotOtp';
+import PasswordSet from '../../components/Forgot/PasswordSet/PasswordSet';
 
 export default function SignIn(props: any) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  // Navigation State to know which view to show
+  const [currentStep, setCurrentStep] = useState<'Sign in' | 'ForgotRegisterEmailId' | 'OTP' | 'Passwordset'>('Sign in');
 
-  const signin = async () => {
-    setErrorMessage(''); // Clear previous error
+  // We only need to store forgotEmail in SignIn so we can pass it to OTP step
+  const [forgotEmailValue, setForgotEmailValue] = useState('');
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
-    if (!email && !password) {
-      setErrorMessage('Please enter your email id and password.');
-      return;
-    }
-
-    if (!email) {
-      setErrorMessage('Please enter your email id.');
-      return;
-    }
-    if (!password) {
-      setErrorMessage('Please enter your password.');
-      return;
-    }
-    
-    let storedUserStr = null;
-    if (Platform.OS === 'web') {
-      try {
-        storedUserStr = window.sessionStorage.getItem('user');
-      } catch (e) {
-        console.error(e);
+  // function when back button is pressed
+  const handleBackButtonClick = () => {
+    if (currentStep === 'Sign in') {
+      if (props.back) {
+        props.back();
       }
-    } else {
-      storedUserStr = await AsyncStorage.getItem('user');
-    }
-
-    if (!storedUserStr) {
-      setErrorMessage('No account found. Please sign up first.');
-      return;
-    }
-
-    const storedUser = JSON.parse(storedUserStr);
-
-    if (storedUser.email !== email || storedUser.password !== password) {
-      setErrorMessage('Invalid Email id or Password.');
-      return;
-    }
-    
-    if (props.onLogin) {
-      props.onLogin(storedUser);
+    } else if (currentStep === 'ForgotRegisterEmailId') {
+      setCurrentStep('Sign in');
+    } else if (currentStep === 'OTP') {
+      setCurrentStep('ForgotRegisterEmailId');
+    } else if (currentStep === 'Passwordset') {
+      setCurrentStep('OTP');
     }
   };
 
+  // function when success modal is closed
+  const handleSuccessPopupClose = () => {
+    setIsSuccessModalOpen(false);
+    // Reset flow and go to sign in
+    setForgotEmailValue('');
+    setCurrentStep('Sign in');
+  };
+
+  // determine title based on step
+  let headerTitle;
+  if (currentStep === 'Sign in') {
+    headerTitle = "Sign In";
+  } else {
+    headerTitle = "Forgot Password";
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+      
+      {/* Show success modal if password is changed */}
+      <SuccessModal 
+        visible={isSuccessModalOpen}
+        title="Password Reset"
+        message="Your password has been changed successfully. You can now login with your new password."
+        onClose={handleSuccessPopupClose}
+      />
+
       <ScrollView contentContainerStyle={styles.contentContainer}>
         
-        <Header title="Sign In" onBackPress={props.back} />
-
-        {!!errorMessage && (
-          <Text style={styles.errorText}>{errorMessage}</Text>
-        )}
-
-        <CustomInput
-          icon="mail"
-          placeholder="Enter your email id"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
+        {/* Header component */}
+        <Header 
+          title={headerTitle} 
+          onBackPress={handleBackButtonClick} 
         />
 
-        <CustomInput
-          icon="lock"
-          placeholder="Enter your password"
-          value={password}
-          onChangeText={setPassword}
-          isPassword={true}
-        />
+        {/* Show forms based on current step */}
+        {currentStep === 'Sign in' ? (
+          <SignInForm 
+            onLogin={props.onLogin}
+            onSignUp={props.onSignUp}
+            onForgot={() => setCurrentStep('ForgotRegisterEmailId')}
+          />
+        ) : null}
 
-        <Pressable style={styles.forgot} onPress={props.onForgot}>
-          <Text style={styles.forgotText}>Forgot password?</Text>
-        </Pressable>
+        {currentStep === 'ForgotRegisterEmailId' ? (
+          <ForgotRegisterEmailId 
+            onSuccess={(validEmail: string) => {
+              setForgotEmailValue(validEmail);
+              setCurrentStep('OTP');
+            }} 
+          />
+        ) : null}
 
-        <PrimaryButton title="Sign In" onPress={signin} />
+        {currentStep === 'OTP' ? (
+          <ForgotOtp 
+            email={forgotEmailValue} 
+            onSuccess={() => setCurrentStep('Passwordset')} 
+          />
+        ) : null}
 
-        <AuthBottomLink 
-          text="Don't have an account? " 
-          linkText="Sign up" 
-          onPress={props.onSignUp} 
-        />
-
-        <Divider text="OR" />
-
-        <SocialButton 
-          title="Sign in with Google" 
-          icon="google" 
-          color="#DB4437" 
-          provider="google"
-        />
-
-        <SocialButton 
-          title="Sign in with Facebook" 
-          icon="facebook" 
-          color="#4267B2" 
-          provider="facebook"
-        />
+        {currentStep === 'Passwordset' ? (
+          <PasswordSet 
+            onSuccess={() => setIsSuccessModalOpen(true)} 
+          />
+        ) : null}
 
       </ScrollView>
     </SafeAreaView>
@@ -136,21 +114,5 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingBottom: 40,
     flexGrow: 1,
-  },
-  errorText: {
-    color: Colors.error,
-    fontSize: 14,
-    marginBottom: 15,
-    textAlign: 'center',
-    fontWeight: '500',
-  },
-  forgot: {
-    alignSelf: 'flex-end',
-    marginBottom: 30,
-  },
-  forgotText: {
-    color: Colors.primary,
-    fontWeight: '600',
-    fontSize: 14,
   },
 });
