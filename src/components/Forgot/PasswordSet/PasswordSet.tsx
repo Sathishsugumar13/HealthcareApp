@@ -25,12 +25,7 @@ export default function PasswordSet(props: any) {
         setErrorText('Passwords do not match.');
       } else {
         // save new password
-        let savedUserString = null;
-        if (Platform.OS === 'android') {
-          savedUserString = window.sessionStorage.getItem('user');
-        } else {
-          savedUserString = await AsyncStorage.getItem('user');
-        }
+        let savedUserString = await AsyncStorage.getItem('user');
 
         if (savedUserString === null) {
           setErrorText('No user found to update password.');
