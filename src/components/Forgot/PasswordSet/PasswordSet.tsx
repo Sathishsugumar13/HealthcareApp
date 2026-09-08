@@ -39,11 +39,7 @@ export default function PasswordSet(props: any) {
           savedUserObject.password = newPasswordValue;
 
           // save it back
-          if (Platform.OS === 'android') {
-            window.sessionStorage.setItem('user', JSON.stringify(savedUserObject));
-          } else {
-            await AsyncStorage.setItem('user', JSON.stringify(savedUserObject));
-          }
+          await AsyncStorage.setItem('user', JSON.stringify(savedUserObject));
 
           console.log('Password successfully updated!');
           props.onSuccess();
