@@ -25,7 +25,10 @@ export default function PasswordSet(props: any) {
         setErrorText('Passwords do not match.');
       } else {
         // save new password
-        let savedUserString = await AsyncStorage.getItem('user');
+        let savedUserString = null;
+        // getting user data
+        let data = await AsyncStorage.getItem('user');
+        savedUserString = data;
 
         if (savedUserString === null) {
           setErrorText('No user found to update password.');

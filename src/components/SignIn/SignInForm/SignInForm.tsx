@@ -29,7 +29,10 @@ export default function SignInForm(props: any) {
       setErrorMsg('Please enter your password.');
     } else {
       // both are entered, so check in local storage
-      let savedUserString = await AsyncStorage.getItem('user');
+      let savedUserString = null;
+      // getting user data
+      let data = await AsyncStorage.getItem('user');
+      savedUserString = data;
 
       // if no user is found
       if (savedUserString === null) {

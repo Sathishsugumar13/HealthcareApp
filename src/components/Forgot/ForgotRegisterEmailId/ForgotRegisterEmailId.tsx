@@ -18,7 +18,10 @@ export default function ForgotRegisterEmailId(props: any) {
     if (emailValue === '') {
       setErrorText('Please enter your email id.');
     } else {
-      let savedUserString = await AsyncStorage.getItem('user');
+      let savedUserString = null;
+      // getting user data
+      let data = await AsyncStorage.getItem('user');
+      savedUserString = data;
 
       if (savedUserString === null) {
         setErrorText('No account found. Please sign up first.');
