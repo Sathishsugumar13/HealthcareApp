@@ -6,6 +6,7 @@ import Splash from './src/screens/Splash/Splash';
 import Onboarding from './src/screens/Onboarding/Onboarding';
 import SignUp from './src/screens/SignUp/SignUp';
 import SignIn from './src/screens/SignIn/SignIn';
+import ForgotPassword from './src/screens/ForgotPassword/ForgotPassword';
 import HomeScreen from './src/screens/Home/HomeScreen';
 import { usePushNotifications } from './src/hooks/usePushNotifications';
 
@@ -32,6 +33,11 @@ export default function App() {
   // function to go to sign up screen
   const goToSignUpScreen = () => {
     setCurrentScreenName('signup');
+  };
+  
+  // function to go to forgot password screen
+  const goToForgotPasswordScreen = () => {
+    setCurrentScreenName('forgotpassword');
   };
 
   // function to go to home screen
@@ -71,7 +77,10 @@ export default function App() {
       back={() => goToOnboardingScreen(3)}
       onSignUp={goToSignUpScreen}
       onLogin={goToHomeScreen}
+      onForgotPassword={goToForgotPasswordScreen}
     />;
+  } else if (currentScreenName === 'forgotpassword') {
+    screenUI = <ForgotPassword back={goToSignInScreen} />;
   } else if (currentScreenName === 'home') {
     screenUI = <HomeScreen user={userData} onLogout={goToSignInScreen} />;
   }

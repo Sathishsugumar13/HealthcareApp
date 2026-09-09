@@ -17,6 +17,31 @@ export default function SignUpForm(props: any) {
   const [isTermsAgreed, setIsTermsAgreed] = useState(false);
   const [errorText, setErrorText] = useState('');
 
+  // Password condition checks for display and validation
+  let hasCapitalLetter = false;
+  let hasSmallLetter = false;
+  let hasNumber = false;
+  let hasSpecialCharacter = false;
+  let isValidLength = false;
+
+  if (userPassword.length >= 8 && userPassword.length <= 15) {
+    isValidLength = true;
+  }
+
+  // Simple loop to check characters
+  for (let i = 0; i < userPassword.length; i++) {
+    let char = userPassword[i];
+    if (char >= 'A' && char <= 'Z') {
+      hasCapitalLetter = true;
+    } else if (char >= 'a' && char <= 'z') {
+      hasSmallLetter = true;
+    } else if (char >= '0' && char <= '9') {
+      hasNumber = true;
+    } else {
+      hasSpecialCharacter = true;
+    }
+  }
+
   // function to run when sign up is clicked
   const handleSignUpClick = async () => {
     // clear any previous error
@@ -29,34 +54,41 @@ export default function SignUpForm(props: any) {
       setErrorText('Please enter your email id.');
     } else if (userPassword === '') {
       setErrorText('Please enter a password.');
+    } else if (isValidLength === false) {
+      setErrorText('Password must be between 8 to 15 letters.');
+    } else if (hasCapitalLetter === false) {
+      setErrorText('Password must have at least one capital letter.');
+    } else if (hasSmallLetter === false) {
+      setErrorText('Password must have at least one small letter.');
+    } else if (hasNumber === false) {
+      setErrorText('Password must have at least one number.');
+    } else if (hasSpecialCharacter === false) {
+      setErrorText('Password must have at least one special character.');
     } else if (confirmPassword === '') {
       setErrorText('Please confirm your password.');
     } else if (isTermsAgreed === false) {
       setErrorText('Please accept the terms & conditions.');
+    } else if (userPassword !== confirmPassword) {
+      setErrorText('Passwords do not match.');
     } else {
-      // check if passwords match
-      if (userPassword !== confirmPassword) {
-        setErrorText('Passwords do not match.');
+      // create a user object
+      const newUser = {
+        name: userName,
+        email: userEmail,
+        password: userPassword
+      };
+
+      // save to storage based on platform
+      if (Platform.OS === 'web') {
+        window.sessionStorage.setItem('user', JSON.stringify(newUser));
       } else {
-        // create a user object
-        const newUser = {
-          name: userName,
-          email: userEmail,
-          password: userPassword
-        };
-
-        // save to storage based on platform
-        if (Platform.OS === 'web') {
-          window.sessionStorage.setItem('user', JSON.stringify(newUser));
-        } else {
-          await AsyncStorage.setItem('user', JSON.stringify(newUser));
-        }
-
-        console.log("Account created successfully!");
-        
-        // call the success function from parent
-        props.onSuccess();
+        await AsyncStorage.setItem('user', JSON.stringify(newUser));
       }
+
+      console.log("Account created successfully!");
+      
+      // call the success function from parent
+      props.onSuccess();
     }
   };
 
@@ -110,10 +142,29 @@ export default function SignUpForm(props: any) {
 
       <View style={styles.spacer} />
 
+      {/* Password Conditions Display above Sign Up button */}
+      <View style={styles.conditionsWrapper}>
+        <Text style={[styles.conditionText, { color: isValidLength ? 'green' : 'gray' }]}>
+          • Minimum 8 to 15 letters
+        </Text>
+        <Text style={[styles.conditionText, { color: hasCapitalLetter ? 'green' : 'gray' }]}>
+          • Minimum 1 capital letter
+        </Text>
+        <Text style={[styles.conditionText, { color: hasSmallLetter ? 'green' : 'gray' }]}>
+          • Minimum 1 small letter
+        </Text>
+        <Text style={[styles.conditionText, { color: hasNumber ? 'green' : 'gray' }]}>
+          • Minimum 1 number
+        </Text>
+        <Text style={[styles.conditionText, { color: hasSpecialCharacter ? 'green' : 'gray' }]}>
+          • Minimum 1 special character
+        </Text>
+      </View>
+
       <PrimaryButton 
         title="Sign Up" 
         onPress={handleSignUpClick} 
-        style={{ marginTop: 30 }}
+        style={{ marginTop: 10 }}
       />
 
       <AuthBottomLink 
@@ -137,4 +188,12 @@ const styles = StyleSheet.create({
     flex: 1,
     minHeight: 40,
   },
+  conditionsWrapper: {
+    marginBottom: 15,
+    marginLeft: 5,
+  },
+  conditionText: {
+    fontSize: 12,
+    marginBottom: 4,
+  }
 });
