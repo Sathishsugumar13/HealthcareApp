@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { Text, View, StyleSheet, TextInput, Pressable, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from '../../../theme/colors';
+import { Colors } from '../../theme/colors';
 
-import CustomInput from '../../SignIn/CustomInput';
-import PrimaryButton from '../../Common/PrimaryButton';
+import CustomInput from '../SignIn/CustomInput';
+import PrimaryButton from '../Common/PrimaryButton';
 
 export default function ForgotPasswordForm(props: any) {
   // state for step

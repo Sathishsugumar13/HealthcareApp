@@ -5,7 +5,7 @@ import { Colors } from '../../theme/colors';
 
 import Header from '../../components/SignIn/Header';
 import SuccessModal from '../../components/Common/SuccessModal';
-import ForgotPasswordForm from '../../components/Forgot/ForgotPasswordForm/ForgotPasswordForm';
+import ForgotPasswordForm from '../../components/ForgotPassword/ForgotPassword';
 
 export default function ForgotPassword(props: any) {
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
