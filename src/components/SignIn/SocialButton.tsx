@@ -5,7 +5,8 @@
  */
 import React from 'react';
 import { Pressable, Text, PressableProps, StyleSheet } from 'react-native';
-import { AntDesign, FontAwesome } from '@expo/vector-icons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { Colors } from '../../theme/colors';
 
 interface SocialButtonProps extends PressableProps {

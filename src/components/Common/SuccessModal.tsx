@@ -6,7 +6,7 @@
 import React from 'react';
 import { Colors } from '../../theme/colors';
 import { Modal, View, Text, Pressable, StyleSheet } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import Feather from 'react-native-vector-icons/Feather';
 
 interface SuccessModalProps {
   visible: boolean;

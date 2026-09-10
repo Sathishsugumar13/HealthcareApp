@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, Image, Modal } from 'react-native';
 import { Colors } from '../../theme/colors';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface ProfileModalProps {
   visible: boolean;
@@ -11,6 +11,8 @@ interface ProfileModalProps {
   onChangePhoto: () => void;
   onLogout: () => void;
 }
+
+import { handleAppLogout } from '../Logout/logoutHelper';
 
 export default function ProfileModal({
   visible,
@@ -53,7 +55,7 @@ export default function ProfileModal({
             <Text style={styles.modalNameText}>{user?.name || 'User'}</Text>
             <Text style={styles.modalEmailText}>{user?.email || 'user@example.com'}</Text>
 
-            <Pressable style={styles.logoutButton} onPress={onLogout}>
+            <Pressable style={styles.logoutButton} onPress={() => handleAppLogout(onLogout)}>
               <MaterialCommunityIcons name="logout" size={20} color="#FF4D4D" />
               <Text style={styles.logoutText}>Logout</Text>
             </Pressable>

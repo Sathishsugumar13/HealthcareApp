@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, TextInput, Pressable, StyleSheet } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Colors } from '../../../theme/colors';
 
 interface Props {

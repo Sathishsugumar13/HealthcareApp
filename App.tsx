@@ -7,7 +7,8 @@ import Onboarding from './src/screens/Onboarding/Onboarding';
 import SignUp from './src/screens/SignUp/SignUp';
 import SignIn from './src/screens/SignIn/SignIn';
 import ForgotPassword from './src/screens/ForgotPassword/ForgotPassword';
-import HomeScreen from './src/screens/Home/HomeScreen';
+import { NavigationContainer } from '@react-navigation/native';
+import MainTabNavigator from './src/navigation/MainTabNavigator';
 import { usePushNotifications } from './src/hooks/usePushNotifications';
 
 export default function App() {
@@ -82,14 +83,16 @@ export default function App() {
   } else if (currentScreenName === 'forgotpassword') {
     screenUI = <ForgotPassword back={goToSignInScreen} />;
   } else if (currentScreenName === 'home') {
-    screenUI = <HomeScreen user={userData} onLogout={goToSignInScreen} />;
+    screenUI = <MainTabNavigator user={userData} onLogout={goToSignInScreen} />;
   }
 
   // return the final UI
   return (
     <SafeAreaProvider>
       <PaperProvider>
-        {screenUI}
+        <NavigationContainer>
+          {screenUI}
+        </NavigationContainer>
       </PaperProvider>
     </SafeAreaProvider>
   );

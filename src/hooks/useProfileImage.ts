@@ -1,16 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
+import { useFocusEffect } from '@react-navigation/native';
 
 export function useProfileImage(user: any) {
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (user?.email) {
-      loadProfileImage(user.email);
-    }
-  }, [user]);
+  useFocusEffect(
+    useCallback(() => {
+      if (user?.email) {
+        loadProfileImage(user.email);
+      }
+    }, [user])
+  );
 
   const loadProfileImage = async (email: string) => {
     try {

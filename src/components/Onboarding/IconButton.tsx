@@ -5,11 +5,11 @@
  */
 import React from 'react';
 import { Pressable, PressableProps, StyleSheet } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import Feather from 'react-native-vector-icons/Feather';
 import { Colors } from '../../theme/colors';
 
 interface IconButtonProps extends PressableProps {
-  icon: keyof typeof Feather.glyphMap;
+  icon: string;
   size?: number;
 }
 
