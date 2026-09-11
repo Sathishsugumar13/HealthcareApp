@@ -13,8 +13,8 @@ export default function Splash(props: any) {
   useEffect(() => {
     // create a timer
     const myTimer = setTimeout(() => {
-      // call next function passed from App.tsx
-      props.next();
+      console.log("5 seconds over, going to Onboarding screen");
+      props.navigation.replace('Onboarding');
     }, 5000);
 
     // clear timer if component unmounts

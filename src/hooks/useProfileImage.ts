@@ -16,13 +16,19 @@ export function useProfileImage(user: any) {
   );
 
   const loadProfileImage = async (email: string) => {
+    console.log("loading profile image for email: ", email);
     try {
       const image = await AsyncStorage.getItem(`profile_img_${email}`);
       if (image) {
+        console.log("found image in storage");
         setProfileImage(image);
+      } else {
+        console.log("no image found, setting to null empty avatar");
+        setProfileImage(null);
       }
     } catch (error) {
-      console.error(error);
+      console.log("error loading image", error);
+      setProfileImage(null);
     }
   };
 
@@ -76,14 +82,44 @@ export function useProfileImage(user: any) {
     }
   };
 
-  const onChangePhoto = () => {
+  const removePhoto = async () => {
+    console.log("remove photo button clicked");
+    setProfileImage(null); // set state to null first
+    if (user && user.email) {
+      try {
+        console.log("removing from storage for email: ", user.email);
+        await AsyncStorage.removeItem(`profile_img_${user.email}`);
+        console.log("removed successfully");
+      } catch (error) {
+        console.log("Error removing photo", error);
+      }
+    } else {
+      console.log("no user email found to remove photo");
+    }
+  };
+
+  const handleUpdateClick = () => {
+    console.log("user clicked update photo");
     Alert.alert(
-      'Change Photo',
+      'Update Photo',
       'Choose an option',
       [
         { text: 'Take Photo', onPress: takePhoto },
         { text: 'Choose from Gallery', onPress: pickImage },
-        { text: 'Cancel', style: 'cancel' }
+        { text: 'Cancel', style: 'cancel', onPress: () => console.log("update cancelled") }
+      ]
+    );
+  };
+
+  const onChangePhoto = () => {
+    console.log("profile photo clicked");
+    Alert.alert(
+      'Profile Photo',
+      'What would you like to do?',
+      [
+        { text: 'Update Photo', onPress: handleUpdateClick },
+        { text: 'Remove Photo', onPress: removePhoto, style: 'destructive' },
+        { text: 'Cancel', style: 'cancel', onPress: () => console.log("main alert cancelled") }
       ]
     );
   };

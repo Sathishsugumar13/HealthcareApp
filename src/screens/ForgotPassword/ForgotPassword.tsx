@@ -11,17 +11,15 @@ export default function ForgotPassword(props: any) {
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
   const handleBackButtonClick = () => {
-    if (props.back) {
-      props.back();
-    }
+    console.log("forgot password back clicked");
+    props.navigation.goBack();
   };
 
   const handleSuccessPopupClose = () => {
     setIsSuccessModalOpen(false);
     // Go back to sign in after closing success modal
-    if (props.back) {
-      props.back();
-    }
+    console.log("popup closed, going back");
+    props.navigation.goBack();
   };
 
   return (

@@ -67,7 +67,7 @@ export default function ProfileContent(props: any) {
         <View style={styles.statBox}>
           <MaterialCommunityIcons name="weight" size={24} color="#4A80F0" />
           <Text style={styles.statLabel}>Weight</Text>
-          <Text style={styles.statValue}>103lbs</Text>
+          <Text style={styles.statValue}>155lbs</Text>
         </View>
       </View>
 

@@ -11,6 +11,19 @@ import ProfileScreen from '../screens/Profile/ProfileScreen';
 const Tab = createBottomTabNavigator();
 
 export default function MainTabNavigator(props: any) {
+  // let's get the user from route params safely
+  let userObj = null;
+  if (props.route && props.route.params && props.route.params.user) {
+    userObj = props.route.params.user;
+  } else {
+    console.log("no user object found in route params");
+  }
+
+  const doLogout = () => {
+    console.log("logout button clicked in tabs");
+    props.navigation.replace('SignIn');
+  }
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -48,12 +61,12 @@ export default function MainTabNavigator(props: any) {
       })}
     >
       <Tab.Screen name="Home">
-        {(screenProps) => <HomeScreen {...screenProps} user={props.user} onLogout={props.onLogout} />}
+        {(screenProps) => <HomeScreen {...screenProps} user={userObj} onLogout={doLogout} />}
       </Tab.Screen>
       <Tab.Screen name="Reports" component={ReportsScreen} />
       <Tab.Screen name="Notification" component={NotificationScreen} />
       <Tab.Screen name="Profile">
-         {(screenProps) => <ProfileScreen {...screenProps} user={props.user} onLogout={props.onLogout} />}
+         {(screenProps) => <ProfileScreen {...screenProps} user={userObj} onLogout={doLogout} />}
       </Tab.Screen>
     </Tab.Navigator>
   );

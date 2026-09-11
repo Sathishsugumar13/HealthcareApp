@@ -8,11 +8,24 @@ import SignInForm from '../../components/SignIn/SignInForm/SignInForm';
 
 export default function SignIn(props: any) {
 
-  // function when back button is pressed
   const handleBackButtonClick = () => {
-    if (props.back) {
-      props.back();
-    }
+    console.log("going back from sign in");
+    props.navigation.goBack();
+  };
+
+  const loginSuccess = (data: any) => {
+    console.log("login success function called, passing data: ", data);
+    props.navigation.replace('MainTab', { user: data });
+  };
+
+  const goToSignUp = () => {
+    console.log("going to sign up screen");
+    props.navigation.navigate('SignUp');
+  };
+
+  const goToForgot = () => {
+    console.log("going to forgot password");
+    props.navigation.navigate('ForgotPassword');
   };
 
   return (
@@ -26,13 +39,9 @@ export default function SignIn(props: any) {
         />
 
         <SignInForm 
-          onLogin={props.onLogin}
-          onSignUp={props.onSignUp}
-          onForgot={() => {
-            if (props.onForgotPassword) {
-              props.onForgotPassword();
-            }
-          }}
+          onLogin={loginSuccess}
+          onSignUp={goToSignUp}
+          onForgot={goToForgot}
         />
 
       </ScrollView>

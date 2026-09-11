@@ -15,11 +15,18 @@ export default function SignUp(props: any) {
   // function to close the popup and go back to sign in
   const handleSuccessPopupClose = () => {
     setIsSuccessPopupOpen(false);
-    
-    // call the parent function to go to sign in screen
-    if (props.onSuccess) {
-      props.onSuccess();
-    }
+    console.log("Success! Going to SignIn page now.");
+    props.navigation.navigate('SignIn');
+  };
+
+  const handleBack = () => {
+    console.log("user pressed back button in signup");
+    props.navigation.goBack();
+  };
+
+  const goToSignIn = () => {
+    console.log("user clicked already have account");
+    props.navigation.navigate('SignIn');
   };
 
   return (
@@ -36,12 +43,12 @@ export default function SignUp(props: any) {
       <ScrollView contentContainerStyle={styles.contentContainer}>
         
         {/* Header */}
-        <Header title="Sign Up" onBackPress={props.back} />
+        <Header title="Sign Up" onBackPress={handleBack} />
 
         {/* The sign up form component */}
         <SignUpForm 
           onSuccess={() => setIsSuccessPopupOpen(true)}
-          onSignIn={props.onSignIn}
+          onSignIn={goToSignIn}
         />
 
       </ScrollView>

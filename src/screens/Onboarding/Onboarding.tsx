@@ -19,7 +19,21 @@ import Logo from '../../components/Common/Logo';
 
 export default function Onboarding(props: any) {
   // state to track which page we are on
-  const [currentPage, setCurrentPage] = useState(props.initialPage || 1);
+  let initPage = 1;
+  if (props.route && props.route.params && props.route.params.initialPage) {
+    initPage = props.route.params.initialPage;
+  }
+  const [currentPage, setCurrentPage] = useState(initPage);
+
+  const onLoginBtnClick = () => {
+    console.log("user clicked login button in onboarding");
+    props.navigation.navigate('SignIn');
+  };
+
+  const onSignUpBtnClick = () => {
+    console.log("user clicked sign up button in onboarding");
+    props.navigation.navigate('SignUp');
+  };
 
   // if user is on the last page (page 3)
   if (currentPage === 3) {
@@ -42,13 +56,13 @@ export default function Onboarding(props: any) {
 
         <PrimaryButton 
           title="Login" 
-          onPress={props.login} 
+          onPress={onLoginBtnClick} 
           style={{ width: '100%', marginBottom: 15 }} 
         />
 
         <OutlineButton 
           title="Sign Up" 
-          onPress={props.signUp} 
+          onPress={onSignUpBtnClick} 
         />
 
       </SafeAreaView>
