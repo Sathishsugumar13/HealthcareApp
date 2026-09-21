@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, StyleSheet, SafeAreaView } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import ProfileContent from '../../components/Profile/ProfileContent';
 import { useProfileImage } from '../../hooks/useProfileImage';
 
