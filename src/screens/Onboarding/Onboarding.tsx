@@ -11,9 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Colors } from '../../theme/colors';
 
-import PrimaryButton from '../../components/Common/PrimaryButton';
-import OutlineButton from '../../components/Onboarding/OutlineButton';
-import IconButton from '../../components/Onboarding/IconButton';
+import CustomButton from '../../components/Common/CustomButton';
 import PaginationDots from '../../components/Onboarding/PaginationDots';
 import Logo from '../../components/Common/Logo';
 
@@ -54,15 +52,17 @@ export default function Onboarding(props: any) {
           Login to Stay healthy and fit
         </Text>
 
-        <PrimaryButton 
+        <CustomButton 
           title="Login" 
           onPress={onLoginBtnClick} 
           style={{ width: '100%', marginBottom: 15 }} 
         />
 
-        <OutlineButton 
+        <CustomButton 
           title="Sign Up" 
+          variant="outline"
           onPress={onSignUpBtnClick} 
+          style={{ width: '100%' }}
         />
 
       </SafeAreaView>
@@ -106,8 +106,10 @@ export default function Onboarding(props: any) {
         <PaginationDots totalPages={2} currentPage={currentPage} />
 
         {/* Go to next page by adding 1 */}
-        <IconButton 
-          icon="arrow-right" 
+        <CustomButton 
+          rightIcon="arrow-right"
+          iconFamily="Feather" 
+          isRound={true}
           onPress={() => setCurrentPage(currentPage + 1)} 
         />
 

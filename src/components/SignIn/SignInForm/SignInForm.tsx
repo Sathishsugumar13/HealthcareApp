@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '../../../theme/colors';
 
 import CustomInput from '../CustomInput';
-import PrimaryButton from '../../Common/PrimaryButton';
+import CustomButton from '../../Common/CustomButton';
 import Divider from '../Divider';
 import SocialButton from '../SocialButton';
 import AuthBottomLink from '../../Common/AuthBottomLink';
@@ -79,7 +79,7 @@ export default function SignInForm(props: any) {
         <Text style={styles.forgotText}>Forgot password?</Text>
       </Pressable>
 
-      <PrimaryButton title="Sign In" onPress={handleLoginClick} />
+      <CustomButton title="Sign In" onPress={handleLoginClick} />
 
       <AuthBottomLink 
         text="Don't have an account? " 

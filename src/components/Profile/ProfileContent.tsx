@@ -6,6 +6,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { handleAppLogout } from '../Logout/logoutHelper';
+import StatBox from './StatBox';
+import ProfileMenuItem from './ProfileMenuItem';
 
 export default function ProfileContent(props: any) {
 
@@ -45,65 +47,36 @@ export default function ProfileContent(props: any) {
       {/* Stats Section */}
       <View style={styles.statsContainer}>
         {/* Stat 1 for heart rate */}
-        <View style={styles.statBox}>
-          <Ionicons name="heart" size={24} color="#4A80F0" />
-          <Text style={styles.statLabel}>Heart rate</Text>
-          <Text style={styles.statValue}>97bpm</Text>
-        </View>
+        <StatBox iconFamily="Ionicons" iconName="heart" label="Heart rate" value="97bpm" />
 
         {/* line divider */}
         <View style={styles.divider}></View>
 
         {/* Stat 2 for calories */}
-        <View style={styles.statBox}>
-          <Ionicons name="water" size={24} color="#4A80F0" />
-          <Text style={styles.statLabel}>Calories</Text>
-          <Text style={styles.statValue}>756cal</Text>
-        </View>
+        <StatBox iconFamily="Ionicons" iconName="water" label="Calories" value="756cal" />
 
         <View style={styles.divider}></View>
 
         {/* Stat 3 for weight */}
-        <View style={styles.statBox}>
-          <MaterialCommunityIcons name="weight" size={24} color="#4A80F0" />
-          <Text style={styles.statLabel}>Weight</Text>
-          <Text style={styles.statValue}>155lbs</Text>
-        </View>
+        <StatBox iconFamily="MaterialCommunityIcons" iconName="weight" label="Weight" value="155lbs" />
       </View>
 
       {/* Menu List items */}
       <View style={{ marginTop: 20 }}>
         {/* mapping the list */}
         {menuItems.map((item) => {
-          
-          // checking icon type
-          let iconComponent = null;
-          if (item.type === 'Feather') {
-            iconComponent = <Feather name={item.icon as any} size={20} color="#4A80F0" />;
-          }
-          if (item.type === 'AntDesign') {
-            iconComponent = <AntDesign name={item.icon as any} size={20} color="#4A80F0" />;
-          }
-
           return (
-            <TouchableOpacity 
-              style={styles.menuItem} 
+            <ProfileMenuItem 
               key={item.id}
+              title={item.title}
+              iconName={item.icon}
+              iconType={item.type as 'Feather' | 'AntDesign'}
               onPress={() => {
                 if (item.title === 'Logout') {
-                  // using the reusable logout function
                   handleAppLogout(props.onLogout);
                 }
               }}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <View style={styles.iconCircle}>
-                  {iconComponent}
-                </View>
-                <Text style={styles.menuText}>{item.title}</Text>
-              </View>
-              <Feather name="chevron-right" size={20} color="gray" />
-            </TouchableOpacity>
+            />
           )
         })}
       </View>
@@ -142,46 +115,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 30,
   },
-  statBox: {
-    alignItems: 'center',
-    width: '30%',
-  },
-  statLabel: {
-    color: '#888', // gray color
-    fontSize: 12,
-    marginTop: 5,
-  },
-  statValue: {
-    color: '#4A80F0', // blue color
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginTop: 3,
-  },
   divider: {
     width: 1,
     height: 40,
     backgroundColor: '#EEEEEE',
-  },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
-  },
-  iconCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20, // circle background
-    backgroundColor: '#EEF3FF', // light blue color
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 15,
-  },
-  menuText: {
-    fontSize: 16,
-    fontWeight: 'bold', // bold text for menu
-    color: 'black',
   }
 });

@@ -5,6 +5,7 @@ import { Feather } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Svg, { Path } from 'react-native-svg';
+import ReportCard from '../Common/ReportCard';
 
 export default function ReportsContent() {
   // dummy data for reports
@@ -62,20 +63,7 @@ export default function ReportsContent() {
         {/* mapping reports */}
         {reportsList.map((item) => {
           return (
-            <TouchableOpacity style={styles.listItem} key={item.id}>
-              <View style={styles.iconBox}>
-                <MaterialCommunityIcons name="clipboard-pulse-outline" size={20} color="#5D85CE" />
-              </View>
-              
-              <View style={{ flex: 1 }}>
-                <Text style={{ fontWeight: 'bold', fontSize: 15 }}>{item.title}</Text>
-                <Text style={{ color: 'gray', fontSize: 13, marginTop: 2 }}>{item.date}</Text>
-              </View>
-              
-              <View>
-                <Feather name="more-horizontal" size={20} color="black" />
-              </View>
-            </TouchableOpacity>
+            <ReportCard key={item.id} item={item} />
           )
         })}
       </View>
@@ -137,20 +125,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#FCECD2', // light yellow
     padding: 15,
     borderRadius: 10,
-  },
-  listItem: {
-    flexDirection: 'row',
-    borderWidth: 1,
-    borderColor: '#ccc', // gray border color
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 10,
-    alignItems: 'center',
-  },
-  iconBox: {
-    backgroundColor: '#EEF3FF',
-    padding: 10,
-    borderRadius: 10,
-    marginRight: 15,
   }
 });

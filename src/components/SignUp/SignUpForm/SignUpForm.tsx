@@ -4,9 +4,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '../../../theme/colors';
 
 import CustomInput from '../../SignIn/CustomInput';
-import PrimaryButton from '../../Common/PrimaryButton';
+import CustomButton from '../../Common/CustomButton';
 import TermsCheckbox from '../TermsCheckbox';
 import AuthBottomLink from '../../Common/AuthBottomLink';
+import PasswordValidator from '../../Common/PasswordValidator';
 
 export default function SignUpForm(props: any) {
   // states for storing user inputs
@@ -143,25 +144,15 @@ export default function SignUpForm(props: any) {
       <View style={styles.spacer} />
 
       {/* Password Conditions Display above Sign Up button */}
-      <View style={styles.conditionsWrapper}>
-        <Text style={[styles.conditionText, { color: isValidLength ? 'green' : 'gray' }]}>
-          • Minimum 8 to 15 letters
-        </Text>
-        <Text style={[styles.conditionText, { color: hasCapitalLetter ? 'green' : 'gray' }]}>
-          • Minimum 1 capital letter
-        </Text>
-        <Text style={[styles.conditionText, { color: hasSmallLetter ? 'green' : 'gray' }]}>
-          • Minimum 1 small letter
-        </Text>
-        <Text style={[styles.conditionText, { color: hasNumber ? 'green' : 'gray' }]}>
-          • Minimum 1 number
-        </Text>
-        <Text style={[styles.conditionText, { color: hasSpecialCharacter ? 'green' : 'gray' }]}>
-          • Minimum 1 special character
-        </Text>
-      </View>
+      <PasswordValidator 
+        isValidLength={isValidLength}
+        hasCapitalLetter={hasCapitalLetter}
+        hasSmallLetter={hasSmallLetter}
+        hasNumber={hasNumber}
+        hasSpecialCharacter={hasSpecialCharacter}
+      />
 
-      <PrimaryButton 
+      <CustomButton 
         title="Sign Up" 
         onPress={handleSignUpClick} 
         style={{ marginTop: 10 }}
@@ -187,13 +178,5 @@ const styles = StyleSheet.create({
   spacer: {
     flex: 1,
     minHeight: 40,
-  },
-  conditionsWrapper: {
-    marginBottom: 15,
-    marginLeft: 5,
-  },
-  conditionText: {
-    fontSize: 12,
-    marginBottom: 4,
   }
 });

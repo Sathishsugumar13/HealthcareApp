@@ -8,9 +8,13 @@ import ReportsScreen from '../screens/Reports/ReportsScreen';
 import NotificationScreen from '../screens/Notification/NotificationScreen';
 import ProfileScreen from '../screens/Profile/ProfileScreen';
 
+import { useGlobalNotifications } from '../context/NotificationContext';
+
 const Tab = createBottomTabNavigator();
 
 export default function MainTabNavigator(props: any) {
+  const { unreadCount } = useGlobalNotifications();
+
   // let's get the user from route params safely
   let userObj = null;
   if (props.route && props.route.params && props.route.params.user) {
@@ -64,7 +68,14 @@ export default function MainTabNavigator(props: any) {
         {(screenProps) => <HomeScreen {...screenProps} user={userObj} onLogout={doLogout} />}
       </Tab.Screen>
       <Tab.Screen name="Reports" component={ReportsScreen} />
-      <Tab.Screen name="Notification" component={NotificationScreen} />
+      <Tab.Screen 
+        name="Notification" 
+        component={NotificationScreen} 
+        options={{
+          tabBarBadge: unreadCount > 0 ? unreadCount : undefined,
+          tabBarBadgeStyle: { backgroundColor: 'red', color: 'white' },
+        }}
+      />
       <Tab.Screen name="Profile">
          {(screenProps) => <ProfileScreen {...screenProps} user={userObj} onLogout={doLogout} />}
       </Tab.Screen>

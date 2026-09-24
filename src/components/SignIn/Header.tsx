@@ -7,6 +7,7 @@ import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import { Colors } from '../../theme/colors';
+import BackButton from '../Common/BackButton';
 
 interface HeaderProps {
   title: string;
@@ -17,9 +18,9 @@ export default function Header({ title, onBackPress }: HeaderProps) {
   return (
     <View style={styles.header}>
       {onBackPress ? (
-        <Pressable onPress={onBackPress} style={styles.backBtn}>
-          <Feather name="chevron-left" size={32} color={Colors.text} />
-        </Pressable>
+        <View style={styles.backBtn}>
+          <BackButton iconFamily="Feather" onPress={onBackPress} size={32} color={Colors.text} style={{ marginLeft: -10 }} />
+        </View>
       ) : (
         <View style={styles.backBtn} />
       )}
