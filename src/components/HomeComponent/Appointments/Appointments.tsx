@@ -55,12 +55,12 @@ const DISTRICTS = [
 ];
 
 let HOSPITALS = [
-  { id: 'h1', name: 'City Hospital', districtId: 'dt1' },
-  { id: 'h2', name: 'SKS Hospital', districtId: 'dt1' },
-  { id: 'h3', name: 'Apollo Main', districtId: 'dt2' },
-  { id: 'h4', name: 'PSG Hospitals', districtId: 'dt3' },
-  { id: 'h5', name: 'Aster Medcity', districtId: 'dt4' },
-  { id: 'h6', name: 'Fortis Hospital', districtId: 'dt5' },
+  { id: 'h1', name: 'City Hospital', districtId: 'dt1', doctors: [{ id: 'd1', name: 'Dr. John Doe', spId: 'sp1', specialization: 'Cardiologist' }, { id: 'd2', name: 'Dr. Sarah Smith', spId: 'sp2', specialization: 'Dentist' }] },
+  { id: 'h2', name: 'SKS Hospital', districtId: 'dt1', doctors: [{ id: 'd3', name: 'Dr. Mike Johnson', spId: 'sp3', specialization: 'Neurologist' }, { id: 'd4', name: 'Dr. Emily Rose', spId: 'sp4', specialization: 'Orthopedist' }] },
+  { id: 'h3', name: 'Apollo Main', districtId: 'dt2', doctors: [{ id: 'd5', name: 'Dr. Mark Ruffalo', spId: 'sp5', specialization: 'Pediatrician' }] },
+  { id: 'h4', name: 'PSG Hospitals', districtId: 'dt3', doctors: [{ id: 'd8', name: 'Dr. Peter Parker', spId: 'sp3', specialization: 'Neurologist' }] },
+  { id: 'h5', name: 'Aster Medcity', districtId: 'dt4', doctors: [{ id: 'd9', name: 'Dr. Bruce Wayne', spId: 'sp4', specialization: 'Orthopedist' }, { id: 'd10', name: 'Dr. Clark Kent', spId: 'sp5', specialization: 'Pediatrician' }] },
+  { id: 'h6', name: 'Fortis Hospital', districtId: 'dt5', doctors: [{ id: 'd6', name: 'Dr. Alice Brown', spId: 'sp1', specialization: 'Cardiologist' }, { id: 'd7', name: 'Dr. Charlie Clark', spId: 'sp2', specialization: 'Dentist' }] },
 ];
 
 export default function AppointmentsComponent() {
@@ -71,7 +71,16 @@ export default function AppointmentsComponent() {
   // Basic Info
   const [patientName, setPatientName] = useState('');
   const [phone, setPhone] = useState('');
-  const [date, setDate] = useState('');
+  const getTodayDate = () => {
+    let today = new Date();
+    let dd = today.getDate();
+    let mm = today.getMonth() + 1;
+    let yyyy = today.getFullYear();
+    let strDd = dd < 10 ? '0' + dd : dd;
+    let strMm = mm < 10 ? '0' + mm : mm;
+    return `${strDd}/${strMm}/${yyyy} at 09:00 AM`;
+  };
+  const [date, setDate] = useState(getTodayDate());
   
   // Appointment Type: 'doctor' | 'hospital'
   const [appointmentType, setAppointmentType] = useState<'doctor' | 'hospital'>('doctor');
@@ -145,7 +154,7 @@ export default function AppointmentsComponent() {
 
   // Calendar Modal State
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
-  const [tempDate, setTempDate] = useState<number | null>(null);
+  const [tempDate, setTempDate] = useState<number | null>(new Date().getDate());
   const [tempTime, setTempTime] = useState<string | null>(null);
 
   const handleBack = () => {
@@ -162,7 +171,11 @@ export default function AppointmentsComponent() {
       return;
     }
     const dayStr = tempDate < 10 ? `0${tempDate}` : `${tempDate}`;
-    setDate(`${dayStr}/10/2023 at ${tempTime}`);
+    let today = new Date();
+    let mm = today.getMonth() + 1;
+    let yyyy = today.getFullYear();
+    let monthStr = mm < 10 ? `0${mm}` : `${mm}`;
+    setDate(`${dayStr}/${monthStr}/${yyyy} at ${tempTime}`);
     setIsCalendarVisible(false);
   };
 
@@ -265,6 +278,8 @@ export default function AppointmentsComponent() {
       setSelectedHospital(null); // reset dependent
     } else if (modalType === 'hospital') {
       setSelectedHospital(item);
+      setSelectedSpecialization(null); // reset dependent
+      setSelectedDoctor(null); // reset dependent
     }
     setIsModalVisible(false);
   };
@@ -282,8 +297,8 @@ export default function AppointmentsComponent() {
       Alert.alert('Error', 'Please select a Specialization and Doctor.');
       return;
     }
-    if (appointmentType === 'hospital' && (!selectedState || !selectedDistrict || !selectedHospital)) {
-      Alert.alert('Error', 'Please select State, District, and Hospital.');
+    if (appointmentType === 'hospital' && (!selectedState || !selectedDistrict || !selectedHospital || !selectedSpecialization || !selectedDoctor)) {
+      Alert.alert('Error', 'Please select State, District, Hospital, Specialization, and Doctor.');
       return;
     }
 
@@ -300,13 +315,13 @@ export default function AppointmentsComponent() {
         image: route.params?.doctor?.image || null
       });
     } else if (appointmentType === 'hospital') {
-      successMsg = `Your appointment at ${selectedHospital.name} has been booked!`;
+      successMsg = `Your appointment at ${selectedHospital.name} with ${selectedDoctor.name} has been booked!`;
       
       addAppointment({
         id: `appt_${Date.now()}`,
         patientName,
-        doctorName: selectedHospital.name,
-        specialization: selectedDistrict.name,
+        doctorName: selectedDoctor.name + ' (' + selectedHospital.name + ')',
+        specialization: selectedSpecialization.name,
         date: date,
         image: route.params?.hospital?.image || null
       });
@@ -512,6 +527,37 @@ export default function AppointmentsComponent() {
                 </Text>
                 <MaterialCommunityIcons name="chevron-down" size={24} color="#777" />
               </TouchableOpacity>
+
+              <Text style={styles.label}>Specialization</Text>
+              <TouchableOpacity 
+                style={[styles.dropdownSelector, !selectedHospital && styles.dropdownDisabled]} 
+                onPress={() => {
+                  if (!selectedHospital) return;
+                  let availableSpIds = selectedHospital.doctors.map((d: any) => d.spId);
+                  openDropdown('specialization', SPECIALIZATIONS.filter(sp => availableSpIds.includes(sp.id)));
+                }}
+                activeOpacity={!selectedHospital ? 1 : 0.7}
+              >
+                <Text style={selectedSpecialization ? styles.dropdownTextSelected : styles.dropdownTextPlaceholder}>
+                  {selectedSpecialization ? selectedSpecialization.name : (selectedHospital ? 'Select Specialization' : 'Select Hospital First')}
+                </Text>
+                <MaterialCommunityIcons name="chevron-down" size={24} color="#777" />
+              </TouchableOpacity>
+
+              <Text style={styles.label}>Select Doctor</Text>
+              <TouchableOpacity 
+                style={[styles.dropdownSelector, !selectedSpecialization && styles.dropdownDisabled]} 
+                onPress={() => {
+                  if (!selectedSpecialization) return;
+                  openDropdown('doctor', selectedHospital.doctors.filter((d: any) => d.spId === selectedSpecialization.id));
+                }}
+                activeOpacity={!selectedSpecialization ? 1 : 0.7}
+              >
+                <Text style={selectedDoctor ? styles.dropdownTextSelected : styles.dropdownTextPlaceholder}>
+                  {selectedDoctor ? selectedDoctor.name : (selectedSpecialization ? 'Select Doctor' : 'Select Specialization First')}
+                </Text>
+                <MaterialCommunityIcons name="chevron-down" size={24} color="#777" />
+              </TouchableOpacity>
             </View>
           )}
 
@@ -583,7 +629,9 @@ export default function AppointmentsComponent() {
             
             {/* Calendar Header */}
             <View style={styles.calendarHeader}>
-              <Text style={styles.calendarMonthText}>October 2023</Text>
+              <Text style={styles.calendarMonthText}>
+                {new Date().toLocaleString('default', { month: 'long' })} {new Date().getFullYear()}
+              </Text>
               <View style={styles.calendarNav}>
                 <MaterialCommunityIcons name="chevron-left" size={24} color="#333" />
                 <MaterialCommunityIcons name="chevron-right" size={24} color="#333" style={{marginLeft: 16}} />
@@ -599,17 +647,27 @@ export default function AppointmentsComponent() {
             
             {/* Dates Grid */}
             <View style={styles.calendarGrid}>
-              {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
+              {Array.from({ length: 31 }, (_, i) => i + 1).map(day => {
+                let todayDate = new Date().getDate();
+                let isOldDate = day < todayDate;
+                return (
                 <TouchableOpacity 
                   key={day} 
-                  style={[styles.calendarDateCell, tempDate === day && styles.calendarDateCellActive]}
-                  onPress={() => setTempDate(day)}
+                  style={[styles.calendarDateCell, tempDate === day && styles.calendarDateCellActive, isOldDate && { opacity: 0.3 }]}
+                  onPress={() => {
+                    if (isOldDate) {
+                      Alert.alert('Invalid Date', 'Old dates cannot be selected.');
+                    } else {
+                      setTempDate(day);
+                    }
+                  }}
+                  activeOpacity={isOldDate ? 1 : 0.2}
                 >
                   <Text style={[styles.calendarDateText, tempDate === day && styles.calendarDateTextActive]}>
                     {day}
                   </Text>
                 </TouchableOpacity>
-              ))}
+              )})}
             </View>
 
             {/* Time Slots */}

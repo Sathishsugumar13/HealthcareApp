@@ -77,9 +77,12 @@ export default function HospitalDetailsScreen() {
         {/* Doctors Section */}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Available Doctors</Text>
-          <Text style={styles.sectionText}>
-            {hospital.doctors.join(', ')}
-          </Text>
+          {hospital.doctors && hospital.doctors.map((doc: any, index: number) => (
+            <View key={index} style={{ marginBottom: 12, paddingBottom: 12, borderBottomWidth: index === hospital.doctors.length - 1 ? 0 : 1, borderBottomColor: '#EAEAEA' }}>
+              <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#333' }}>{doc.name}</Text>
+              <Text style={{ fontSize: 14, color: '#666' }}>{doc.specialization}</Text>
+            </View>
+          ))}
         </View>
 
         {/* About Section */}

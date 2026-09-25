@@ -53,18 +53,18 @@ const MOCK_DISTRICTS: DistrictData[] = [
 ];
 
 const MOCK_HOSPITALS: HospitalData[] = [
-  { id: 'h1', name: 'City Hospital', address: 'Main Road, Salem', rating: '4.5', districtId: 'd1', image: require('../../../assets/images/hospital_city.jpg'), doctors: ['Dr. Alan Walker', 'Dr. Sarah Smith'] },
-  { id: 'h2', name: 'SKS Hospital', address: '2nd Avenue, Salem', rating: '4.8', districtId: 'd1', image: require('../../../assets/images/hospital_sks.jpg'), doctors: ['Dr. John Doe', 'Dr. Emily Rose'] },
-  { id: 'h3', name: 'Apollo Main', address: 'Greams Road, Chennai', rating: '4.9', districtId: 'd2', image: require('../../../assets/images/hospital_city.jpg'), doctors: ['Dr. Mark Ruffalo'] },
-  { id: 'h4', name: 'Fortis Hospital', address: 'Bannerghatta Road, Bangalore', rating: '4.7', districtId: 'd6', image: require('../../../assets/images/hospital_sks.jpg'), doctors: ['Dr. Alice Brown', 'Dr. Charlie Clark'] },
-  { id: 'h5', name: 'PSG Hospitals', address: 'Peelamedu, Coimbatore', rating: '4.6', districtId: 'd3', image: require('../../../assets/images/hospital_city.jpg'), doctors: ['Dr. Peter Parker'] },
-  { id: 'h6', name: 'Aster Medcity', address: 'Cheranallur, Kochi', rating: '4.9', districtId: 'd4', image: require('../../../assets/images/hospital_sks.jpg'), doctors: ['Dr. Bruce Wayne', 'Dr. Clark Kent'] },
-  { id: 'h7', name: 'KIMS Hospital', address: 'Anayara, Trivandrum', rating: '4.8', districtId: 'd5', image: require('../../../assets/images/hospital_city.jpg'), doctors: ['Dr. John Doe'] },
-  { id: 'h8', name: 'Columbia Asia', address: 'Mysore Road, Mysore', rating: '4.4', districtId: 'd7', image: require('../../../assets/images/hospital_sks.jpg'), doctors: ['Dr. Sarah Smith'] },
-  { id: 'h9', name: 'Care Hospitals', address: 'Ram Nagar, Visakhapatnam', rating: '4.5', districtId: 'd8', image: require('../../../assets/images/hospital_city.jpg'), doctors: ['Dr. Mike Johnson'] },
-  { id: 'h10', name: 'Ramesh Hospitals', address: 'MG Road, Vijayawada', rating: '4.6', districtId: 'd9', image: require('../../../assets/images/hospital_sks.jpg'), doctors: ['Dr. Emily Rose'] },
-  { id: 'h11', name: 'Lilavati Hospital', address: 'Bandra, Mumbai', rating: '4.8', districtId: 'd10', image: require('../../../assets/images/hospital_city.jpg'), doctors: ['Dr. Alan Walker'] },
-  { id: 'h12', name: 'Ruby Hall Clinic', address: 'Sassoon Road, Pune', rating: '4.7', districtId: 'd11', image: require('../../../assets/images/hospital_sks.jpg'), doctors: ['Dr. Peter Parker'] },
+  { id: 'h1', name: 'City Hospital', address: 'Main Road, Salem', rating: '4.5', districtId: 'd1', image: require('../../../assets/images/hospital_city.jpg'), doctors: [{ id: 'd1', name: 'Dr. John Doe', spId: 'sp1', specialization: 'Cardiologist' }, { id: 'd2', name: 'Dr. Sarah Smith', spId: 'sp2', specialization: 'Dentist' }] },
+  { id: 'h2', name: 'SKS Hospital', address: '2nd Avenue, Salem', rating: '4.8', districtId: 'd1', image: require('../../../assets/images/hospital_sks.jpg'), doctors: [{ id: 'd3', name: 'Dr. Mike Johnson', spId: 'sp3', specialization: 'Neurologist' }, { id: 'd4', name: 'Dr. Emily Rose', spId: 'sp4', specialization: 'Orthopedist' }] },
+  { id: 'h3', name: 'Apollo Main', address: 'Greams Road, Chennai', rating: '4.9', districtId: 'd2', image: require('../../../assets/images/hospital_city.jpg'), doctors: [{ id: 'd5', name: 'Dr. Mark Ruffalo', spId: 'sp5', specialization: 'Pediatrician' }] },
+  { id: 'h4', name: 'Fortis Hospital', address: 'Bannerghatta Road, Bangalore', rating: '4.7', districtId: 'd6', image: require('../../../assets/images/hospital_sks.jpg'), doctors: [{ id: 'd6', name: 'Dr. Alice Brown', spId: 'sp1', specialization: 'Cardiologist' }, { id: 'd7', name: 'Dr. Charlie Clark', spId: 'sp2', specialization: 'Dentist' }] },
+  { id: 'h5', name: 'PSG Hospitals', address: 'Peelamedu, Coimbatore', rating: '4.6', districtId: 'd3', image: require('../../../assets/images/hospital_city.jpg'), doctors: [{ id: 'd8', name: 'Dr. Peter Parker', spId: 'sp3', specialization: 'Neurologist' }] },
+  { id: 'h6', name: 'Aster Medcity', address: 'Cheranallur, Kochi', rating: '4.9', districtId: 'd4', image: require('../../../assets/images/hospital_sks.jpg'), doctors: [{ id: 'd9', name: 'Dr. Bruce Wayne', spId: 'sp4', specialization: 'Orthopedist' }, { id: 'd10', name: 'Dr. Clark Kent', spId: 'sp5', specialization: 'Pediatrician' }] },
+  { id: 'h7', name: 'KIMS Hospital', address: 'Anayara, Trivandrum', rating: '4.8', districtId: 'd5', image: require('../../../assets/images/hospital_city.jpg'), doctors: [{ id: 'd11', name: 'Dr. John Doe', spId: 'sp1', specialization: 'Cardiologist' }] },
+  { id: 'h8', name: 'Columbia Asia', address: 'Mysore Road, Mysore', rating: '4.4', districtId: 'd7', image: require('../../../assets/images/hospital_sks.jpg'), doctors: [{ id: 'd12', name: 'Dr. Sarah Smith', spId: 'sp2', specialization: 'Dentist' }] },
+  { id: 'h9', name: 'Care Hospitals', address: 'Ram Nagar, Visakhapatnam', rating: '4.5', districtId: 'd8', image: require('../../../assets/images/hospital_city.jpg'), doctors: [{ id: 'd13', name: 'Dr. Mike Johnson', spId: 'sp3', specialization: 'Neurologist' }] },
+  { id: 'h10', name: 'Ramesh Hospitals', address: 'MG Road, Vijayawada', rating: '4.6', districtId: 'd9', image: require('../../../assets/images/hospital_sks.jpg'), doctors: [{ id: 'd14', name: 'Dr. Emily Rose', spId: 'sp4', specialization: 'Orthopedist' }] },
+  { id: 'h11', name: 'Lilavati Hospital', address: 'Bandra, Mumbai', rating: '4.8', districtId: 'd10', image: require('../../../assets/images/hospital_city.jpg'), doctors: [{ id: 'd15', name: 'Dr. Alan Walker', spId: 'sp5', specialization: 'Pediatrician' }] },
+  { id: 'h12', name: 'Ruby Hall Clinic', address: 'Sassoon Road, Pune', rating: '4.7', districtId: 'd11', image: require('../../../assets/images/hospital_sks.jpg'), doctors: [{ id: 'd16', name: 'Dr. Peter Parker', spId: 'sp1', specialization: 'Cardiologist' }] },
 ];
 
 export default function HospitalComponent() {
