@@ -3,10 +3,10 @@ import { Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import HomeScreen from '../screens/Home/HomeScreen';
-import ReportsScreen from '../screens/Reports/ReportsScreen';
-import NotificationScreen from '../screens/Notification/NotificationScreen';
-import ProfileScreen from '../screens/Profile/ProfileScreen';
+import HomeScreen from '../screens/HomeScreen';
+import ReportsScreen from '../screens/ReportsScreen';
+import NotificationScreen from '../screens/NotificationScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 
 import { useGlobalNotifications } from '../context/NotificationContext';
 
@@ -82,3 +82,4 @@ export default function MainTabNavigator(props: any) {
     </Tab.Navigator>
   );
 }
+

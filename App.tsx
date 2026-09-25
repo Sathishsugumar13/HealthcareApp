@@ -4,22 +4,22 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import Splash from './src/screens/Splash/Splash';
-import Onboarding from './src/screens/Onboarding/Onboarding';
-import SignUp from './src/screens/SignUp/SignUp';
-import SignIn from './src/screens/SignIn/SignIn';
-import ForgotPassword from './src/screens/ForgotPassword/ForgotPassword';
-import DoctorsListScreen from './src/screens/doctorsList/doctorsList';
-import PharmacyScreen from './src/screens/Pharmacy/Pharmacy';
-import HospitalScreen from './src/screens/Hospital/Hospital';
-import AppointmentsScreen from './src/screens/Appointments/Appointments';
+import Splash from './src/screens/Splash';
+import Onboarding from './src/screens/Onboarding';
+import SignUp from './src/screens/SignUp';
+import SignIn from './src/screens/SignIn';
+import ForgotPassword from './src/screens/ForgotPassword';
+import DoctorsListScreen from './src/screens/doctorsList';
+import PharmacyScreen from './src/screens/Pharmacy';
+import HospitalScreen from './src/screens/Hospital';
+import AppointmentsScreen from './src/screens/Appointments';
 import MainTabNavigator from './src/navigation/MainTabNavigator';
 import { NotificationProvider } from './src/context/NotificationContext';
 import { AppointmentProvider } from './src/context/AppointmentContext';
 
-import DoctorDetailsScreen from './src/screens/DoctorDetails/DoctorDetailsScreen';
-import HospitalDetailsScreen from './src/screens/HospitalDetails/HospitalDetailsScreen';
-import ChatScreen from './src/screens/Chat/ChatScreen';
+import DoctorDetailsScreen from './src/screens/DoctorDetailsScreen';
+import HospitalDetailsScreen from './src/screens/HospitalDetailsScreen';
+import ChatScreen from './src/screens/ChatScreen';
 
 const Stack = createNativeStackNavigator();
 

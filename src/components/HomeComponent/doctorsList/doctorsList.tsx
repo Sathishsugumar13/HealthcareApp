@@ -34,25 +34,25 @@ const SPECIALIZATIONS: Specialization[] = [
 
 const ALL_DOCTORS: Doctor[] = [
   // Cardiologist
-  { id: 'd1', name: 'Dr. John Doe', specialization: 'Cardiologist', rating: '4.8', experience: '12 Years', image: require('../../../assets/images/article_diet.jpg') },
-  { id: 'd2', name: 'Dr. Sarah Smith', specialization: 'Cardiologist', rating: '4.9', experience: '15 Years', image: require('../../../assets/images/article_exercise.jpg') },
-  { id: 'd3', name: 'Dr. Mike Johnson', specialization: 'Cardiologist', rating: '4.7', experience: '8 Years', image: require('../../../assets/images/article_diet.jpg') },
+  { id: 'd1', name: 'Dr. John Doe', specialization: 'Cardiologist', rating: '4.8', experience: '12 Years', image: require('../../../assets/images/doctor_2.jpg') },
+  { id: 'd2', name: 'Dr. Sarah Smith', specialization: 'Cardiologist', rating: '4.9', experience: '15 Years', image: require('../../../assets/images/doctor_1.jpg') },
+  { id: 'd3', name: 'Dr. Mike Johnson', specialization: 'Cardiologist', rating: '4.7', experience: '8 Years', image: require('../../../assets/images/doctor_4b.jpg') },
   // Dentist
-  { id: 'd6', name: 'Dr. Alice Brown', specialization: 'Dentist', rating: '4.5', experience: '5 Years', image: require('../../../assets/images/article_exercise.jpg') },
-  { id: 'd7', name: 'Dr. Charlie Clark', specialization: 'Dentist', rating: '4.8', experience: '12 Years', image: require('../../../assets/images/article_diet.jpg') },
-  { id: 'd8', name: 'Dr. Emily Rose', specialization: 'Dentist', rating: '4.6', experience: '7 Years', image: require('../../../assets/images/article_exercise.jpg') },
+  { id: 'd6', name: 'Dr. Alice Brown', specialization: 'Dentist', rating: '4.5', experience: '5 Years', image: require('../../../assets/images/doctor_3.jpg') },
+  { id: 'd7', name: 'Dr. Charlie Clark', specialization: 'Dentist', rating: '4.8', experience: '12 Years', image: require('../../../assets/images/doctor_6b.jpg') },
+  { id: 'd8', name: 'Dr. Emily Rose', specialization: 'Dentist', rating: '4.6', experience: '7 Years', image: require('../../../assets/images/doctor_5.jpg') },
   // Neurologist
-  { id: 'd11', name: 'Dr. Peter Parker', specialization: 'Neurologist', rating: '4.9', experience: '9 Years', image: require('../../../assets/images/article_exercise.jpg') },
-  { id: 'd11_2', name: 'Dr. Stephen Strange', specialization: 'Neurologist', rating: '4.8', experience: '11 Years', image: require('../../../assets/images/article_diet.jpg') },
-  { id: 'd11_3', name: 'Dr. Charles Xavier', specialization: 'Neurologist', rating: '5.0', experience: '20 Years', image: require('../../../assets/images/article_exercise.jpg') },
+  { id: 'd11', name: 'Dr. Peter Parker', specialization: 'Neurologist', rating: '4.9', experience: '9 Years', image: require('../../../assets/images/doctor_8.jpg') },
+  { id: 'd11_2', name: 'Dr. Stephen Strange', specialization: 'Neurologist', rating: '4.8', experience: '11 Years', image: require('../../../assets/images/doctor_9.jpg') },
+  { id: 'd11_3', name: 'Dr. Charles Xavier', specialization: 'Neurologist', rating: '5.0', experience: '20 Years', image: require('../../../assets/images/doctor_10b.jpg') },
   // Orthopedist
-  { id: 'd12', name: 'Dr. Bruce Wayne', specialization: 'Orthopedist', rating: '4.8', experience: '14 Years', image: require('../../../assets/images/article_diet.jpg') },
-  { id: 'd12_2', name: 'Dr. Steve Rogers', specialization: 'Orthopedist', rating: '4.7', experience: '10 Years', image: require('../../../assets/images/article_exercise.jpg') },
-  { id: 'd12_3', name: 'Dr. Tony Stark', specialization: 'Orthopedist', rating: '4.9', experience: '15 Years', image: require('../../../assets/images/article_diet.jpg') },
+  { id: 'd12', name: 'Dr. Bruce Wayne', specialization: 'Orthopedist', rating: '4.8', experience: '14 Years', image: require('../../../assets/images/doctor_11.jpg') },
+  { id: 'd12_2', name: 'Dr. Steve Rogers', specialization: 'Orthopedist', rating: '4.7', experience: '10 Years', image: require('../../../assets/images/doctor_12b.jpg') },
+  { id: 'd12_3', name: 'Dr. Tony Stark', specialization: 'Orthopedist', rating: '4.9', experience: '15 Years', image: require('../../../assets/images/doctor_13b.jpg') },
   // Pediatrician
-  { id: 'd13', name: 'Dr. Clark Kent', specialization: 'Pediatrician', rating: '4.9', experience: '6 Years', image: require('../../../assets/images/article_exercise.jpg') },
-  { id: 'd13_2', name: 'Dr. Diana Prince', specialization: 'Pediatrician', rating: '4.8', experience: '8 Years', image: require('../../../assets/images/article_diet.jpg') },
-  { id: 'd13_3', name: 'Dr. Barry Allen', specialization: 'Pediatrician', rating: '4.6', experience: '4 Years', image: require('../../../assets/images/article_exercise.jpg') },
+  { id: 'd13', name: 'Dr. Clark Kent', specialization: 'Pediatrician', rating: '4.9', experience: '6 Years', image: require('../../../assets/images/doctor_14.jpg') },
+  { id: 'd13_2', name: 'Dr. Diana Prince', specialization: 'Pediatrician', rating: '4.8', experience: '8 Years', image: require('../../../assets/images/doctor_7.jpg') },
+  { id: 'd13_3', name: 'Dr. Barry Allen', specialization: 'Pediatrician', rating: '4.6', experience: '4 Years', image: require('../../../assets/images/doctor_15.jpg') },
 ];
 
 export default function DoctorsListComponent() {
@@ -196,3 +196,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   }
 });
+
+
+
