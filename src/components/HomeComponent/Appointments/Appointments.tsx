@@ -73,12 +73,38 @@ export default function AppointmentsComponent() {
   const [phone, setPhone] = useState('');
   const getTodayDate = () => {
     let today = new Date();
+    let currentHour = today.getHours();
+    let currentMinute = today.getMinutes();
+
+    let timeSlots = ['09:00 AM', '10:30 AM', '11:00 AM', '02:00 PM', '04:00 PM', '06:30 PM'];
+    let nextValidTime = null;
+
+    for (let time of timeSlots) {
+      let [timePart, modifier] = time.split(' ');
+      let [hours, minutes] = timePart.split(':');
+      let hr = parseInt(hours, 10);
+      let min = parseInt(minutes, 10);
+      if (modifier === 'PM' && hr !== 12) hr += 12;
+      if (modifier === 'AM' && hr === 12) hr = 0;
+
+      if (hr > currentHour || (hr === currentHour && min > currentMinute)) {
+        nextValidTime = time;
+        break;
+      }
+    }
+
+    if (!nextValidTime) {
+      today.setDate(today.getDate() + 1);
+      nextValidTime = timeSlots[0];
+    }
+
     let dd = today.getDate();
     let mm = today.getMonth() + 1;
     let yyyy = today.getFullYear();
     let strDd = dd < 10 ? '0' + dd : dd;
     let strMm = mm < 10 ? '0' + mm : mm;
-    return `${strDd}/${strMm}/${yyyy} at 09:00 AM`;
+
+    return `${strDd}/${strMm}/${yyyy} at ${nextValidTime}`;
   };
   const [date, setDate] = useState(getTodayDate());
   
@@ -154,8 +180,8 @@ export default function AppointmentsComponent() {
 
   // Calendar Modal State
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
-  const [tempDate, setTempDate] = useState<number | null>(new Date().getDate());
-  const [tempTime, setTempTime] = useState<string | null>(null);
+  const [tempDate, setTempDate] = useState<number | null>(parseInt(date.substring(0, 2), 10));
+  const [tempTime, setTempTime] = useState<string | null>(date.split(' at ')[1]);
 
   const handleBack = () => {
     navigation.goBack();
@@ -394,7 +420,13 @@ export default function AppointmentsComponent() {
                 <Text style={styles.amPmText}>{date.includes(' PM') ? 'AM' : 'PM'}</Text>
               </TouchableOpacity>
             )}
-            <TouchableOpacity onPress={() => setIsCalendarVisible(true)} style={styles.calendarButton}>
+            <TouchableOpacity onPress={() => {
+              let parsedDay = parseInt(date.substring(0, 2), 10);
+              let parsedTime = date.split(' at ')[1];
+              setTempDate(isNaN(parsedDay) ? new Date().getDate() : parsedDay);
+              setTempTime(parsedTime || null);
+              setIsCalendarVisible(true);
+            }} style={styles.calendarButton}>
               <MaterialCommunityIcons name="calendar-search" size={24} color="#8B5CF6" />
             </TouchableOpacity>
           </View>
@@ -659,6 +691,7 @@ export default function AppointmentsComponent() {
                       Alert.alert('Invalid Date', 'Old dates cannot be selected.');
                     } else {
                       setTempDate(day);
+                      setTempTime(null);
                     }
                   }}
                   activeOpacity={isOldDate ? 1 : 0.2}
@@ -673,15 +706,40 @@ export default function AppointmentsComponent() {
             {/* Time Slots */}
             <Text style={styles.timeTitle}>Select Time</Text>
             <View style={styles.timeGrid}>
-              {['09:00 AM', '10:30 AM', '11:00 AM', '02:00 PM', '04:00 PM', '06:30 PM'].map(time => (
+              {['09:00 AM', '10:30 AM', '11:00 AM', '02:00 PM', '04:00 PM', '06:30 PM'].map(time => {
+                let isOldTime = false;
+                let todayDate = new Date().getDate();
+                if (tempDate === todayDate) {
+                  let [timePart, modifier] = time.split(' ');
+                  let [hours, minutes] = timePart.split(':');
+                  let hr = parseInt(hours, 10);
+                  let min = parseInt(minutes, 10);
+                  if (modifier === 'PM' && hr !== 12) hr += 12;
+                  if (modifier === 'AM' && hr === 12) hr = 0;
+                  
+                  let currentHour = new Date().getHours();
+                  let currentMinute = new Date().getMinutes();
+                  if (hr < currentHour || (hr === currentHour && min < currentMinute)) {
+                    isOldTime = true;
+                  }
+                }
+
+                return (
                 <TouchableOpacity 
                   key={time} 
-                  style={[styles.timeGridChip, tempTime === time && styles.timeGridChipActive]}
-                  onPress={() => setTempTime(time)}
+                  style={[styles.timeGridChip, tempTime === time && styles.timeGridChipActive, isOldTime && { opacity: 0.3 }]}
+                  onPress={() => {
+                    if (isOldTime) {
+                      Alert.alert('Invalid Time', 'Old times cannot be selected.');
+                    } else {
+                      setTempTime(time);
+                    }
+                  }}
+                  activeOpacity={isOldTime ? 1 : 0.2}
                 >
                   <Text style={[styles.timeGridChipText, tempTime === time && styles.timeGridChipTextActive]}>{time}</Text>
                 </TouchableOpacity>
-              ))}
+              )})}
             </View>
 
             <TouchableOpacity style={styles.confirmDateTimeButton} onPress={handleConfirmDateTime}>
