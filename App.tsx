@@ -16,20 +16,24 @@ import AppointmentsScreen from './src/screens/Appointments';
 import MainTabNavigator from './src/navigation/MainTabNavigator';
 import { NotificationProvider } from './src/context/NotificationContext';
 import { AppointmentProvider } from './src/context/AppointmentContext';
+import { PharmacyProvider } from './src/context/PharmacyContext';
 
 import DoctorDetailsScreen from './src/screens/DoctorDetailsScreen';
 import HospitalDetailsScreen from './src/screens/HospitalDetailsScreen';
 import ChatScreen from './src/screens/ChatScreen';
+import PaymentScreen from './src/screens/PaymentScreen';
+import PharmacyCheckoutScreen from './src/screens/PharmacyCheckoutScreen';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  console.log("App component started rendering"); // checking if app starts
+  console.log("App component started rendering"); 
 
   return (
     <SafeAreaProvider>
       <PaperProvider>
         <NotificationProvider>
+          <PharmacyProvider>
           <AppointmentProvider>
             <NavigationContainer>
             <Stack.Navigator 
@@ -48,10 +52,13 @@ export default function App() {
               <Stack.Screen name="HospitalDetails" component={HospitalDetailsScreen} />
               <Stack.Screen name="Appointments" component={AppointmentsScreen} />
               <Stack.Screen name="Chat" component={ChatScreen} />
+              <Stack.Screen name="Payment" component={PaymentScreen} />
+              <Stack.Screen name="PharmacyCheckout" component={PharmacyCheckoutScreen} />
               <Stack.Screen name="MainTab" component={MainTabNavigator} />
             </Stack.Navigator>
           </NavigationContainer>
           </AppointmentProvider>
+          </PharmacyProvider>
         </NotificationProvider>
       </PaperProvider>
     </SafeAreaProvider>

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Colors } from '../../theme/colors';
 
 export interface ArticleCardProps {
   title: string;
@@ -10,13 +11,15 @@ export interface ArticleCardProps {
 }
 
 export default function ArticleCard({ title, date, read, imageSource }: ArticleCardProps) {
+  const [isBookmarked, setIsBookmarked] = useState(false);
+
   return (
     <Pressable style={articleCardStyles.container}>
       {imageSource ? (
         <Image source={imageSource} style={articleCardStyles.articleImage} />
       ) : (
         <View style={articleCardStyles.imagePlaceholder}>
-          <MaterialCommunityIcons name="image-outline" size={30} color="#B0B0B0" />
+          <MaterialCommunityIcons name="image-outline" size={30} color={Colors.colorB0B0B0} />
         </View>
       )}
       <View style={articleCardStyles.content}>
@@ -26,8 +29,12 @@ export default function ArticleCard({ title, date, read, imageSource }: ArticleC
           <Text style={articleCardStyles.metaText}>{read}</Text>
         </View>
       </View>
-      <Pressable style={articleCardStyles.bookmarkButton}>
-        <MaterialCommunityIcons name="bookmark" size={24} color="#3C72F2" />
+      <Pressable style={articleCardStyles.bookmarkButton} onPress={() => setIsBookmarked(!isBookmarked)}>
+        <MaterialCommunityIcons 
+          name={isBookmarked ? "bookmark" : "bookmark-outline"} 
+          size={24} 
+          color={Colors.color3C72F2} 
+        />
       </Pressable>
     </Pressable>
   );
@@ -36,14 +43,14 @@ export default function ArticleCard({ title, date, read, imageSource }: ArticleC
 const articleCardStyles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.white,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#F0F0F0',
+    borderColor: Colors.colorF0F0F0,
     marginBottom: 16,
     padding: 12,
     alignItems: 'center',
-    shadowColor: '#000',
+    shadowColor: Colors.color000,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 3,
@@ -60,7 +67,7 @@ const articleCardStyles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 8,
-    backgroundColor: '#E8E8E8',
+    backgroundColor: Colors.border,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
@@ -72,7 +79,7 @@ const articleCardStyles = StyleSheet.create({
   title: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#333333',
+    color: Colors.color333333,
     marginBottom: 8,
     lineHeight: 20,
   },
@@ -82,7 +89,7 @@ const articleCardStyles = StyleSheet.create({
   },
   metaText: {
     fontSize: 12,
-    color: '#A0A0A0',
+    color: Colors.secondaryText,
     marginRight: 12,
   },
   bookmarkButton: {

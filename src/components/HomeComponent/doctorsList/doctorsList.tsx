@@ -1,14 +1,17 @@
 import React, { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, TextInput, ScrollView, Platform } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import SearchBox from '../../Common/SearchBox';
 import BackButton from '../../Common/BackButton';
 import DoctorCard from '../../Common/DoctorCard';
 import Dropdown from '../../Common/Dropdown';
+import { images } from '../../../assets/images';
+import { Colors } from '../../../theme/colors';
 
 export interface Doctor {
+  phone?: string;
   id: string;
   name: string;
   specialization: string;
@@ -23,7 +26,7 @@ export interface Specialization {
   icon: string;
 }
 
-// Mock Data
+
 const SPECIALIZATIONS: Specialization[] = [
   { id: '1', name: 'Cardiologist', icon: 'heart-pulse' },
   { id: '2', name: 'Dentist', icon: 'tooth-outline' },
@@ -32,27 +35,27 @@ const SPECIALIZATIONS: Specialization[] = [
   { id: '5', name: 'Pediatrician', icon: 'baby-face-outline' },
 ];
 
-const ALL_DOCTORS: Doctor[] = [
-  // Cardiologist
-  { id: 'd1', name: 'Dr. John Doe', specialization: 'Cardiologist', rating: '4.8', experience: '12 Years', image: require('../../../assets/images/doctor_2.jpg') },
-  { id: 'd2', name: 'Dr. Sarah Smith', specialization: 'Cardiologist', rating: '4.9', experience: '15 Years', image: require('../../../assets/images/doctor_1.jpg') },
-  { id: 'd3', name: 'Dr. Mike Johnson', specialization: 'Cardiologist', rating: '4.7', experience: '8 Years', image: require('../../../assets/images/doctor_4b.jpg') },
-  // Dentist
-  { id: 'd6', name: 'Dr. Alice Brown', specialization: 'Dentist', rating: '4.5', experience: '5 Years', image: require('../../../assets/images/doctor_3.jpg') },
-  { id: 'd7', name: 'Dr. Charlie Clark', specialization: 'Dentist', rating: '4.8', experience: '12 Years', image: require('../../../assets/images/doctor_6b.jpg') },
-  { id: 'd8', name: 'Dr. Emily Rose', specialization: 'Dentist', rating: '4.6', experience: '7 Years', image: require('../../../assets/images/doctor_5.jpg') },
-  // Neurologist
-  { id: 'd11', name: 'Dr. Peter Parker', specialization: 'Neurologist', rating: '4.9', experience: '9 Years', image: require('../../../assets/images/doctor_8.jpg') },
-  { id: 'd11_2', name: 'Dr. Stephen Strange', specialization: 'Neurologist', rating: '4.8', experience: '11 Years', image: require('../../../assets/images/doctor_9.jpg') },
-  { id: 'd11_3', name: 'Dr. Charles Xavier', specialization: 'Neurologist', rating: '5.0', experience: '20 Years', image: require('../../../assets/images/doctor_10b.jpg') },
-  // Orthopedist
-  { id: 'd12', name: 'Dr. Bruce Wayne', specialization: 'Orthopedist', rating: '4.8', experience: '14 Years', image: require('../../../assets/images/doctor_11.jpg') },
-  { id: 'd12_2', name: 'Dr. Steve Rogers', specialization: 'Orthopedist', rating: '4.7', experience: '10 Years', image: require('../../../assets/images/doctor_12b.jpg') },
-  { id: 'd12_3', name: 'Dr. Tony Stark', specialization: 'Orthopedist', rating: '4.9', experience: '15 Years', image: require('../../../assets/images/doctor_13b.jpg') },
-  // Pediatrician
-  { id: 'd13', name: 'Dr. Clark Kent', specialization: 'Pediatrician', rating: '4.9', experience: '6 Years', image: require('../../../assets/images/doctor_14.jpg') },
-  { id: 'd13_2', name: 'Dr. Diana Prince', specialization: 'Pediatrician', rating: '4.8', experience: '8 Years', image: require('../../../assets/images/doctor_7.jpg') },
-  { id: 'd13_3', name: 'Dr. Barry Allen', specialization: 'Pediatrician', rating: '4.6', experience: '4 Years', image: require('../../../assets/images/doctor_15.jpg') },
+export const ALL_DOCTORS: Doctor[] = [
+  
+  { id: 'd1', name: 'Dr. John Doe', specialization: 'Cardiologist', rating: '4.8', experience: '12 Years', image: images.doctors.doctor2, phone: '+91 9876543201' },
+  { id: 'd2', name: 'Dr. Sarah Smith', specialization: 'Cardiologist', rating: '4.9', experience: '15 Years', image: images.doctors.doctor1, phone: '+91 9876543202' },
+  { id: 'd3', name: 'Dr. Mike Johnson', specialization: 'Cardiologist', rating: '4.7', experience: '8 Years', image: images.doctors.doctor4b, phone: '+91 9876543203' },
+  
+  { id: 'd6', name: 'Dr. Alice Brown', specialization: 'Dentist', rating: '4.5', experience: '5 Years', image: images.doctors.doctor3, phone: '+91 9876543206' },
+  { id: 'd7', name: 'Dr. Charlie Clark', specialization: 'Dentist', rating: '4.8', experience: '12 Years', image: images.doctors.doctor6b, phone: '+91 9876543207' },
+  { id: 'd8', name: 'Dr. Emily Rose', specialization: 'Dentist', rating: '4.6', experience: '7 Years', image: images.doctors.doctor5, phone: '+91 9876543208' },
+  
+  { id: 'd11', name: 'Dr. Peter Parker', specialization: 'Neurologist', rating: '4.9', experience: '9 Years', image: images.doctors.doctor8, phone: '+91 9876543211' },
+  { id: 'd11_2', name: 'Dr. Stephen Strange', specialization: 'Neurologist', rating: '4.8', experience: '11 Years', image: images.doctors.doctor9, phone: '+91 9876543212' },
+  { id: 'd11_3', name: 'Dr. Charles Xavier', specialization: 'Neurologist', rating: '5.0', experience: '20 Years', image: images.doctors.doctor10b, phone: '+91 9876543213' },
+  
+  { id: 'd12', name: 'Dr. Bruce Wayne', specialization: 'Orthopedist', rating: '4.8', experience: '14 Years', image: images.doctors.doctor11, phone: '+91 9876543221' },
+  { id: 'd12_2', name: 'Dr. Steve Rogers', specialization: 'Orthopedist', rating: '4.7', experience: '10 Years', image: images.doctors.doctor12b, phone: '+91 9876543222' },
+  { id: 'd12_3', name: 'Dr. Tony Stark', specialization: 'Orthopedist', rating: '4.9', experience: '15 Years', image: images.doctors.doctor13b, phone: '+91 9876543223' },
+  
+  { id: 'd13', name: 'Dr. Clark Kent', specialization: 'Pediatrician', rating: '4.9', experience: '6 Years', image: images.doctors.doctor14, phone: '+91 9876543231' },
+  { id: 'd13_2', name: 'Dr. Diana Prince', specialization: 'Pediatrician', rating: '4.8', experience: '8 Years', image: images.doctors.doctor7, phone: '+91 9876543232' },
+  { id: 'd13_3', name: 'Dr. Barry Allen', specialization: 'Pediatrician', rating: '4.6', experience: '4 Years', image: images.doctors.doctor15, phone: '+91 9876543233' },
 ];
 
 export default function DoctorsListComponent() {
@@ -68,7 +71,7 @@ export default function DoctorsListComponent() {
     navigation.navigate('DoctorDetails', { doctor: item });
   };
 
-  // Filter doctors based on search query and selected specialization
+  
   const filteredDoctors = useMemo(() => {
     return ALL_DOCTORS.filter(doctor => {
       const matchesSearch = 
@@ -105,10 +108,10 @@ export default function DoctorsListComponent() {
       <View style={styles.header}>
         <BackButton onPress={handleBack} />
         <Text style={styles.headerTitle}>All Doctors</Text>
-        <View style={{ width: 48 }} />
+        <View style={styles.spacerWidth48} />
       </View>
       
-      <View style={{ paddingHorizontal: 16, marginTop: 10 }}>
+      <View style={styles.inlinePaddinghorizontal16Margi}>
         <SearchBox 
           value={searchQuery}
           onChangeText={setSearchQuery}
@@ -117,7 +120,7 @@ export default function DoctorsListComponent() {
         />
       </View>
 
-      <View style={{ marginTop: 10, marginBottom: 5, zIndex: 1000, elevation: 1000 }}>
+      <View style={styles.inlineMargintop10Marginbottom5}>
         <Dropdown 
           data={dropdownData}
           value={selectedSpecialization}
@@ -136,7 +139,7 @@ export default function DoctorsListComponent() {
           />
         ) : (
           <View style={styles.emptyContainer}>
-            <MaterialCommunityIcons name="doctor" size={64} color="#CCC" />
+            <MaterialCommunityIcons name="doctor" size={64} color={Colors.colorCCC} />
             <Text style={styles.emptyText}>No doctors found</Text>
           </View>
         )}
@@ -146,9 +149,13 @@ export default function DoctorsListComponent() {
 }
 
 const styles = StyleSheet.create({
+  spacerWidth48: { width: 48 },
+  inlinePaddinghorizontal16Margi: { paddingHorizontal: 16, marginTop: 10 },
+  inlineMargintop10Marginbottom5: { marginTop: 10, marginBottom: 5, zIndex: 1000, elevation: 1000 },
+
   safeArea: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: Colors.colorF5F5F5,
   },
   header: {
     flexDirection: 'row',
@@ -156,9 +163,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.colorFFF,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    borderBottomColor: Colors.colorE0E0E0,
   },
   backButton: {
     padding: 10,
@@ -167,7 +174,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: Colors.color333,
   },
 
   content: {
@@ -186,12 +193,12 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 18,
-    color: '#888',
+    color: Colors.color888,
     marginTop: 16,
     fontWeight: '500',
   },
   sideButtonPrimaryText: {
-    color: '#FFF',
+    color: Colors.colorFFF,
     fontSize: 12,
     fontWeight: '700',
   }

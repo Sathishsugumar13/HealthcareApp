@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { useGlobalNotifications } from '../../context/NotificationContext';
 
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import NotificationCard from '../Common/NotificationCard';
+import { images } from '../../assets/images';
+import { Colors } from '../../theme/colors';
 
 export default function NotificationContent() {
-  const { notifications, readIds, markAsRead } = useGlobalNotifications();
+  const { notifications, readIds, markAsRead, deleteNotification } = useGlobalNotifications();
   const [selectedNotification, setSelectedNotification] = useState<any>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   const unreadList = notifications.filter(n => !readIds.includes(n.request.identifier));
   const readList = notifications.filter(n => readIds.includes(n.request.identifier));
@@ -22,7 +25,8 @@ export default function NotificationContent() {
       key={item.request.identifier} 
       item={item} 
       isUnread={isUnread} 
-      onPress={handleNotificationPress} 
+      onPress={handleNotificationPress}
+      onDelete={() => setDeleteConfirmId(item.request.identifier)}
     />
   );
 
@@ -31,13 +35,13 @@ export default function NotificationContent() {
       {notifications.length === 0 ? (
         <View style={styles.centerBox}>
           <Image 
-            source={require('../../assets/images/no_data.png')} 
+            source={images.common.noData} 
             style={styles.imageStyle} 
           />
-          <Text style={{ marginTop: 20, fontSize: 16, color: 'gray' }}>No new notifications</Text>
+          <Text style={styles.inlineMargintop20Fontsize16Col}>No new notifications</Text>
         </View>
       ) : (
-        <ScrollView style={{ flex: 1, width: '100%' }} showsVerticalScrollIndicator={false}>
+        <ScrollView style={styles.inlineFlex1Width100} showsVerticalScrollIndicator={false}>
           {unreadList.length > 0 && (
             <>
               <Text style={styles.sectionTitle}>New Notifications</Text>
@@ -54,7 +58,7 @@ export default function NotificationContent() {
         </ScrollView>
       )}
 
-      {/* Unique Popup Modal for Notification Details */}
+      {}
       <Modal
         animationType="slide"
         transparent={true}
@@ -64,11 +68,11 @@ export default function NotificationContent() {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             
-            {/* Minimalist Clean Header */}
+            {}
             <View style={styles.modalHeaderRow}>
               <View style={styles.modalHeaderLeft}>
                 <Image 
-                  source={require('../../assets/images/healthcare-logo.png')} 
+                  source={images.common.healthcareLogo} 
                   style={styles.headerLogo} 
                   resizeMode="contain"
                 />
@@ -99,24 +103,60 @@ export default function NotificationContent() {
           </View>
         </View>
       </Modal>
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={!!deleteConfirmId}
+        onRequestClose={() => setDeleteConfirmId(null)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.confirmModalContent}>
+            <Text style={styles.confirmModalTitle}>Delete Notification</Text>
+            <Text style={styles.confirmModalBody}>Are you sure you want to delete this notification?</Text>
+            <View style={styles.confirmActionRow}>
+              <TouchableOpacity 
+                style={styles.cancelBtn} 
+                onPress={() => setDeleteConfirmId(null)}
+              >
+                <Text style={styles.cancelBtnText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.confirmBtn} 
+                onPress={() => {
+                  if (deleteConfirmId) {
+                    deleteNotification(deleteConfirmId);
+                  }
+                  setDeleteConfirmId(null);
+                }}
+              >
+                <Text style={styles.confirmBtnText}>Confirm</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  inlineMargintop20Fontsize16Col: { marginTop: 20, fontSize: 16, color: Colors.gray },
+  inlineFlex1Width100: { flex: 1, width: '100%' },
+
   mainBox: {
     padding: 20,
-    paddingTop: 50, // giving space for top status bar
-    backgroundColor: 'white',
-    flex: 1, // using flex to allow centering
+    paddingTop: 50, 
+    backgroundColor: Colors.white,
+    flex: 1, 
   },
   centerBox: {
-    flex: 1, // this makes it take full available height
+    flex: 1, 
     alignItems: 'center',
-    justifyContent: 'center', // perfect center vertically
+    justifyContent: 'center', 
   },
   imageStyle: {
-    width: 350, // made image even bigger
+    width: 350, 
     height: 350,
     resizeMode: 'contain',
   },
@@ -124,23 +164,23 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 15,
-    color: '#333'
+    color: Colors.color333
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    backgroundColor: Colors.overlay60,
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalContent: {
     width: '85%',
-    backgroundColor: '#fff',
+    backgroundColor: Colors.colorFFF,
     borderRadius: 16,
     paddingTop: 20,
     paddingHorizontal: 24,
     paddingBottom: 16,
     maxHeight: '75%',
-    shadowColor: '#000',
+    shadowColor: Colors.color000,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
@@ -163,13 +203,13 @@ const styles = StyleSheet.create({
   },
   modalAppName: {
     fontSize: 14,
-    color: '#223A6A',
+    color: Colors.brandDark,
     marginLeft: 6,
     fontWeight: '700',
   },
   modalTimeSmall: {
     fontSize: 12,
-    color: '#999',
+    color: Colors.color999,
   },
   modalBodyScroll: {
     width: '100%',
@@ -179,12 +219,12 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    color: Colors.color333,
     marginBottom: 10,
   },
   modalBodyText: {
     fontSize: 16,
-    color: '#555',
+    color: Colors.color555,
     lineHeight: 24,
   },
   modalActionRow: {
@@ -196,11 +236,68 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 8,
-    backgroundColor: '#EEF3FF',
+    backgroundColor: Colors.colorEEF3FF,
   },
   simpleCloseButtonText: {
-    color: '#3572E1',
+    color: Colors.color3572E1,
     fontSize: 16,
     fontWeight: '600',
+  },
+  confirmModalContent: {
+    width: '80%',
+    backgroundColor: Colors.colorFFF,
+    borderRadius: 16,
+    padding: 24,
+    alignItems: 'center',
+    elevation: 8,
+    shadowColor: Colors.color000,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+  },
+  confirmModalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: Colors.color333,
+    marginBottom: 10,
+    textAlign: 'center'
+  },
+  confirmModalBody: {
+    fontSize: 16,
+    color: Colors.color555,
+    textAlign: 'center',
+    marginBottom: 24,
+    lineHeight: 22,
+  },
+  confirmActionRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  cancelBtn: {
+    flex: 1,
+    paddingVertical: 12,
+    backgroundColor: Colors.colorF5F5F5,
+    borderRadius: 8,
+    marginRight: 10,
+    alignItems: 'center',
+  },
+  cancelBtnText: {
+    color: Colors.color555,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  confirmBtn: {
+    flex: 1,
+    paddingVertical: 12,
+    backgroundColor: '#FF4D4D',
+    borderRadius: 8,
+    marginLeft: 10,
+    alignItems: 'center',
+  },
+  confirmBtnText: {
+    color: Colors.white,
+    fontSize: 16,
+    fontWeight: 'bold',
   }
 });

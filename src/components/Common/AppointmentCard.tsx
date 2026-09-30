@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 export interface AppointmentCardProps {
@@ -10,6 +10,10 @@ export interface AppointmentCardProps {
   time: string;
   status: 'Upcoming' | 'Confirmed';
   imageSource?: any;
+  patientName?: string;
+  phone?: string;
+  paymentMethod?: string;
+  paymentStatus?: string;
   onPressAction?: () => void;
   containerStyle?: any;
 }
@@ -21,6 +25,10 @@ export default function AppointmentCard({
   time,
   status,
   imageSource,
+  patientName,
+  phone,
+  paymentMethod,
+  paymentStatus,
   onPressAction,
   containerStyle
 }: AppointmentCardProps) {
@@ -38,10 +46,57 @@ export default function AppointmentCard({
             <Text style={appointmentCardStyles.doctorSpecialization}>{specialization}</Text>
           </View>
         </View>
-        <View style={[appointmentCardStyles.appointmentStatus, isConfirmed && { backgroundColor: '#E8F5E9' }]}>
-          <Text style={[appointmentCardStyles.statusText, isConfirmed && { color: '#4CAF50' }]}>{status}</Text>
+        <View style={[appointmentCardStyles.appointmentStatus, isConfirmed && { backgroundColor: Colors.successBg }]}>
+          <Text style={[appointmentCardStyles.statusText, isConfirmed && { color: Colors.success }]}>{status}</Text>
         </View>
       </View>
+
+      {}
+      {patientName && (
+        <View style={appointmentCardStyles.extraDetailsContainer}>
+          <View style={appointmentCardStyles.infoRow}>
+            <View style={appointmentCardStyles.infoRowLeft}>
+              <MaterialCommunityIcons name="account-outline" size={16} color={Colors.color64748B} />
+              <Text style={appointmentCardStyles.infoLabel}>Patient</Text>
+            </View>
+            <Text style={appointmentCardStyles.infoValue}>{patientName}</Text>
+          </View>
+          
+          {phone && (
+            <View style={appointmentCardStyles.infoRow}>
+              <View style={appointmentCardStyles.infoRowLeft}>
+                <MaterialCommunityIcons name="phone-outline" size={16} color={Colors.color64748B} />
+                <Text style={appointmentCardStyles.infoLabel}>Phone</Text>
+              </View>
+              <Text style={appointmentCardStyles.infoValue}>{phone}</Text>
+            </View>
+          )}
+
+          <View style={appointmentCardStyles.divider} />
+
+          <View style={appointmentCardStyles.infoRow}>
+            <View style={appointmentCardStyles.infoRowLeft}>
+              <MaterialCommunityIcons name="credit-card-outline" size={16} color={Colors.color64748B} />
+              <Text style={appointmentCardStyles.infoLabel}>Method</Text>
+            </View>
+            <Text style={appointmentCardStyles.infoValue}>{paymentMethod || 'Pay at Clinic'}</Text>
+          </View>
+
+          <View style={appointmentCardStyles.infoRow}>
+            <View style={appointmentCardStyles.infoRowLeft}>
+              <MaterialCommunityIcons name="shield-check-outline" size={16} color={Colors.color64748B} />
+              <Text style={appointmentCardStyles.infoLabel}>Status</Text>
+            </View>
+            <Text style={[
+              appointmentCardStyles.infoValue, 
+              { color: paymentStatus === 'Paid' ? Colors.color00C473 : Colors.colorFF9800 }
+            ]}>
+              {paymentStatus || 'Pending'}
+            </Text>
+          </View>
+        </View>
+      )}
+
       <View style={appointmentCardStyles.appointmentDetails}>
         <View style={appointmentCardStyles.detailItem}>
           <MaterialCommunityIcons name="calendar-month-outline" size={16} color={Colors.secondaryText} />
@@ -52,7 +107,7 @@ export default function AppointmentCard({
           <Text style={appointmentCardStyles.detailText}>{time}</Text>
         </View>
       </View>
-      <Pressable style={[appointmentCardStyles.joinButton, isConfirmed && { backgroundColor: '#4CAF50' }]} onPress={onPressAction}>
+      <Pressable style={[appointmentCardStyles.joinButton, isConfirmed && { backgroundColor: Colors.success }]} onPress={onPressAction}>
         <Text style={appointmentCardStyles.joinButtonText}>{isConfirmed ? 'Reschedule' : 'Join Consultation'}</Text>
       </Pressable>
     </View>
@@ -65,8 +120,8 @@ const appointmentCardStyles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#F0F0F0',
-    shadowColor: '#000',
+    borderColor: Colors.colorF0F0F0,
+    shadowColor: Colors.color000,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 5,
@@ -85,7 +140,7 @@ const appointmentCardStyles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#E8E8E8',
+    backgroundColor: Colors.border,
     marginRight: 12,
     overflow: 'hidden',
   },
@@ -100,19 +155,53 @@ const appointmentCardStyles = StyleSheet.create({
     color: Colors.secondaryText,
   },
   appointmentStatus: {
-    backgroundColor: '#FFF4E5',
+    backgroundColor: Colors.colorFFF4E5,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 12,
   },
   statusText: {
-    color: '#FF9800',
+    color: Colors.colorFF9800,
     fontSize: 12,
     fontWeight: '600',
   },
+  extraDetailsContainer: {
+    backgroundColor: Colors.colorF8FAFC,
+    padding: 12,
+    borderRadius: 12,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: Colors.colorE2E8F0,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  infoRowLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  infoLabel: {
+    fontSize: 13,
+    color: Colors.color64748B,
+    marginLeft: 6,
+    fontWeight: '500',
+  },
+  infoValue: {
+    fontSize: 13,
+    color: Colors.color334155,
+    fontWeight: '600',
+  },
+  divider: {
+    height: 1,
+    backgroundColor: Colors.colorE2E8F0,
+    marginVertical: 8,
+  },
   appointmentDetails: {
     flexDirection: 'row',
-    backgroundColor: '#F5F5F5',
+    backgroundColor: Colors.colorF5F5F5,
     padding: 12,
     borderRadius: 12,
     marginBottom: 16,

@@ -1,62 +1,27 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, TextInput, KeyboardAvoidingView, Platform, ScrollView, Alert, Modal } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import { usePharmacy } from '../../../context/PharmacyContext';
 import BackButton from '../../Common/BackButton';
+import ContactActionButtons from '../../Common/ContactActionButtons';
+import AttachmentUploadModal from '../../Common/AttachmentUploadModal';
+import PharmacyListCard from '../../Common/PharmacyListCard';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 
-// --- Types ---
-export interface PharmacyData {
-  id: string;
-  name: string;
-  address: string;
-  rating: string;
-  distance: string;
-  image: any;
-  availableTablets: string[];
-}
 
-// --- Mock Data ---
-const MOCK_PHARMACIES: PharmacyData[] = [
-  { 
-    id: 'p1', name: 'Apollo Pharmacy', address: '123 Main Street, Salem', rating: '4.8', distance: '1.2 km', 
-    image: require('../../../assets/images/hospital_city.jpg'),
-    availableTablets: ['Paracetamol', 'Dolo 650', 'Amoxicillin', 'Cetirizine', 'Azithromycin']
-  },
-  { 
-    id: 'p2', name: 'MedPlus', address: '45 Second Avenue, Salem', rating: '4.5', distance: '2.5 km', 
-    image: require('../../../assets/images/hospital_sks.jpg'),
-    availableTablets: ['Crocin', 'Aspirin', 'Vitamin C', 'Zincovit', 'Pantoprazole']
-  },
-  { 
-    id: 'p3', name: 'Netmeds Pharmacy', address: '78 Third Street, Salem', rating: '4.7', distance: '3.0 km', 
-    image: require('../../../assets/images/hospital_city.jpg'),
-    availableTablets: ['Ibuprofen', 'Metformin', 'Amlodipine', 'Omeprazole', 'Atorvastatin']
-  },
-  { 
-    id: 'p4', name: 'Wellness Forever', address: '90 Fourth Cross, Salem', rating: '4.9', distance: '4.1 km', 
-    image: require('../../../assets/images/hospital_sks.jpg'),
-    availableTablets: ['Diclofenac', 'Tramadol', 'Ambroxol', 'B-Complex', 'Liv52']
-  },
-  { 
-    id: 'p5', name: 'Thulasi Pharmacies', address: '112 Fifth Avenue, Salem', rating: '4.6', distance: '1.8 km', 
-    image: require('../../../assets/images/hospital_city.jpg'),
-    availableTablets: ['Azel', 'Augmentin', 'Allegra', 'Becosules', 'Crocine']
-  },
-  { 
-    id: 'p6', name: 'Sanjivani Pharmacy', address: '33 Sixth Main Road, Salem', rating: '4.4', distance: '5.5 km', 
-    image: require('../../../assets/images/hospital_sks.jpg'),
-    availableTablets: ['Montair LC', 'Zifi 200', 'Shelcal 500', 'Pan D', 'Thyronorm']
-  },
-];
+
+import { MOCK_PHARMACIES, PharmacyData } from '../../../data/mockData';
+import { Colors } from '../../../theme/colors';
 
 export default function PharmacyComponent() {
   const navigation = useNavigation<any>();
+  const { addOrder } = usePharmacy();
   const [selectedPharmacy, setSelectedPharmacy] = useState<PharmacyData | null>(null);
   
-  // Order states
+  
   const [message, setMessage] = useState('');
 
   const handleBack = () => {
@@ -85,44 +50,23 @@ export default function PharmacyComponent() {
   };
 
   const handleBuy = () => {
-    Alert.alert('Success', 'Your order has been placed successfully!');
-    setMessage('');
-    setSelectedPharmacy(null);
+    if (selectedPharmacy) {
+      navigation.navigate('PharmacyCheckout', {
+        pharmacy: selectedPharmacy,
+        message: message
+      });
+    } else {
+      Alert.alert('Error', 'Please select a pharmacy first.');
+    }
   };
 
   const renderPharmacyItem = ({ item }: { item: PharmacyData }) => (
-    <TouchableOpacity style={styles.pharmacyCard} onPress={() => handlePharmacyPress(item)}>
-      <View style={styles.pharmacyImageWrapper}>
-        <Image source={item.image} style={styles.pharmacyImage} />
-        <View style={styles.ratingBadge}>
-          <MaterialCommunityIcons name="star" size={12} color="#FFF" />
-          <Text style={styles.ratingText}>{item.rating}</Text>
-        </View>
-      </View>
-      <View style={styles.pharmacyInfo}>
-        <View style={styles.pharmacyTitleRow}>
-          <Text style={styles.pharmacyName}>{item.name}</Text>
-          <View style={styles.distanceBadge}>
-            <MaterialCommunityIcons name="map-marker-outline" size={12} color="#3C72F2" />
-            <Text style={styles.distanceText}>{item.distance}</Text>
-          </View>
-        </View>
-        <Text style={styles.pharmacyAddress} numberOfLines={1}>{item.address}</Text>
-        
-        <View style={styles.pharmacyTabletsPreview}>
-          {item.availableTablets.slice(0, 2).map((tablet, idx) => (
-             <View key={idx} style={styles.miniTabletPill}>
-                <Text style={styles.miniTabletText}>{tablet}</Text>
-             </View>
-          ))}
-          {item.availableTablets.length > 2 && (
-             <View style={styles.miniTabletPillMore}>
-                <Text style={styles.miniTabletTextMore}>+{item.availableTablets.length - 2}</Text>
-             </View>
-          )}
-        </View>
-      </View>
-    </TouchableOpacity>
+    <PharmacyListCard 
+      pharmacy={item} 
+      onSelect={(pharmacy) => {
+        handlePharmacyPress(pharmacy);
+      }} 
+    />
   );
 
   return (
@@ -132,7 +76,7 @@ export default function PharmacyComponent() {
         <Text style={styles.headerTitle}>
           {selectedPharmacy ? selectedPharmacy.name : 'Pharmacies'}
         </Text>
-        <View style={{ width: 48 }} />
+        <View style={styles.spacerWidth48} />
       </View>
 
       <KeyboardAvoidingView 
@@ -140,7 +84,7 @@ export default function PharmacyComponent() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         {!selectedPharmacy ? (
-          // --- State 1: Pharmacy List ---
+          
           <View style={styles.content}>
             <FlatList
               data={MOCK_PHARMACIES}
@@ -151,25 +95,15 @@ export default function PharmacyComponent() {
             />
           </View>
         ) : (
-          // --- State 2: Pharmacy Details & Order ---
+          
           <ScrollView style={styles.detailsContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
             
-            {/* Contact Buttons */}
-            <View style={styles.contactButtonsRow}>
-              <TouchableOpacity style={[styles.contactButton, { backgroundColor: '#E8F0FE', borderColor: '#E8F0FE', marginRight: 6 }]} onPress={() => navigation.navigate('Chat', { recipientName: selectedPharmacy.name })}>
-                <MaterialCommunityIcons name="message-processing-outline" size={20} color="#1A73E8" />
-                <Text style={[styles.contactButtonText, { color: '#1A73E8' }]}>Message</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.contactButton, { backgroundColor: '#E6F4EA', borderColor: '#E6F4EA', marginLeft: 6 }]} onPress={() => Alert.alert('Calling', `Dialing ${selectedPharmacy.name}...`)}>
-                <MaterialCommunityIcons name="phone-in-talk-outline" size={20} color="#137333" />
-                <Text style={[styles.contactButtonText, { color: '#137333' }]}>Call</Text>
-              </TouchableOpacity>
-            </View>
+            <ContactActionButtons recipientName={selectedPharmacy.name} />
 
             <View style={styles.divider} />
 
             <View style={styles.sectionHeader}>
-              <MaterialCommunityIcons name="pill" size={22} color="#3C72F2" />
+              <MaterialCommunityIcons name="pill" size={22} color={Colors.color3C72F2} />
               <Text style={styles.sectionTitle}>Available Tablets</Text>
             </View>
             
@@ -184,7 +118,7 @@ export default function PharmacyComponent() {
             <View style={styles.divider} />
 
             <View style={styles.sectionHeader}>
-              <MaterialCommunityIcons name="clipboard-edit-outline" size={22} color="#3C72F2" />
+              <MaterialCommunityIcons name="clipboard-edit-outline" size={22} color={Colors.color3C72F2} />
               <Text style={styles.sectionTitle}>Order Medicines</Text>
             </View>
             
@@ -192,7 +126,7 @@ export default function PharmacyComponent() {
               <TextInput
                 style={styles.textInput}
                 placeholder="Type tablet names or describe your health issue..."
-                placeholderTextColor="#A0AAB5"
+                placeholderTextColor={Colors.colorA0AAB5}
                 value={message}
                 onChangeText={setMessage}
                 multiline
@@ -202,17 +136,17 @@ export default function PharmacyComponent() {
             </View>
 
             <View style={styles.uploadButtonsContainer}>
-              <TouchableOpacity style={[styles.uploadButton, { backgroundColor: '#FFF5EB', borderColor: '#FFD6B3' }]} onPress={handleUploadPrescription}>
-                <View style={[styles.uploadIconWrapper, { backgroundColor: '#FFE4CC' }]}>
-                  <MaterialCommunityIcons name="file-document-outline" size={24} color="#FF7A00" />
+              <TouchableOpacity style={[styles.uploadButton, { backgroundColor: Colors.colorFFF5EB, borderColor: Colors.colorFFD6B3 }]} onPress={handleUploadPrescription}>
+                <View style={[styles.uploadIconWrapper, { backgroundColor: Colors.colorFFE4CC }]}>
+                  <MaterialCommunityIcons name="file-document-outline" size={24} color={Colors.colorFF7A00} />
                 </View>
                 <Text style={styles.uploadButtonTitle}>Prescription</Text>
                 <Text style={styles.uploadButtonSub}>Tap to upload</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={[styles.uploadButton, { backgroundColor: '#F0FDF4', borderColor: '#BBF7D0' }]} onPress={handleUploadTabletImage}>
-                <View style={[styles.uploadIconWrapper, { backgroundColor: '#DCFCE7' }]}>
-                  <MaterialCommunityIcons name="camera-outline" size={24} color="#16A34A" />
+              <TouchableOpacity style={[styles.uploadButton, { backgroundColor: Colors.colorF0FDF4, borderColor: Colors.colorBBF7D0 }]} onPress={handleUploadTabletImage}>
+                <View style={[styles.uploadIconWrapper, { backgroundColor: Colors.colorDCFCE7 }]}>
+                  <MaterialCommunityIcons name="camera-outline" size={24} color={Colors.color16A34A} />
                 </View>
                 <Text style={styles.uploadButtonTitle}>Tablet Image</Text>
                 <Text style={styles.uploadButtonSub}>Tap to upload</Text>
@@ -220,7 +154,7 @@ export default function PharmacyComponent() {
             </View>
 
             <TouchableOpacity style={styles.buyButton} onPress={handleBuy}>
-              <MaterialCommunityIcons name="cart-outline" size={22} color="#FFF" style={styles.buyIcon} />
+              <MaterialCommunityIcons name="cart-outline" size={22} color={Colors.colorFFF} style={styles.buyIcon} />
               <Text style={styles.buyButtonText}>Buy Now</Text>
             </TouchableOpacity>
 
@@ -228,70 +162,24 @@ export default function PharmacyComponent() {
         )}
       </KeyboardAvoidingView>
 
-      <Modal visible={isUploadModalVisible} transparent animationType="slide" onRequestClose={() => setIsUploadModalVisible(false)}>
-        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setIsUploadModalVisible(false)}>
-          <TouchableOpacity style={styles.uploadModalContainer} activeOpacity={1} onPress={() => {}}>
-            <Text style={styles.uploadModalTitle}>
-              {uploadType === 'prescription' ? 'Upload Prescription' : 'Upload Tablet Image'}
-            </Text>
-            
-            <TouchableOpacity style={styles.uploadOptionButton} onPress={async () => {
-              setIsUploadModalVisible(false);
-              const result = await ImagePicker.launchCameraAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                quality: 1,
-              });
-              if (!result.canceled) {
-                Alert.alert('Success', 'Photo attached successfully!');
-              }
-            }}>
-              <MaterialCommunityIcons name="camera-outline" size={24} color="#3C72F2" />
-              <Text style={styles.uploadOptionText}>Take Photo</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.uploadOptionButton} onPress={async () => {
-              setIsUploadModalVisible(false);
-              const result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                quality: 1,
-              });
-              if (!result.canceled) {
-                Alert.alert('Success', 'Photo attached successfully!');
-              }
-            }}>
-              <MaterialCommunityIcons name="image-outline" size={24} color="#3C72F2" />
-              <Text style={styles.uploadOptionText}>Choose from Gallery</Text>
-            </TouchableOpacity>
-
-            {uploadType === 'prescription' && (
-              <TouchableOpacity style={styles.uploadOptionButton} onPress={async () => {
-                setIsUploadModalVisible(false);
-                const result = await DocumentPicker.getDocumentAsync({ type: '*/*' });
-                if (!result.canceled) {
-                  Alert.alert('Success', 'Document attached successfully!');
-                }
-              }}>
-                <MaterialCommunityIcons name="file-document-outline" size={24} color="#3C72F2" />
-                <Text style={styles.uploadOptionText}>Choose Document</Text>
-              </TouchableOpacity>
-            )}
-
-            <TouchableOpacity style={[styles.uploadOptionButton, { borderBottomWidth: 0 }]} onPress={() => setIsUploadModalVisible(false)}>
-              <MaterialCommunityIcons name="close" size={24} color="#FF4D4D" />
-              <Text style={[styles.uploadOptionText, { color: '#FF4D4D' }]}>Cancel</Text>
-            </TouchableOpacity>
-          </TouchableOpacity>
-        </TouchableOpacity>
-      </Modal>
+      <AttachmentUploadModal 
+        isVisible={isUploadModalVisible} 
+        onClose={() => setIsUploadModalVisible(false)} 
+        title={uploadType === 'prescription' ? 'Upload Prescription' : 'Upload Tablet Image'} 
+        onUploadSuccess={() => Alert.alert('Success', 'Attached successfully!')} 
+        allowDocument={uploadType === 'prescription'}
+      />
 
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  spacerWidth48: { width: 48 },
+
   safeArea: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: Colors.colorF5F5F5,
   },
   container: {
     flex: 1,
@@ -302,9 +190,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.colorFFF,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    borderBottomColor: Colors.colorE0E0E0,
   },
   backButton: {
     padding: 10,
@@ -313,7 +201,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: Colors.color333,
   },
   content: {
     flex: 1,
@@ -325,23 +213,23 @@ const styles = StyleSheet.create({
   },
   pharmacyCard: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
+    backgroundColor: Colors.colorFFF,
     padding: 14,
     marginBottom: 16,
     borderRadius: 20,
-    shadowColor: '#3C72F2',
+    shadowColor: Colors.color3C72F2,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.06,
     shadowRadius: 10,
     elevation: 4,
     borderWidth: 1,
-    borderColor: '#F0F4F8',
+    borderColor: Colors.colorF0F4F8,
   },
   pharmacyImageWrapper: {
     width: 80,
     height: 80,
     borderRadius: 16,
-    backgroundColor: '#F0F4F8',
+    backgroundColor: Colors.colorF0F4F8,
     marginRight: 14,
     position: 'relative',
   },
@@ -356,15 +244,15 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFB800',
+    backgroundColor: Colors.colorFFB800,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 8,
     borderWidth: 2,
-    borderColor: '#FFF',
+    borderColor: Colors.colorFFF,
   },
   ratingText: {
-    color: '#FFF',
+    color: Colors.colorFFF,
     fontSize: 10,
     fontWeight: '700',
     marginLeft: 2,
@@ -383,26 +271,26 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     fontWeight: '700',
-    color: '#2C3E50',
+    color: Colors.color2C3E50,
     marginRight: 8,
   },
   distanceBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#E5F1F8',
+    backgroundColor: Colors.colorE5F1F8,
     paddingHorizontal: 6,
     paddingVertical: 3,
     borderRadius: 6,
   },
   distanceText: {
     fontSize: 11,
-    color: '#3C72F2',
+    color: Colors.color3C72F2,
     fontWeight: '600',
     marginLeft: 2,
   },
   pharmacyAddress: {
     fontSize: 12,
-    color: '#888',
+    color: Colors.color888,
     marginBottom: 10,
   },
   pharmacyTabletsPreview: {
@@ -410,32 +298,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   miniTabletPill: {
-    backgroundColor: '#F8F9FA',
+    backgroundColor: Colors.colorF8F9FA,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
     marginRight: 6,
     borderWidth: 1,
-    borderColor: '#EBEBEB',
+    borderColor: Colors.colorEBEBEB,
   },
   miniTabletText: {
     fontSize: 10,
-    color: '#555',
+    color: Colors.color555,
     fontWeight: '600',
   },
   miniTabletPillMore: {
-    backgroundColor: '#E5F1F8',
+    backgroundColor: Colors.colorE5F1F8,
     paddingHorizontal: 6,
     paddingVertical: 4,
     borderRadius: 6,
   },
   miniTabletTextMore: {
     fontSize: 10,
-    color: '#3C72F2',
+    color: Colors.color3C72F2,
     fontWeight: '700',
   },
   
-  // Details Styles
+  
   detailsContent: {
     flex: 1,
     paddingHorizontal: 20,
@@ -468,7 +356,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#2C3E50',
+    color: Colors.color2C3E50,
     marginLeft: 8,
   },
   tabletsContainer: {
@@ -477,13 +365,13 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   tabletPill: {
-    backgroundColor: '#F0F4F8',
+    backgroundColor: Colors.colorF0F4F8,
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 12,
     marginRight: 10,
     marginBottom: 10,
-    shadowColor: '#000',
+    shadowColor: Colors.color000,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -491,23 +379,23 @@ const styles = StyleSheet.create({
   },
   tabletText: {
     fontSize: 14,
-    color: '#3C72F2',
+    color: Colors.color3C72F2,
     fontWeight: '600',
   },
   divider: {
     height: 1,
-    backgroundColor: '#EBEBEB',
+    backgroundColor: Colors.colorEBEBEB,
     marginVertical: 20,
   },
   inputContainer: {
-    backgroundColor: '#F8F9FA',
+    backgroundColor: Colors.colorF8F9FA,
     borderRadius: 16,
     padding: 16,
     marginBottom: 20,
   },
   textInput: {
     fontSize: 15,
-    color: '#333',
+    color: Colors.color333,
     minHeight: 100,
   },
   uploadButtonsContainer: {
@@ -535,24 +423,24 @@ const styles = StyleSheet.create({
   uploadButtonTitle: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#333',
+    color: Colors.color333,
     textAlign: 'center',
     marginBottom: 4,
   },
   uploadButtonSub: {
     fontSize: 11,
     fontWeight: '500',
-    color: '#888',
+    color: Colors.color888,
     textAlign: 'center',
   },
   buyButton: {
     flexDirection: 'row',
-    backgroundColor: '#3C72F2',
+    backgroundColor: Colors.color3C72F2,
     paddingVertical: 18,
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#3C72F2',
+    shadowColor: Colors.color3C72F2,
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.3,
     shadowRadius: 10,
@@ -563,24 +451,24 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   buyButtonText: {
-    color: '#FFF',
+    color: Colors.colorFFF,
     fontSize: 16,
     fontWeight: '700',
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'transparent',
+    backgroundColor: Colors.transparent,
     justifyContent: 'flex-end',
   },
   uploadModalContainer: {
-    backgroundColor: '#FFF',
+    backgroundColor: Colors.colorFFF,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 20,
     paddingBottom: 40,
     borderWidth: 1,
-    borderColor: '#EAEAEA',
-    shadowColor: '#000',
+    borderColor: Colors.colorEAEAEA,
+    shadowColor: Colors.color000,
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.05,
     shadowRadius: 10,
@@ -589,7 +477,7 @@ const styles = StyleSheet.create({
   uploadModalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: Colors.color333,
     marginBottom: 16,
     textAlign: 'center',
   },
@@ -598,11 +486,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#EBEBEB',
+    borderBottomColor: Colors.colorEBEBEB,
   },
   uploadOptionText: {
     fontSize: 16,
-    color: '#333',
+    color: Colors.color333,
     marginLeft: 16,
     fontWeight: '500',
   }

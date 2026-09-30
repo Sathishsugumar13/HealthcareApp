@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Colors } from '../../theme/colors';
 
 export interface StatBoxProps {
   iconFamily: 'Ionicons' | 'MaterialCommunityIcons';
@@ -13,9 +14,9 @@ export default function StatBox({ iconFamily, iconName, label, value }: StatBoxP
   return (
     <View style={styles.statBox}>
       {iconFamily === 'Ionicons' ? (
-        <Ionicons name={iconName as any} size={24} color="#4A80F0" />
+        <Ionicons name={iconName as any} size={24} color={Colors.color4A80F0} />
       ) : (
-        <MaterialCommunityIcons name={iconName as any} size={24} color="#4A80F0" />
+        <MaterialCommunityIcons name={iconName as any} size={24} color={Colors.color4A80F0} />
       )}
       <Text style={styles.statLabel}>{label}</Text>
       <Text style={styles.statValue}>{value}</Text>
@@ -29,12 +30,12 @@ const styles = StyleSheet.create({
     width: '30%',
   },
   statLabel: {
-    color: '#888',
+    color: Colors.color888,
     fontSize: 12,
     marginTop: 5,
   },
   statValue: {
-    color: '#4A80F0',
+    color: Colors.color4A80F0,
     fontSize: 16,
     fontWeight: 'bold',
     marginTop: 2,

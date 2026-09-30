@@ -6,25 +6,27 @@ import {
   StyleSheet,
 } from 'react-native';
 import Logo from '../components/Common/Logo';
+import { images } from '../assets/images';
+import { Colors } from '../theme/colors';
 
 export default function Splash(props: any) {
 
-  // wait for 5 seconds and go to next screen
+  
   useEffect(() => {
-    // create a timer
+    
     const myTimer = setTimeout(() => {
       console.log("5 seconds over, going to Onboarding screen");
       props.navigation.replace('Onboarding');
     }, 5000);
 
-    // clear timer if component unmounts
+    
     return () => clearTimeout(myTimer);
   }, []);
 
-  // render the background image and text
+  
   return (
     <ImageBackground
-      source={require('../assets/images/splash-new.png')}
+      source={images.common.splashNew}
       style={styles.container}
       resizeMode="cover"
     >
@@ -52,12 +54,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 42,
     fontWeight: 'bold',
-    color: '#223A6A',
+    color: Colors.brandDark,
     marginBottom: 5,
   },
   subtitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#223A6A',
+    color: Colors.brandDark,
   },
 });

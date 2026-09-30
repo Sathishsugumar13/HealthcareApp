@@ -1,74 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Modal, FlatList, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useAppointment } from '../../../context/AppointmentContext';
 import BackButton from '../../Common/BackButton';
+import AttachmentUploadModal from '../../Common/AttachmentUploadModal';
+import ReusableDropdownModal from '../../Common/ReusableDropdownModal';
+import DateTimePickerModal from '../../Common/DateTimePickerModal';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 
-// --- Mock Data ---
-let SPECIALIZATIONS = [
-  { id: 'sp1', name: 'Cardiologist' },
-  { id: 'sp2', name: 'Dentist' },
-  { id: 'sp3', name: 'Neurologist' },
-  { id: 'sp4', name: 'Orthopedist' },
-  { id: 'sp5', name: 'Pediatrician' },
-];
-
-let DOCTORS = [
-  // Cardiologist
-  { id: 'd1', name: 'Dr. John Doe', spId: 'sp1' },
-  { id: 'd2', name: 'Dr. Sarah Smith', spId: 'sp1' },
-  { id: 'd3', name: 'Dr. Mike Johnson', spId: 'sp1' },
-  // Dentist
-  { id: 'd6', name: 'Dr. Alice Brown', spId: 'sp2' },
-  { id: 'd7', name: 'Dr. Charlie Clark', spId: 'sp2' },
-  { id: 'd8', name: 'Dr. Emily Rose', spId: 'sp2' },
-  // Neurologist
-  { id: 'd11', name: 'Dr. Peter Parker', spId: 'sp3' },
-  { id: 'd11_2', name: 'Dr. Stephen Strange', spId: 'sp3' },
-  { id: 'd11_3', name: 'Dr. Charles Xavier', spId: 'sp3' },
-  // Orthopedist
-  { id: 'd12', name: 'Dr. Bruce Wayne', spId: 'sp4' },
-  { id: 'd12_2', name: 'Dr. Steve Rogers', spId: 'sp4' },
-  { id: 'd12_3', name: 'Dr. Tony Stark', spId: 'sp4' },
-  // Pediatrician
-  { id: 'd13', name: 'Dr. Clark Kent', spId: 'sp5' },
-  { id: 'd13_2', name: 'Dr. Diana Prince', spId: 'sp5' },
-  { id: 'd13_3', name: 'Dr. Barry Allen', spId: 'sp5' },
-];
-
-const STATES = [
-  { id: 's1', name: 'Tamil Nadu' },
-  { id: 's2', name: 'Kerala' },
-  { id: 's3', name: 'Karnataka' },
-];
-
-const DISTRICTS = [
-  { id: 'dt1', name: 'Salem', stateId: 's1' },
-  { id: 'dt2', name: 'Chennai', stateId: 's1' },
-  { id: 'dt3', name: 'Coimbatore', stateId: 's1' },
-  { id: 'dt4', name: 'Kochi', stateId: 's2' },
-  { id: 'dt5', name: 'Bangalore', stateId: 's3' },
-];
-
-let HOSPITALS = [
-  { id: 'h1', name: 'City Hospital', districtId: 'dt1', doctors: [{ id: 'd1', name: 'Dr. John Doe', spId: 'sp1', specialization: 'Cardiologist' }, { id: 'd2', name: 'Dr. Sarah Smith', spId: 'sp2', specialization: 'Dentist' }] },
-  { id: 'h2', name: 'SKS Hospital', districtId: 'dt1', doctors: [{ id: 'd3', name: 'Dr. Mike Johnson', spId: 'sp3', specialization: 'Neurologist' }, { id: 'd4', name: 'Dr. Emily Rose', spId: 'sp4', specialization: 'Orthopedist' }] },
-  { id: 'h3', name: 'Apollo Main', districtId: 'dt2', doctors: [{ id: 'd5', name: 'Dr. Mark Ruffalo', spId: 'sp5', specialization: 'Pediatrician' }] },
-  { id: 'h4', name: 'PSG Hospitals', districtId: 'dt3', doctors: [{ id: 'd8', name: 'Dr. Peter Parker', spId: 'sp3', specialization: 'Neurologist' }] },
-  { id: 'h5', name: 'Aster Medcity', districtId: 'dt4', doctors: [{ id: 'd9', name: 'Dr. Bruce Wayne', spId: 'sp4', specialization: 'Orthopedist' }, { id: 'd10', name: 'Dr. Clark Kent', spId: 'sp5', specialization: 'Pediatrician' }] },
-  { id: 'h6', name: 'Fortis Hospital', districtId: 'dt5', doctors: [{ id: 'd6', name: 'Dr. Alice Brown', spId: 'sp1', specialization: 'Cardiologist' }, { id: 'd7', name: 'Dr. Charlie Clark', spId: 'sp2', specialization: 'Dentist' }] },
-];
+import { SPECIALIZATIONS, DOCTORS, STATES, DISTRICTS, HOSPITALS } from '../../../data/mockData';
+import { Colors } from '../../../theme/colors';
 
 export default function AppointmentsComponent() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const { addAppointment } = useAppointment();
   
-  // Basic Info
+  
   const [patientName, setPatientName] = useState('');
   const [phone, setPhone] = useState('');
   const getTodayDate = () => {
@@ -108,21 +59,21 @@ export default function AppointmentsComponent() {
   };
   const [date, setDate] = useState(getTodayDate());
   
-  // Appointment Type: 'doctor' | 'hospital'
+  
   const [appointmentType, setAppointmentType] = useState<'doctor' | 'hospital'>('doctor');
 
-  // Doctor Flow States
+  
   const [selectedSpecialization, setSelectedSpecialization] = useState<any>(null);
   const [selectedDoctor, setSelectedDoctor] = useState<any>(null);
   const [consultationMode, setConsultationMode] = useState<'offline' | 'online'>('offline');
   const [isPreFilled, setIsPreFilled] = useState(false);
 
-  // Hospital Flow States
+  
   const [selectedState, setSelectedState] = useState<any>(null);
   const [selectedDistrict, setSelectedDistrict] = useState<any>(null);
   const [selectedHospital, setSelectedHospital] = useState<any>(null);
 
-  // Optional Uploads
+  
   const [oldReports, setOldReports] = useState<string[]>([]);
 
   useEffect(() => {
@@ -151,7 +102,7 @@ export default function AppointmentsComponent() {
 
       let dist = DISTRICTS.find(d => d.id === incomingHospital.districtId);
       if (!dist) {
-        dist = DISTRICTS[0]; // fallback
+        dist = DISTRICTS[0]; 
       }
       let st = STATES.find(s => s.id === dist.stateId);
       
@@ -173,7 +124,7 @@ export default function AppointmentsComponent() {
     setIsUploadModalVisible(true);
   };
 
-  // Dropdown Modal States
+  
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalType, setModalType] = useState('');
   const [modalData, setModalData] = useState<any[]>([]);
@@ -276,7 +227,7 @@ export default function AppointmentsComponent() {
     } else if (date.includes(' PM')) {
       setDate(date.replace(' PM', ' AM'));
     } else {
-      // if not complete yet but they tap it
+      
       if (date.length >= 16) { 
         setDate(date + ' PM');
       }
@@ -292,20 +243,20 @@ export default function AppointmentsComponent() {
   const handleSelectItem = (item: any) => {
     if (modalType === 'specialization') {
       setSelectedSpecialization(item);
-      setSelectedDoctor(null); // reset dependent
+      setSelectedDoctor(null); 
     } else if (modalType === 'doctor') {
       setSelectedDoctor(item);
     } else if (modalType === 'state') {
       setSelectedState(item);
-      setSelectedDistrict(null); // reset dependent
-      setSelectedHospital(null); // reset dependent
+      setSelectedDistrict(null); 
+      setSelectedHospital(null); 
     } else if (modalType === 'district') {
       setSelectedDistrict(item);
-      setSelectedHospital(null); // reset dependent
+      setSelectedHospital(null); 
     } else if (modalType === 'hospital') {
       setSelectedHospital(item);
-      setSelectedSpecialization(null); // reset dependent
-      setSelectedDoctor(null); // reset dependent
+      setSelectedSpecialization(null); 
+      setSelectedDoctor(null); 
     }
     setIsModalVisible(false);
   };
@@ -329,34 +280,40 @@ export default function AppointmentsComponent() {
     }
 
     let successMsg = 'Your appointment has been successfully booked!';
+    let apptDetails: any = null;
+
     if (appointmentType === 'doctor') {
       successMsg = `Your ${consultationMode} appointment with ${selectedDoctor.name} has been booked!`;
       
-      addAppointment({
+      apptDetails = {
         id: `appt_${Date.now()}`,
         patientName,
+        phone,
         doctorName: selectedDoctor.name,
         specialization: selectedSpecialization.name,
         date: date,
         image: route.params?.doctor?.image || null
-      });
+      };
     } else if (appointmentType === 'hospital') {
       successMsg = `Your appointment at ${selectedHospital.name} with ${selectedDoctor.name} has been booked!`;
       
-      addAppointment({
+      apptDetails = {
         id: `appt_${Date.now()}`,
         patientName,
+        phone,
         doctorName: selectedDoctor.name + ' (' + selectedHospital.name + ')',
         specialization: selectedSpecialization.name,
         date: date,
         image: route.params?.hospital?.image || null
-      });
+      };
     }
 
-    Alert.alert('Success', successMsg);
-    
-    // Instead of goBack(), navigate to MainTab to see the home screen update
-    navigation.navigate('MainTab');
+    if (apptDetails) {
+      navigation.navigate('Payment', {
+        apptDetails,
+        successMsg
+      });
+    }
   };
 
   return (
@@ -364,25 +321,25 @@ export default function AppointmentsComponent() {
       <View style={styles.header}>
         <BackButton onPress={handleBack} />
         <Text style={styles.headerTitle}>Book Appointment</Text>
-        <View style={{ width: 48 }} />
+        <View style={styles.spacerWidth48} />
       </View>
 
       <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
           
           <View style={styles.sectionHeader}>
-            <MaterialCommunityIcons name="account-details-outline" size={24} color="#3C72F2" />
+            <MaterialCommunityIcons name="account-details-outline" size={24} color={Colors.color3C72F2} />
             <Text style={styles.sectionTitle}>Patient Information</Text>
           </View>
           
           <View style={styles.inputContainer}>
             <View style={styles.iconCircle}>
-              <MaterialCommunityIcons name="account-outline" size={20} color="#3C72F2" />
+              <MaterialCommunityIcons name="account-outline" size={20} color={Colors.color3C72F2} />
             </View>
             <TextInput
               style={styles.textInput}
               placeholder="Patient Name"
-              placeholderTextColor="#A0AAB5"
+              placeholderTextColor={Colors.colorA0AAB5}
               value={patientName}
               onChangeText={setPatientName}
             />
@@ -390,27 +347,27 @@ export default function AppointmentsComponent() {
 
           <View style={styles.inputContainer}>
             <View style={styles.iconCircle}>
-              <MaterialCommunityIcons name="phone-outline" size={20} color="#3C72F2" />
+              <MaterialCommunityIcons name="phone-outline" size={20} color={Colors.color3C72F2} />
             </View>
             <TextInput
               style={styles.textInput}
               placeholder="Phone Number"
-              placeholderTextColor="#A0AAB5"
-              keyboardType="phone-pad"
+              placeholderTextColor={Colors.colorA0AAB5}
+              keyboardType="numeric"
               value={phone}
-              onChangeText={setPhone}
+              onChangeText={(text) => setPhone(text.replace(/[^0-9]/g, ''))}
               maxLength={10}
             />
           </View>
 
           <View style={styles.inputContainer}>
             <View style={styles.iconCircle}>
-              <MaterialCommunityIcons name="calendar-month-outline" size={20} color="#3C72F2" />
+              <MaterialCommunityIcons name="calendar-month-outline" size={20} color={Colors.color3C72F2} />
             </View>
             <TextInput
               style={styles.textInput}
               placeholder="e.g. 12/10/2023 at 10:30 AM"
-              placeholderTextColor="#A0AAB5"
+              placeholderTextColor={Colors.colorA0AAB5}
               value={date}
               onChangeText={handleDateChange}
               keyboardType="numbers-and-punctuation"
@@ -427,14 +384,14 @@ export default function AppointmentsComponent() {
               setTempTime(parsedTime || null);
               setIsCalendarVisible(true);
             }} style={styles.calendarButton}>
-              <MaterialCommunityIcons name="calendar-search" size={24} color="#8B5CF6" />
+              <MaterialCommunityIcons name="calendar-search" size={24} color={Colors.color8B5CF6} />
             </TouchableOpacity>
           </View>
 
           {!isPreFilled && (
             <>
               <View style={styles.sectionHeader}>
-                <MaterialCommunityIcons name="hand-extended-outline" size={24} color="#3C72F2" />
+                <MaterialCommunityIcons name="hand-extended-outline" size={24} color={Colors.color3C72F2} />
                 <Text style={styles.sectionTitle}>Appointment Type</Text>
               </View>
               
@@ -445,7 +402,7 @@ export default function AppointmentsComponent() {
                   activeOpacity={0.8}
                 >
                   <View style={[styles.typeIconWrapper, appointmentType === 'doctor' && styles.typeIconWrapperActive]}>
-                    <MaterialCommunityIcons name="stethoscope" size={28} color={appointmentType === 'doctor' ? '#3C72F2' : '#777'} />
+                    <MaterialCommunityIcons name="stethoscope" size={28} color={appointmentType === 'doctor' ? Colors.color3C72F2 : Colors.color777} />
                   </View>
                   <Text style={[styles.typeCardText, appointmentType === 'doctor' && styles.typeCardTextActive]}>Doctor</Text>
                 </TouchableOpacity>
@@ -456,7 +413,7 @@ export default function AppointmentsComponent() {
                   activeOpacity={0.8}
                 >
                   <View style={[styles.typeIconWrapper, appointmentType === 'hospital' && styles.typeIconWrapperActive]}>
-                    <MaterialCommunityIcons name="hospital-building" size={28} color={appointmentType === 'hospital' ? '#3C72F2' : '#777'} />
+                    <MaterialCommunityIcons name="hospital-building" size={28} color={appointmentType === 'hospital' ? Colors.color3C72F2 : Colors.color777} />
                   </View>
                   <Text style={[styles.typeCardText, appointmentType === 'hospital' && styles.typeCardTextActive]}>Hospital</Text>
                 </TouchableOpacity>
@@ -469,7 +426,7 @@ export default function AppointmentsComponent() {
           {appointmentType === 'doctor' ? (
             <View style={styles.flowContainer}>
               <View style={styles.sectionHeader}>
-                <MaterialCommunityIcons name="doctor" size={24} color="#3C72F2" />
+                <MaterialCommunityIcons name="doctor" size={24} color={Colors.color3C72F2} />
                 <Text style={styles.sectionTitle}>Doctor Details</Text>
               </View>
               
@@ -478,7 +435,7 @@ export default function AppointmentsComponent() {
                 <Text style={selectedSpecialization ? styles.dropdownTextSelected : styles.dropdownTextPlaceholder}>
                   {selectedSpecialization ? selectedSpecialization.name : 'Select Specialization'}
                 </Text>
-                <MaterialCommunityIcons name="chevron-down" size={24} color="#777" />
+                <MaterialCommunityIcons name="chevron-down" size={24} color={Colors.color777} />
               </TouchableOpacity>
 
               <Text style={styles.label}>Select Doctor</Text>
@@ -493,7 +450,7 @@ export default function AppointmentsComponent() {
                 <Text style={selectedDoctor ? styles.dropdownTextSelected : styles.dropdownTextPlaceholder}>
                   {selectedDoctor ? selectedDoctor.name : (selectedSpecialization ? 'Select Doctor' : 'Select Specialization First')}
                 </Text>
-                <MaterialCommunityIcons name="chevron-down" size={24} color="#777" />
+                <MaterialCommunityIcons name="chevron-down" size={24} color={Colors.color777} />
               </TouchableOpacity>
 
               <Text style={styles.label}>Consultation Mode</Text>
@@ -502,7 +459,7 @@ export default function AppointmentsComponent() {
                   style={[styles.modeButton, consultationMode === 'offline' && styles.modeButtonActive]}
                   onPress={() => setConsultationMode('offline')}
                 >
-                  <MaterialCommunityIcons name="office-building-marker-outline" size={20} color={consultationMode === 'offline' ? '#FFF' : '#777'} />
+                  <MaterialCommunityIcons name="office-building-marker-outline" size={20} color={consultationMode === 'offline' ? Colors.colorFFF : Colors.color777} />
                   <Text style={[styles.modeButtonText, consultationMode === 'offline' && styles.modeButtonTextActive]}>Offline</Text>
                 </TouchableOpacity>
 
@@ -510,7 +467,7 @@ export default function AppointmentsComponent() {
                   style={[styles.modeButton, consultationMode === 'online' && styles.modeButtonActive]}
                   onPress={() => setConsultationMode('online')}
                 >
-                  <MaterialCommunityIcons name="video-outline" size={22} color={consultationMode === 'online' ? '#FFF' : '#777'} />
+                  <MaterialCommunityIcons name="video-outline" size={22} color={consultationMode === 'online' ? Colors.colorFFF : Colors.color777} />
                   <Text style={[styles.modeButtonText, consultationMode === 'online' && styles.modeButtonTextActive]}>Online</Text>
                 </TouchableOpacity>
               </View>
@@ -518,7 +475,7 @@ export default function AppointmentsComponent() {
           ) : (
             <View style={styles.flowContainer}>
               <View style={styles.sectionHeader}>
-                <MaterialCommunityIcons name="hospital-marker" size={24} color="#3C72F2" />
+                <MaterialCommunityIcons name="hospital-marker" size={24} color={Colors.color3C72F2} />
                 <Text style={styles.sectionTitle}>Hospital Details</Text>
               </View>
               
@@ -527,7 +484,7 @@ export default function AppointmentsComponent() {
                 <Text style={selectedState ? styles.dropdownTextSelected : styles.dropdownTextPlaceholder}>
                   {selectedState ? selectedState.name : 'Select State'}
                 </Text>
-                <MaterialCommunityIcons name="chevron-down" size={24} color="#777" />
+                <MaterialCommunityIcons name="chevron-down" size={24} color={Colors.color777} />
               </TouchableOpacity>
 
               <Text style={styles.label}>District</Text>
@@ -542,7 +499,7 @@ export default function AppointmentsComponent() {
                 <Text style={selectedDistrict ? styles.dropdownTextSelected : styles.dropdownTextPlaceholder}>
                   {selectedDistrict ? selectedDistrict.name : (selectedState ? 'Select District' : 'Select State First')}
                 </Text>
-                <MaterialCommunityIcons name="chevron-down" size={24} color="#777" />
+                <MaterialCommunityIcons name="chevron-down" size={24} color={Colors.color777} />
               </TouchableOpacity>
 
               <Text style={styles.label}>Select Hospital</Text>
@@ -557,7 +514,7 @@ export default function AppointmentsComponent() {
                 <Text style={selectedHospital ? styles.dropdownTextSelected : styles.dropdownTextPlaceholder}>
                   {selectedHospital ? selectedHospital.name : (selectedDistrict ? 'Select Hospital' : 'Select District First')}
                 </Text>
-                <MaterialCommunityIcons name="chevron-down" size={24} color="#777" />
+                <MaterialCommunityIcons name="chevron-down" size={24} color={Colors.color777} />
               </TouchableOpacity>
 
               <Text style={styles.label}>Specialization</Text>
@@ -573,7 +530,7 @@ export default function AppointmentsComponent() {
                 <Text style={selectedSpecialization ? styles.dropdownTextSelected : styles.dropdownTextPlaceholder}>
                   {selectedSpecialization ? selectedSpecialization.name : (selectedHospital ? 'Select Specialization' : 'Select Hospital First')}
                 </Text>
-                <MaterialCommunityIcons name="chevron-down" size={24} color="#777" />
+                <MaterialCommunityIcons name="chevron-down" size={24} color={Colors.color777} />
               </TouchableOpacity>
 
               <Text style={styles.label}>Select Doctor</Text>
@@ -588,7 +545,7 @@ export default function AppointmentsComponent() {
                 <Text style={selectedDoctor ? styles.dropdownTextSelected : styles.dropdownTextPlaceholder}>
                   {selectedDoctor ? selectedDoctor.name : (selectedSpecialization ? 'Select Doctor' : 'Select Specialization First')}
                 </Text>
-                <MaterialCommunityIcons name="chevron-down" size={24} color="#777" />
+                <MaterialCommunityIcons name="chevron-down" size={24} color={Colors.color777} />
               </TouchableOpacity>
             </View>
           )}
@@ -596,14 +553,14 @@ export default function AppointmentsComponent() {
           <View style={styles.divider} />
           
           <View style={styles.sectionHeader}>
-            <MaterialCommunityIcons name="folder-clock-outline" size={24} color="#3C72F2" />
+            <MaterialCommunityIcons name="folder-clock-outline" size={24} color={Colors.color3C72F2} />
             <Text style={styles.sectionTitle}>Old Reports (Optional)</Text>
           </View>
 
           <View style={styles.reportsContainer}>
             <TouchableOpacity style={styles.oldReportsUploadBox} onPress={handleAddOldReport}>
               <View style={styles.uploadIconCircle}>
-                <MaterialCommunityIcons name="cloud-upload-outline" size={28} color="#3C72F2" />
+                <MaterialCommunityIcons name="cloud-upload-outline" size={28} color={Colors.color3C72F2} />
               </View>
               <Text style={styles.oldReportsUploadTitle}>Upload Old Reports</Text>
               <Text style={styles.oldReportsUploadSub}>Medical, Scan, or Lab reports</Text>
@@ -613,9 +570,9 @@ export default function AppointmentsComponent() {
               <View style={styles.uploadedFilesList}>
                 {oldReports.map((fileName, index) => (
                   <View key={index} style={styles.uploadedFileItem}>
-                    <MaterialCommunityIcons name={fileName.endsWith('.jpg') ? "file-image-outline" : "file-document-outline"} size={20} color="#00C473" />
+                    <MaterialCommunityIcons name={fileName.endsWith('.jpg') ? "file-image-outline" : "file-document-outline"} size={20} color={Colors.color00C473} />
                     <Text style={styles.uploadedFileName}>{fileName}</Text>
-                    <MaterialCommunityIcons name="check-circle" size={18} color="#00C473" style={{marginLeft: 'auto'}} />
+                    <MaterialCommunityIcons name="check-circle" size={18} color={Colors.color00C473} style={styles.inlineMarginleftAuto} />
                   </View>
                 ))}
               </View>
@@ -629,194 +586,42 @@ export default function AppointmentsComponent() {
         </ScrollView>
       </KeyboardAvoidingView>
 
-      <Modal visible={isModalVisible} transparent animationType="slide" onRequestClose={() => setIsModalVisible(false)}>
-        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setIsModalVisible(false)}>
-          <TouchableOpacity style={styles.modalContainer} activeOpacity={1} onPress={() => {}}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Select Option</Text>
-              <TouchableOpacity onPress={() => setIsModalVisible(false)}>
-                <MaterialCommunityIcons name="close" size={24} color="#333" />
-              </TouchableOpacity>
-            </View>
-            <FlatList
-              data={modalData}
-              keyExtractor={(item) => item.id}
-              keyboardShouldPersistTaps="handled"
-              renderItem={({ item }) => (
-                <TouchableOpacity style={styles.modalListItem} onPress={() => handleSelectItem(item)}>
-                  <Text style={styles.modalListItemText}>{item.name}</Text>
-                  <MaterialCommunityIcons name="chevron-right" size={20} color="#CCC" />
-                </TouchableOpacity>
-              )}
-              ListEmptyComponent={<Text style={styles.modalEmptyText}>No items found.</Text>}
-            />
-          </TouchableOpacity>
-        </TouchableOpacity>
-      </Modal>
+      <ReusableDropdownModal 
+        isVisible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        title="Select Option"
+        data={modalData}
+        onSelect={handleSelectItem}
+      />
 
-      {/* Custom Calendar Modal */}
-      <Modal visible={isCalendarVisible} transparent animationType="fade" onRequestClose={() => setIsCalendarVisible(false)}>
-        <TouchableOpacity style={styles.calendarModalOverlay} activeOpacity={1} onPress={() => setIsCalendarVisible(false)}>
-          <TouchableOpacity style={styles.calendarModalContainer} activeOpacity={1} onPress={() => {}}>
-            
-            {/* Calendar Header */}
-            <View style={styles.calendarHeader}>
-              <Text style={styles.calendarMonthText}>
-                {new Date().toLocaleString('default', { month: 'long' })} {new Date().getFullYear()}
-              </Text>
-              <View style={styles.calendarNav}>
-                <MaterialCommunityIcons name="chevron-left" size={24} color="#333" />
-                <MaterialCommunityIcons name="chevron-right" size={24} color="#333" style={{marginLeft: 16}} />
-              </View>
-            </View>
-            
-            {/* Days Row */}
-            <View style={styles.calendarDaysRow}>
-              {['Su','Mo','Tu','We','Th','Fr','Sa'].map(day => (
-                <Text key={day} style={styles.calendarDayLabel}>{day}</Text>
-              ))}
-            </View>
-            
-            {/* Dates Grid */}
-            <View style={styles.calendarGrid}>
-              {Array.from({ length: 31 }, (_, i) => i + 1).map(day => {
-                let todayDate = new Date().getDate();
-                let isOldDate = day < todayDate;
-                return (
-                <TouchableOpacity 
-                  key={day} 
-                  style={[styles.calendarDateCell, tempDate === day && styles.calendarDateCellActive, isOldDate && { opacity: 0.3 }]}
-                  onPress={() => {
-                    if (isOldDate) {
-                      Alert.alert('Invalid Date', 'Old dates cannot be selected.');
-                    } else {
-                      setTempDate(day);
-                      setTempTime(null);
-                    }
-                  }}
-                  activeOpacity={isOldDate ? 1 : 0.2}
-                >
-                  <Text style={[styles.calendarDateText, tempDate === day && styles.calendarDateTextActive]}>
-                    {day}
-                  </Text>
-                </TouchableOpacity>
-              )})}
-            </View>
+      <DateTimePickerModal 
+        isVisible={isCalendarVisible}
+        onClose={() => setIsCalendarVisible(false)}
+        tempDate={tempDate}
+        setTempDate={setTempDate}
+        tempTime={tempTime}
+        setTempTime={setTempTime}
+        onConfirm={handleConfirmDateTime}
+      />
 
-            {/* Time Slots */}
-            <Text style={styles.timeTitle}>Select Time</Text>
-            <View style={styles.timeGrid}>
-              {['09:00 AM', '10:30 AM', '11:00 AM', '02:00 PM', '04:00 PM', '06:30 PM'].map(time => {
-                let isOldTime = false;
-                let todayDate = new Date().getDate();
-                if (tempDate === todayDate) {
-                  let [timePart, modifier] = time.split(' ');
-                  let [hours, minutes] = timePart.split(':');
-                  let hr = parseInt(hours, 10);
-                  let min = parseInt(minutes, 10);
-                  if (modifier === 'PM' && hr !== 12) hr += 12;
-                  if (modifier === 'AM' && hr === 12) hr = 0;
-                  
-                  let currentHour = new Date().getHours();
-                  let currentMinute = new Date().getMinutes();
-                  if (hr < currentHour || (hr === currentHour && min < currentMinute)) {
-                    isOldTime = true;
-                  }
-                }
-
-                return (
-                <TouchableOpacity 
-                  key={time} 
-                  style={[styles.timeGridChip, tempTime === time && styles.timeGridChipActive, isOldTime && { opacity: 0.3 }]}
-                  onPress={() => {
-                    if (isOldTime) {
-                      Alert.alert('Invalid Time', 'Old times cannot be selected.');
-                    } else {
-                      setTempTime(time);
-                    }
-                  }}
-                  activeOpacity={isOldTime ? 1 : 0.2}
-                >
-                  <Text style={[styles.timeGridChipText, tempTime === time && styles.timeGridChipTextActive]}>{time}</Text>
-                </TouchableOpacity>
-              )})}
-            </View>
-
-            <TouchableOpacity style={styles.confirmDateTimeButton} onPress={handleConfirmDateTime}>
-              <Text style={styles.confirmDateTimeButtonText}>Confirm</Text>
-            </TouchableOpacity>
-
-          </TouchableOpacity>
-        </TouchableOpacity>
-      </Modal>
-
-      {/* Upload Modal */}
-      <Modal visible={isUploadModalVisible} transparent animationType="slide" onRequestClose={() => setIsUploadModalVisible(false)}>
-        <TouchableOpacity style={styles.uploadModalOverlay} activeOpacity={1} onPress={() => setIsUploadModalVisible(false)}>
-          <TouchableOpacity style={styles.uploadModalContainer} activeOpacity={1} onPress={() => {}}>
-            <Text style={styles.uploadModalTitle}>Upload Old Reports</Text>
-            
-            <TouchableOpacity style={styles.uploadOptionButton} onPress={async () => {
-              setIsUploadModalVisible(false);
-              const result = await ImagePicker.launchCameraAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                quality: 1,
-              });
-              if (!result.canceled) {
-                const uri = result.assets[0].uri;
-                const fileName = uri.split('/').pop() || 'photo.jpg';
-                setOldReports([...oldReports, fileName]);
-              }
-            }}>
-              <MaterialCommunityIcons name="camera-outline" size={24} color="#3C72F2" />
-              <Text style={styles.uploadOptionText}>Take Photo</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.uploadOptionButton} onPress={async () => {
-              setIsUploadModalVisible(false);
-              const result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                quality: 1,
-              });
-              if (!result.canceled) {
-                const uri = result.assets[0].uri;
-                const fileName = uri.split('/').pop() || 'gallery_image.jpg';
-                setOldReports([...oldReports, fileName]);
-              }
-            }}>
-              <MaterialCommunityIcons name="image-outline" size={24} color="#3C72F2" />
-              <Text style={styles.uploadOptionText}>Choose from Gallery</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.uploadOptionButton} onPress={async () => {
-              setIsUploadModalVisible(false);
-              const result = await DocumentPicker.getDocumentAsync({ type: '*/*' });
-              if (!result.canceled) {
-                const uri = result.assets[0].uri;
-                const fileName = result.assets[0].name || uri.split('/').pop() || 'document.pdf';
-                setOldReports([...oldReports, fileName]);
-              }
-            }}>
-              <MaterialCommunityIcons name="file-document-outline" size={24} color="#3C72F2" />
-              <Text style={styles.uploadOptionText}>Choose Document</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={[styles.uploadOptionButton, { borderBottomWidth: 0 }]} onPress={() => setIsUploadModalVisible(false)}>
-              <MaterialCommunityIcons name="close" size={24} color="#FF4D4D" />
-              <Text style={[styles.uploadOptionText, { color: '#FF4D4D' }]}>Cancel</Text>
-            </TouchableOpacity>
-          </TouchableOpacity>
-        </TouchableOpacity>
-      </Modal>
+      <AttachmentUploadModal 
+        isVisible={isUploadModalVisible} 
+        onClose={() => setIsUploadModalVisible(false)} 
+        title="Upload Old Reports" 
+        onUploadSuccess={(fileName) => setOldReports([...oldReports, fileName])} 
+      />
 
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  spacerWidth48: { width: 48 },
+  inlineMarginleftAuto: { marginLeft: 'auto' },
+
   safeArea: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: Colors.colorF5F5F5,
   },
   container: {
     flex: 1,
@@ -827,9 +632,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.colorFFF,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    borderBottomColor: Colors.colorE0E0E0,
   },
   backButton: {
     padding: 10,
@@ -838,7 +643,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: Colors.color333,
   },
   content: {
     paddingHorizontal: 20,
@@ -853,13 +658,13 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#2C3E50',
+    color: Colors.color2C3E50,
     marginLeft: 8,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F8F9FA',
+    backgroundColor: Colors.colorF8F9FA,
     borderRadius: 20,
     paddingHorizontal: 12,
     marginBottom: 16,
@@ -869,7 +674,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#E5F1F8',
+    backgroundColor: Colors.colorE5F1F8,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -877,7 +682,7 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     fontSize: 15,
-    color: '#333',
+    color: Colors.color333,
     height: '100%',
     fontWeight: '500',
   },
@@ -891,16 +696,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 20,
-    backgroundColor: '#FFF',
+    backgroundColor: Colors.colorFFF,
     borderRadius: 20,
     marginHorizontal: 6,
     borderWidth: 1.5,
-    borderColor: '#EBEBEB',
+    borderColor: Colors.colorEBEBEB,
   },
   typeCardActive: {
-    backgroundColor: '#F4F7FE',
-    borderColor: '#3C72F2',
-    shadowColor: '#3C72F2',
+    backgroundColor: Colors.colorF4F7FE,
+    borderColor: Colors.color3C72F2,
+    shadowColor: Colors.color3C72F2,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -910,14 +715,14 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: Colors.colorF5F5F5,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
   },
   typeIconWrapperActive: {
-    backgroundColor: '#FFF',
-    shadowColor: '#3C72F2',
+    backgroundColor: Colors.colorFFF,
+    shadowColor: Colors.color3C72F2,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 6,
@@ -926,10 +731,10 @@ const styles = StyleSheet.create({
   typeCardText: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#777',
+    color: Colors.color777,
   },
   typeCardTextActive: {
-    color: '#3C72F2',
+    color: Colors.color3C72F2,
   },
   modeSelectorContainer: {
     flexDirection: 'row',
@@ -941,29 +746,29 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#F8F9FA',
+    backgroundColor: Colors.colorF8F9FA,
     paddingVertical: 14,
     borderRadius: 20,
     marginHorizontal: 4,
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: Colors.colorE0E0E0,
   },
   modeButtonActive: {
-    backgroundColor: '#3C72F2',
-    borderColor: '#3C72F2',
+    backgroundColor: Colors.color3C72F2,
+    borderColor: Colors.color3C72F2,
   },
   modeButtonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#777',
+    color: Colors.color777,
     marginLeft: 8,
   },
   modeButtonTextActive: {
-    color: '#FFF',
+    color: Colors.colorFFF,
   },
   divider: {
     height: 1,
-    backgroundColor: '#EBEBEB',
+    backgroundColor: Colors.colorEBEBEB,
     marginVertical: 24,
   },
   flowContainer: {
@@ -971,7 +776,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 13,
-    color: '#555',
+    color: Colors.color555,
     marginBottom: 8,
     fontWeight: '600',
     marginLeft: 4,
@@ -980,24 +785,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#F8F9FA',
+    backgroundColor: Colors.colorF8F9FA,
     borderRadius: 20,
     paddingHorizontal: 20,
     marginBottom: 16,
     height: 60,
   },
   dropdownDisabled: {
-    backgroundColor: '#F5F5F5',
+    backgroundColor: Colors.colorF5F5F5,
     opacity: 0.7,
   },
   dropdownTextPlaceholder: {
     fontSize: 15,
-    color: '#A0AAB5',
+    color: Colors.colorA0AAB5,
     fontWeight: '500',
   },
   dropdownTextSelected: {
     fontSize: 15,
-    color: '#333',
+    color: Colors.color333,
     fontWeight: '600',
   },
   reportsContainer: {
@@ -1006,32 +811,32 @@ const styles = StyleSheet.create({
   oldReportsUploadBox: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#F8F9FA',
+    backgroundColor: Colors.colorF8F9FA,
     paddingVertical: 24,
     borderRadius: 20,
     marginBottom: 16,
     borderWidth: 2,
-    borderColor: '#E5F1F8',
+    borderColor: Colors.colorE5F1F8,
     borderStyle: 'dashed',
   },
   uploadIconCircle: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#E5F1F8',
+    backgroundColor: Colors.colorE5F1F8,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
   },
   oldReportsUploadTitle: {
     fontSize: 16,
-    color: '#333',
+    color: Colors.color333,
     fontWeight: '700',
     marginBottom: 4,
   },
   oldReportsUploadSub: {
     fontSize: 13,
-    color: '#888',
+    color: Colors.color888,
     fontWeight: '500',
   },
   uploadedFilesList: {
@@ -1040,26 +845,26 @@ const styles = StyleSheet.create({
   uploadedFileItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#E8F8F2',
+    backgroundColor: Colors.colorE8F8F2,
     padding: 12,
     borderRadius: 12,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: '#00C473',
+    borderColor: Colors.color00C473,
   },
   uploadedFileName: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#333',
+    color: Colors.color333,
     marginLeft: 10,
   },
   bookButton: {
-    backgroundColor: '#3C72F2',
+    backgroundColor: Colors.color3C72F2,
     paddingVertical: 18,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#3C72F2',
+    shadowColor: Colors.color3C72F2,
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.3,
     shadowRadius: 10,
@@ -1068,19 +873,19 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
   bookButtonText: {
-    color: '#FFF',
+    color: Colors.colorFFF,
     fontSize: 16,
     fontWeight: '700',
   },
   
-  // Modal Styles
+  
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: Colors.overlay40,
     justifyContent: 'flex-end',
   },
   modalContainer: {
-    backgroundColor: '#FFF',
+    backgroundColor: Colors.colorFFF,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     paddingHorizontal: 24,
@@ -1093,13 +898,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 24,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: Colors.colorF0F0F0,
     marginBottom: 10,
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#2C3E50',
+    color: Colors.color2C3E50,
   },
   modalListItem: {
     flexDirection: 'row',
@@ -1107,28 +912,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F8F9FA',
+    borderBottomColor: Colors.colorF8F9FA,
   },
   modalListItemText: {
     fontSize: 16,
-    color: '#333',
+    color: Colors.color333,
     fontWeight: '500',
   },
   modalEmptyText: {
     textAlign: 'center',
     marginTop: 30,
     fontSize: 15,
-    color: '#888',
+    color: Colors.color888,
   },
   amPmButton: {
-    backgroundColor: '#F0F4F8',
+    backgroundColor: Colors.colorF0F4F8,
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 8,
     marginRight: 8,
   },
   amPmText: {
-    color: '#3C72F2',
+    color: Colors.color3C72F2,
     fontWeight: '700',
     fontSize: 13,
   },
@@ -1138,11 +943,11 @@ const styles = StyleSheet.create({
   },
   calendarModalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: Colors.overlay50,
     justifyContent: 'center',
   },
   calendarModalContainer: {
-    backgroundColor: '#FFF',
+    backgroundColor: Colors.colorFFF,
     marginHorizontal: 24,
     borderRadius: 24,
     padding: 20,
@@ -1158,7 +963,7 @@ const styles = StyleSheet.create({
   calendarMonthText: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#333',
+    color: Colors.color333,
   },
   calendarNav: {
     flexDirection: 'row',
@@ -1172,7 +977,7 @@ const styles = StyleSheet.create({
     width: '14%',
     textAlign: 'center',
     fontSize: 13,
-    color: '#888',
+    color: Colors.color888,
     fontWeight: '600',
   },
   calendarGrid: {
@@ -1188,21 +993,21 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   calendarDateCellActive: {
-    backgroundColor: '#3C72F2',
+    backgroundColor: Colors.color3C72F2,
   },
   calendarDateText: {
     fontSize: 15,
-    color: '#333',
+    color: Colors.color333,
     fontWeight: '500',
   },
   calendarDateTextActive: {
-    color: '#FFF',
+    color: Colors.colorFFF,
     fontWeight: '700',
   },
   timeTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#333',
+    color: Colors.color333,
     marginTop: 24,
     marginBottom: 12,
   },
@@ -1216,50 +1021,50 @@ const styles = StyleSheet.create({
     width: '31%',
     paddingVertical: 12,
     borderRadius: 16,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: Colors.colorF8F9FA,
     alignItems: 'center',
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: Colors.colorE0E0E0,
   },
   timeGridChipActive: {
-    backgroundColor: '#3C72F2',
-    borderColor: '#3C72F2',
+    backgroundColor: Colors.color3C72F2,
+    borderColor: Colors.color3C72F2,
   },
   timeGridChipText: {
     fontSize: 13,
-    color: '#555',
+    color: Colors.color555,
     fontWeight: '600',
   },
   timeGridChipTextActive: {
-    color: '#FFF',
+    color: Colors.colorFFF,
   },
   confirmDateTimeButton: {
-    backgroundColor: '#00C473',
+    backgroundColor: Colors.color00C473,
     paddingVertical: 14,
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
   },
   confirmDateTimeButtonText: {
-    color: '#FFF',
+    color: Colors.colorFFF,
     fontSize: 16,
     fontWeight: '700',
   },
   uploadModalOverlay: {
     flex: 1,
-    backgroundColor: 'transparent',
+    backgroundColor: Colors.transparent,
     justifyContent: 'flex-end',
   },
   uploadModalContainer: {
-    backgroundColor: '#FFF',
+    backgroundColor: Colors.colorFFF,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 20,
     paddingBottom: 40,
     borderWidth: 1,
-    borderColor: '#EAEAEA',
-    shadowColor: '#000',
+    borderColor: Colors.colorEAEAEA,
+    shadowColor: Colors.color000,
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.05,
     shadowRadius: 10,
@@ -1268,7 +1073,7 @@ const styles = StyleSheet.create({
   uploadModalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: Colors.color333,
     marginBottom: 16,
     textAlign: 'center',
   },
@@ -1277,11 +1082,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#EBEBEB',
+    borderBottomColor: Colors.colorEBEBEB,
   },
   uploadOptionText: {
     fontSize: 16,
-    color: '#333',
+    color: Colors.color333,
     marginLeft: 16,
     fontWeight: '500',
   }

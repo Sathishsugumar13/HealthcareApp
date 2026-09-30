@@ -8,10 +8,10 @@ import CustomButton from '../Common/CustomButton';
 import PasswordValidator from '../Common/PasswordValidator';
 
 export default function ForgotPasswordForm(props: any) {
-  // state for step
-  const [step, setStep] = useState(1); // 1 = Email, 2 = OTP, 3 = Password Set
+  
+  const [step, setStep] = useState(1); 
 
-  // state for email
+  
   const [emailValue, setEmailValue] = useState('');
   
   // state for otp
@@ -56,14 +56,14 @@ export default function ForgotPasswordForm(props: any) {
           setErrorText('Entered email id does not match the registered account.');
         } else {
           setStep(2);
-          setTimer(30); // reset timer when going to step 2
-          setIsOtpSubmitted(false); // reset otp submission state
+          setTimer(30); 
+          setIsOtpSubmitted(false); 
         }
       }
     }
   };
 
-  // Handle OTP Verify
+  
   const handleVerifyClick = () => {
     setIsOtpSubmitted(true);
     setErrorText('');
@@ -110,7 +110,7 @@ export default function ForgotPasswordForm(props: any) {
     }
   }
 
-  // Handle Change Password
+  
   const handleChangePasswordClick = async () => {
     setErrorText('');
 
@@ -148,7 +148,7 @@ export default function ForgotPasswordForm(props: any) {
   const boxArray = [0, 1, 2, 3, 4, 5];
 
   return (
-    <View style={{ width: '100%' }}>
+    <View style={styles.inlineWidth100}>
       {step === 1 && (
         <>
           <Text style={styles.title}>Forgot Password?</Text>
@@ -196,7 +196,7 @@ export default function ForgotPasswordForm(props: any) {
                   style={[
                     styles.otpBox, 
                     isCurrentBox ? styles.otpBoxActive : null,
-                    showRedBorder ? { borderColor: 'red' } : null
+                    showRedBorder ? { borderColor: Colors.red } : null
                   ]}
                 >
                   <Text style={styles.otpText}>{digit}</Text>
@@ -212,7 +212,7 @@ export default function ForgotPasswordForm(props: any) {
               if (text.length <= 6) {
                 setOtpValue(text);
               }
-              // hide red border when typing
+              
               if (isOtpSubmitted) {
                 setIsOtpSubmitted(false);
               }
@@ -223,7 +223,7 @@ export default function ForgotPasswordForm(props: any) {
             style={styles.hiddenInput}
           />
 
-          {/* Resend OTP Section */}
+          {}
           <View style={styles.resendContainer}>
             {timer > 0 ? (
               <Text style={styles.timerText}>Resend OTP in {timer} seconds</Text>
@@ -265,14 +265,14 @@ export default function ForgotPasswordForm(props: any) {
           <View style={styles.spacer} />
           <CustomButton title="Change Password" onPress={handleChangePasswordClick} />
 
-          {/* Password Conditions Display below button */}
+          
           <PasswordValidator 
             isValidLength={isValidLength}
             hasCapitalLetter={hasCapitalLetter}
             hasSmallLetter={hasSmallLetter}
             hasNumber={hasNumber}
             hasSpecialCharacter={hasSpecialCharacter}
-            style={{ marginTop: 15, marginBottom: 0 }}
+            style={styles.inlineMargintop15Marginbottom0}
           />
         </>
       )}
@@ -281,6 +281,9 @@ export default function ForgotPasswordForm(props: any) {
 }
 
 const styles = StyleSheet.create({
+  inlineWidth100: { width: '100%' },
+  inlineMargintop15Marginbottom0: { marginTop: 15, marginBottom: 0 },
+
   title: {
     fontSize: 24,
     fontWeight: '700',
@@ -315,11 +318,11 @@ const styles = StyleSheet.create({
     width: 45,
     height: 55,
     borderWidth: 1,
-    borderColor: '#D3D3D3',
+    borderColor: Colors.colorD3D3D3,
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F9F9F9',
+    backgroundColor: Colors.colorF9F9F9,
   },
   otpBoxActive: {
     borderColor: Colors.primary,

@@ -1,13 +1,8 @@
-/**
- * Component: SocialButton
- * Originally created for: Sign In Page
- * Usage: Google/Facebook login buttons
- */
+
 import React from 'react';
-import { Pressable, Text, PressableProps, StyleSheet } from 'react-native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { Pressable, Text, PressableProps, StyleSheet, Image } from 'react-native';
 import { Colors } from '../../theme/colors';
+import { images } from '../../assets/images';
 
 interface SocialButtonProps extends PressableProps {
   title: string;
@@ -17,16 +12,14 @@ interface SocialButtonProps extends PressableProps {
 }
 
 export default function SocialButton({ title, icon, color, provider, ...props }: SocialButtonProps) {
+  const logoSource = provider === 'google' ? images.common.googleLogo : images.common.facebookLogo;
+  
   return (
     <Pressable 
       style={({ pressed }) => [styles.socialBtn, pressed && { opacity: 0.7, backgroundColor: Colors.background }]} 
       {...props}
     >
-      {provider === 'google' ? (
-        <AntDesign name={icon as any} size={24} color={color} style={styles.socialIcon} />
-      ) : (
-        <FontAwesome name={icon as any} size={24} color={color} style={styles.socialIcon} />
-      )}
+      <Image source={logoSource} style={styles.socialIcon} resizeMode="contain" />
       <Text style={styles.socialText}>{title}</Text>
     </Pressable>
   );
@@ -47,6 +40,8 @@ const styles = StyleSheet.create({
   socialIcon: {
     position: 'absolute',
     left: 20,
+    width: 24,
+    height: 24,
   },
   socialText: {
     fontSize: 16,

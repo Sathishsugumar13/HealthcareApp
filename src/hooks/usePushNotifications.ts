@@ -3,6 +3,7 @@ import { Platform, Alert } from 'react-native';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
+import { Colors } from '../theme/colors';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -35,7 +36,7 @@ export const usePushNotifications = (): PushNotificationState => {
         name: 'default',
         importance: Notifications.AndroidImportance.MAX,
         vibrationPattern: [0, 250, 250, 250],
-        lightColor: '#FF231F7C',
+        lightColor: Colors.colorFF231F7C,
       });
     }
 
@@ -61,7 +62,7 @@ export const usePushNotifications = (): PushNotificationState => {
         });
         console.log('Expo Push Token:', token?.data);
         
-        // Removed Push Token alert for production
+        
       } catch (e: any) {
         console.log('Error getting push token:', e.message);
       }

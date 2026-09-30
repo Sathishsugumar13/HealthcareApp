@@ -1,20 +1,24 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
+import { images } from '../../assets/images';
+
+import { useNavigation } from '@react-navigation/native';
 
 interface HomeHeaderProps {
   profileImageHook: any;
   user: any;
-  setIsProfileModalOpen: (val: boolean) => void;
 }
 
-export default function HomeHeader({ profileImageHook, user, setIsProfileModalOpen }: HomeHeaderProps) {
+export default function HomeHeader({ profileImageHook, user }: HomeHeaderProps) {
+  const navigation = useNavigation<any>();
+
   return (
     <SafeAreaView style={styles.topSection} edges={['top']}>
       <View style={styles.headerContent}>
-        <Pressable style={styles.profileImagePlaceholder} onPress={() => setIsProfileModalOpen(true)}>
+        <Pressable style={styles.profileImagePlaceholder} onPress={() => navigation.navigate('Profile')}>
           {profileImageHook.profileImage ? (
             <Image source={{ uri: profileImageHook.profileImage }} style={styles.smallAvatarImage} />
           ) : (
@@ -26,7 +30,7 @@ export default function HomeHeader({ profileImageHook, user, setIsProfileModalOp
         <Text style={styles.greetingText}>How are you feeling today ?</Text>
       </View>
       <View style={styles.doctorImageWrapper}>
-         <Image source={require('../../assets/images/home_doctor.png')} style={styles.largeDoctorImage} />
+         <Image source={images.common.homeDoctor} style={styles.largeDoctorImage} />
       </View>
     </SafeAreaView>
   );
@@ -49,12 +53,12 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.white,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
     borderWidth: 2,
-    borderColor: '#D0E3F0',
+    borderColor: Colors.colorD0E3F0,
     overflow: 'hidden',
   },
   smallAvatarImage: {
@@ -64,19 +68,19 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     fontSize: 16,
-    color: '#333333',
+    color: Colors.color333333,
     fontWeight: '600',
     marginBottom: 4,
   },
   nameText: {
     fontSize: 24,
-    color: '#1A1A1A',
+    color: Colors.color1A1A1A,
     fontWeight: 'bold',
     marginBottom: 8,
   },
   greetingText: {
     fontSize: 14,
-    color: '#8CA1B0',
+    color: Colors.color8CA1B0,
     fontWeight: '500',
   },
   doctorImageWrapper: {

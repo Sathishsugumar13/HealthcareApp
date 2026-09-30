@@ -1,10 +1,7 @@
-/**
- * Component: Logo
- * Originally created for: Common use across Splash, Onboarding, and Dashboard
- * Usage: Renders the Healthcare logo image
- */
+
 import React from 'react';
 import { Image, ImageStyle, StyleProp } from 'react-native';
+import { images } from '../../assets/images';
 
 interface LogoProps {
   style?: StyleProp<ImageStyle>;
@@ -23,7 +20,7 @@ export default function Logo({ style, size }: LogoProps) {
 
   return (
     <Image
-      source={require('../../assets/images/healthcare-logo.png')}
+      source={images.common.healthcareLogo}
       style={[baseStyle, style]}
     />
   );

@@ -1,35 +1,38 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { View, Text, StyleSheet, Pressable, Linking } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Colors } from '../../theme/colors';
 
 export default function EmergencyButton() {
   return (
     <View style={styles.emergencyContainer}>
-      <Pressable style={styles.emergencyCallButton} onPress={() => Alert.alert('Emergency', 'Calling Ambulance 108...')}>
+      <Pressable style={styles.emergencyCallButton} onPress={() => { Linking.openURL('tel:+917904176040').catch(err => console.error('Failed to open dialer', err)); }}>
         <View style={styles.emergencyCallIconCircle}>
-          <MaterialCommunityIcons name="phone-in-talk" size={26} color="#FFF" />
+          <MaterialCommunityIcons name="phone-in-talk" size={26} color={Colors.colorFFF} />
         </View>
         <View style={styles.emergencyCallTextWrapper}>
           <Text style={styles.emergencyCallTitle}>Call Ambulance</Text>
-          <Text style={styles.emergencyCallSub}>Dial 108 immediately</Text>
+          <Text style={styles.emergencyCallSub}>Dial +917904176040 immediately</Text>
         </View>
-        <MaterialCommunityIcons name="ambulance" size={28} color="#FFD1D1" style={{ opacity: 0.5 }} />
+        <MaterialCommunityIcons name="ambulance" size={28} color={Colors.colorFFD1D1} style={styles.inlineOpacity05} />
       </Pressable>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  inlineOpacity05: { opacity: 0.5 },
+
   emergencyContainer: {
     paddingBottom: 40,
   },
   emergencyCallButton: {
     flexDirection: 'row',
-    backgroundColor: '#EF4444',
+    backgroundColor: Colors.colorEF4444,
     borderRadius: 16,
     padding: 16,
     alignItems: 'center',
-    shadowColor: '#EF4444',
+    shadowColor: Colors.colorEF4444,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -39,7 +42,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: Colors.lightOverlay20,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
@@ -50,12 +53,12 @@ const styles = StyleSheet.create({
   emergencyCallTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#FFF',
+    color: Colors.colorFFF,
     marginBottom: 4,
   },
   emergencyCallSub: {
     fontSize: 13,
-    color: '#FFE4E4',
+    color: Colors.colorFFE4E4,
     fontWeight: '500',
   },
 });

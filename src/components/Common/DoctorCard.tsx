@@ -1,8 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { Doctor } from '../HomeComponent/doctorsList/doctorsList';
+import { Colors } from '../../theme/colors';
 
 interface DoctorCardProps {
   item: Doctor;
@@ -24,11 +25,11 @@ export default function DoctorCard({ item, onPress, onChatPress }: DoctorCardPro
           </View>
           <View style={styles.doctorStats}>
             <View style={styles.statRow}>
-              <MaterialCommunityIcons name="star" size={14} color="#FFB800" />
+              <MaterialCommunityIcons name="star" size={14} color={Colors.colorFFB800} />
               <Text style={styles.statText}>{item.rating}</Text>
             </View>
             <View style={styles.statRow}>
-              <MaterialCommunityIcons name="briefcase-variant-outline" size={14} color="#777" />
+              <MaterialCommunityIcons name="briefcase-variant-outline" size={14} color={Colors.color777} />
               <Text style={styles.statText}>{item.experience}</Text>
             </View>
           </View>
@@ -37,13 +38,13 @@ export default function DoctorCard({ item, onPress, onChatPress }: DoctorCardPro
         <View style={styles.sideActions}>
           <View style={styles.sideIconsColumn}>
             <TouchableOpacity 
-              style={[styles.actionIconButton, { backgroundColor: '#EDE9FE' }]}
+              style={[styles.actionIconButton, { backgroundColor: Colors.colorEDE9FE }]}
               onPress={() => onChatPress(item)}
             >
-              <MaterialCommunityIcons name="message-processing-outline" size={16} color="#8B5CF6" />
+              <MaterialCommunityIcons name="message-processing-outline" size={16} color={Colors.color8B5CF6} />
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.actionIconButton, { marginTop: 8, backgroundColor: '#E6F9F0' }]}>
-              <MaterialCommunityIcons name="phone-in-talk-outline" size={16} color="#00C473" />
+            <TouchableOpacity style={[styles.actionIconButton, { marginTop: 8, backgroundColor: Colors.colorE6F9F0 }]}>
+              <MaterialCommunityIcons name="phone-in-talk-outline" size={16} color={Colors.color00C473} />
             </TouchableOpacity>
           </View>
         </View>
@@ -54,16 +55,16 @@ export default function DoctorCard({ item, onPress, onChatPress }: DoctorCardPro
 
 const styles = StyleSheet.create({
   doctorCardWrapper: {
-    backgroundColor: '#fff',
+    backgroundColor: Colors.colorFFF,
     marginBottom: 16,
     borderRadius: 20,
-    shadowColor: '#000',
+    shadowColor: Colors.color000,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.08,
     shadowRadius: 12,
     elevation: 4,
     borderWidth: 1,
-    borderColor: '#F0F4F8',
+    borderColor: Colors.colorF0F4F8,
   },
   doctorCardTop: {
     flexDirection: 'row',
@@ -73,10 +74,10 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 20,
-    backgroundColor: '#F0F4F8',
+    backgroundColor: Colors.colorF0F4F8,
     marginRight: 14,
     position: 'relative',
-    shadowColor: '#3C72F2',
+    shadowColor: Colors.color3C72F2,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8,
@@ -94,11 +95,11 @@ const styles = StyleSheet.create({
   doctorName: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#2C3E50',
+    color: Colors.color2C3E50,
     marginBottom: 4,
   },
   specializationPill: {
-    backgroundColor: '#E5F1F8',
+    backgroundColor: Colors.colorE5F1F8,
     paddingVertical: 3,
     paddingHorizontal: 8,
     borderRadius: 6,
@@ -107,7 +108,7 @@ const styles = StyleSheet.create({
   },
   doctorSpecialization: {
     fontSize: 11,
-    color: '#3C72F2',
+    color: Colors.color3C72F2,
     fontWeight: '600',
   },
   doctorStats: {
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
   },
   statText: {
     fontSize: 12,
-    color: '#555',
+    color: Colors.color555,
     marginLeft: 4,
     fontWeight: '500',
   },
@@ -138,7 +139,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#E5F1F8',
+    backgroundColor: Colors.colorE5F1F8,
     justifyContent: 'center',
     alignItems: 'center',
   },

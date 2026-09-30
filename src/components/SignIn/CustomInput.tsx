@@ -1,11 +1,7 @@
-/**
- * Component: CustomInput
- * Originally created for: Sign In Page
- * Usage: Reusable input field across auth screens
- */
+
 import React, { useState } from 'react';
 import { View, TextInput, Pressable, TextInputProps, StyleSheet } from 'react-native';
-import Feather from 'react-native-vector-icons/Feather';
+import { Feather } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 interface CustomInputProps extends TextInputProps {

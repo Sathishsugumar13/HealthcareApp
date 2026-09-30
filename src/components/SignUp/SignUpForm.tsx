@@ -1,16 +1,15 @@
 import { useState } from 'react';
-import { Text, View, Platform, StyleSheet } from 'react-native';
+import { Text, View, Platform, StyleSheet, Pressable } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '../../theme/colors';
 
 import CustomInput from '../SignIn/CustomInput';
 import CustomButton from '../Common/CustomButton';
 import TermsCheckbox from './TermsCheckbox';
-import AuthBottomLink from '../Common/AuthBottomLink';
 import PasswordValidator from '../Common/PasswordValidator';
 
 export default function SignUpForm(props: any) {
-  // states for storing user inputs
+  
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
@@ -43,9 +42,9 @@ export default function SignUpForm(props: any) {
     }
   }
 
-  // function to run when sign up is clicked
+  
   const handleSignUpClick = async () => {
-    // clear any previous error
+    
     setErrorText(''); 
 
     // check if all fields are filled
@@ -88,7 +87,7 @@ export default function SignUpForm(props: any) {
 
       console.log("Account created successfully!");
       
-      // call the success function from parent
+      
       props.onSuccess();
     }
   };
@@ -143,7 +142,7 @@ export default function SignUpForm(props: any) {
 
       <View style={styles.spacer} />
 
-      {/* Password Conditions Display above Sign Up button */}
+      
       <PasswordValidator 
         isValidLength={isValidLength}
         hasCapitalLetter={hasCapitalLetter}
@@ -155,19 +154,22 @@ export default function SignUpForm(props: any) {
       <CustomButton 
         title="Sign Up" 
         onPress={handleSignUpClick} 
-        style={{ marginTop: 10 }}
+        style={styles.inlineMargintop10}
       />
 
-      <AuthBottomLink 
-        text="Already have an account? " 
-        linkText="Sign In" 
-        onPress={props.onSignIn} 
-      />
+      <View style={styles.authLinkContainer}>
+        <Text style={styles.authBottomText}>Already have an account? </Text>
+        <Pressable onPress={props.onSignIn}>
+          <Text style={styles.authLink}>Sign In</Text>
+        </Pressable>
+      </View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
+  inlineMargintop10: { marginTop: 10 },
+
   errorText: {
     color: Colors.error,
     fontSize: 14,
@@ -178,6 +180,21 @@ const styles = StyleSheet.create({
   spacer: {
     flex: 1,
     minHeight: 40,
-  }
+  },
+  authLinkContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 20,
+    marginBottom: 40, 
+  },
+  authBottomText: {
+    fontSize: 15,
+    color: Colors.text,
+  },
+  authLink: {
+    color: Colors.primary,
+    fontWeight: '700',
+    fontSize: 15,
+  },
 });
 

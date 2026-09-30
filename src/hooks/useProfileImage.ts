@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Alert } from 'react-native';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import { useFocusEffect } from '@react-navigation/native';
@@ -45,7 +45,7 @@ export function useProfileImage(user: any) {
   const takePhoto = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Permission needed', 'Sorry, we need camera permissions to make this work!');
+      console.warn('Sorry, we need camera permissions to make this work!');
       return;
     }
     
@@ -65,7 +65,7 @@ export function useProfileImage(user: any) {
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Permission needed', 'Sorry, we need camera roll permissions to make this work!');
+      console.warn('Sorry, we need camera roll permissions to make this work!');
       return;
     }
     
@@ -84,7 +84,7 @@ export function useProfileImage(user: any) {
 
   const removePhoto = async () => {
     console.log("remove photo button clicked");
-    setProfileImage(null); // set state to null first
+    setProfileImage(null); 
     if (user && user.email) {
       try {
         console.log("removing from storage for email: ", user.email);
@@ -98,31 +98,5 @@ export function useProfileImage(user: any) {
     }
   };
 
-  const handleUpdateClick = () => {
-    console.log("user clicked update photo");
-    Alert.alert(
-      'Update Photo',
-      'Choose an option',
-      [
-        { text: 'Take Photo', onPress: takePhoto },
-        { text: 'Choose from Gallery', onPress: pickImage },
-        { text: 'Cancel', style: 'cancel', onPress: () => console.log("update cancelled") }
-      ]
-    );
-  };
-
-  const onChangePhoto = () => {
-    console.log("profile photo clicked");
-    Alert.alert(
-      'Profile Photo',
-      'What would you like to do?',
-      [
-        { text: 'Update Photo', onPress: handleUpdateClick },
-        { text: 'Remove Photo', onPress: removePhoto, style: 'destructive' },
-        { text: 'Cancel', style: 'cancel', onPress: () => console.log("main alert cancelled") }
-      ]
-    );
-  };
-
-  return { profileImage, onChangePhoto };
+  return { profileImage, takePhoto, pickImage, removePhoto };
 }

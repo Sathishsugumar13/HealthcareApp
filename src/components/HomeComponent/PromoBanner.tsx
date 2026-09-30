@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Colors } from '../../theme/colors';
 
 export default function PromoBanner() {
   return (
@@ -10,7 +11,7 @@ export default function PromoBanner() {
         <Text style={styles.bannerDescription}>Take care of your health every day.</Text>
       </View>
       <View style={styles.bannerImageContainer}>
-        <MaterialCommunityIcons name="heart-pulse" size={48} color="#FFFFFF" />
+        <MaterialCommunityIcons name="heart-pulse" size={48} color={Colors.white} />
       </View>
     </View>
   );
@@ -18,7 +19,7 @@ export default function PromoBanner() {
 
 const styles = StyleSheet.create({
   bannerContainer: {
-    backgroundColor: '#3C72F2',
+    backgroundColor: Colors.color3C72F2,
     borderRadius: 16,
     padding: 20,
     flexDirection: 'row',
@@ -34,12 +35,12 @@ const styles = StyleSheet.create({
   bannerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: Colors.white,
     marginBottom: 8,
   },
   bannerDescription: {
     fontSize: 14,
-    color: '#E5F1F8',
+    color: Colors.colorE5F1F8,
     lineHeight: 20,
   },
   bannerImageContainer: {

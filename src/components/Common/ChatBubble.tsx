@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { Colors } from '../../theme/colors';
 
 export interface Message {
   id: string;
@@ -34,25 +35,25 @@ const styles = StyleSheet.create({
   },
   senderBubble: {
     alignSelf: 'flex-end',
-    backgroundColor: '#3C72F2',
+    backgroundColor: Colors.color3C72F2,
     borderBottomRightRadius: 4,
   },
   receiverBubble: {
     alignSelf: 'flex-start',
-    backgroundColor: '#FFF',
+    backgroundColor: Colors.colorFFF,
     borderBottomLeftRadius: 4,
     borderWidth: 1,
-    borderColor: '#EAEAEA',
+    borderColor: Colors.colorEAEAEA,
   },
   messageText: {
     fontSize: 15,
     lineHeight: 22,
   },
   senderText: {
-    color: '#FFF',
+    color: Colors.colorFFF,
   },
   receiverText: {
-    color: '#333',
+    color: Colors.color333,
   },
   messageTime: {
     fontSize: 10,
@@ -60,9 +61,9 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   senderTime: {
-    color: '#D0E0FF',
+    color: Colors.colorD0E0FF,
   },
   receiverTime: {
-    color: '#888',
+    color: Colors.color888,
   },
 });

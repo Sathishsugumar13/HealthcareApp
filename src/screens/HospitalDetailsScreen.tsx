@@ -1,9 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import BackButton from '../components/Common/BackButton';
+import { Colors } from '../theme/colors';
 
 export default function HospitalDetailsScreen() {
   const navigation = useNavigation<any>();
@@ -16,7 +17,7 @@ export default function HospitalDetailsScreen() {
         <View style={styles.header}>
           <BackButton onPress={() => navigation.goBack()} />
           <Text style={styles.headerTitle}>Error</Text>
-          <View style={{ width: 48 }} />
+          <View style={styles.spacerWidth48} />
         </View>
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>No Hospital Data found!</Text>
@@ -27,15 +28,15 @@ export default function HospitalDetailsScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* Header */}
+      {}
       <View style={styles.header}>
         <BackButton onPress={() => navigation.goBack()} />
         <Text style={styles.headerTitle}>Hospital Details</Text>
-        <View style={{ width: 48 }} />
+        <View style={styles.spacerWidth48} />
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Hospital Info Card */}
+        {}
         <View style={styles.card}>
           <View style={styles.hospitalProfileRow}>
             <View style={styles.hospitalImageWrapper}>
@@ -48,7 +49,7 @@ export default function HospitalDetailsScreen() {
               </View>
               <View style={styles.ratingRow}>
                 <View style={styles.statRow}>
-                  <MaterialCommunityIcons name="star" size={14} color="#FFB800" />
+                  <MaterialCommunityIcons name="star" size={14} color={Colors.colorFFB800} />
                   <Text style={styles.statText}>{hospital.rating}</Text>
                 </View>
               </View>
@@ -57,35 +58,35 @@ export default function HospitalDetailsScreen() {
           
           <View style={styles.statsDivider} />
           
-          {/* Contact Buttons */}
+          {}
           <View style={styles.contactButtonsRow}>
-            <TouchableOpacity style={[styles.contactButton, { backgroundColor: '#FCE8E8', borderColor: '#FCE8E8', marginRight: 4 }]} onPress={() => Alert.alert('Mail', `Mail sent to ${hospital.name}`)}>
-              <MaterialCommunityIcons name="email-outline" size={20} color="#D93025" />
-              <Text style={[styles.contactButtonText, { color: '#D93025' }]}>Mail</Text>
+            <TouchableOpacity style={[styles.contactButton, { backgroundColor: Colors.colorFCE8E8, borderColor: Colors.colorFCE8E8, marginRight: 4 }]} onPress={() => Alert.alert('Mail', `Mail sent to ${hospital.name}`)}>
+              <MaterialCommunityIcons name="email-outline" size={20} color={Colors.colorD93025} />
+              <Text style={[styles.contactButtonText, { color: Colors.colorD93025 }]}>Mail</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.contactButton, { backgroundColor: '#E8F0FE', borderColor: '#E8F0FE', marginHorizontal: 4 }]} onPress={() => navigation.navigate('Chat', { recipientName: hospital.name })}>
-              <MaterialCommunityIcons name="message-processing-outline" size={20} color="#1A73E8" />
-              <Text style={[styles.contactButtonText, { color: '#1A73E8' }]}>Message</Text>
+            <TouchableOpacity style={[styles.contactButton, { backgroundColor: Colors.colorE8F0FE, borderColor: Colors.colorE8F0FE, marginHorizontal: 4 }]} onPress={() => navigation.navigate('Chat', { recipientName: hospital.name })}>
+              <MaterialCommunityIcons name="message-processing-outline" size={20} color={Colors.color1A73E8} />
+              <Text style={[styles.contactButtonText, { color: Colors.color1A73E8 }]}>Message</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.contactButton, { backgroundColor: '#E6F4EA', borderColor: '#E6F4EA', marginLeft: 4 }]} onPress={() => Alert.alert('Calling', `Dialing ${hospital.name}...`)}>
-              <MaterialCommunityIcons name="phone-in-talk-outline" size={20} color="#137333" />
-              <Text style={[styles.contactButtonText, { color: '#137333' }]}>Call</Text>
+            <TouchableOpacity style={[styles.contactButton, { backgroundColor: Colors.colorE6F4EA, borderColor: Colors.colorE6F4EA, marginLeft: 4 }]} onPress={() => Alert.alert('Calling', `Dialing ${hospital.name}...`)}>
+              <MaterialCommunityIcons name="phone-in-talk-outline" size={20} color={Colors.color137333} />
+              <Text style={[styles.contactButtonText, { color: Colors.color137333 }]}>Call</Text>
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* Doctors Section */}
+        {}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Available Doctors</Text>
           {hospital.doctors && hospital.doctors.map((doc: any, index: number) => (
-            <View key={index} style={{ marginBottom: 12, paddingBottom: 12, borderBottomWidth: index === hospital.doctors.length - 1 ? 0 : 1, borderBottomColor: '#EAEAEA' }}>
-              <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#333' }}>{doc.name}</Text>
-              <Text style={{ fontSize: 14, color: '#666' }}>{doc.specialization}</Text>
+            <View key={index} style={{ marginBottom: 12, paddingBottom: 12, borderBottomWidth: index === hospital.doctors.length - 1 ? 0 : 1, borderBottomColor: Colors.colorEAEAEA }}>
+              <Text style={styles.inlineFontsize16FontweightBold}>{doc.name}</Text>
+              <Text style={styles.inlineFontsize14Color666}>{doc.specialization}</Text>
             </View>
           ))}
         </View>
 
-        {/* About Section */}
+        {}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>About Hospital</Text>
           <Text style={styles.sectionText}>
@@ -93,20 +94,20 @@ export default function HospitalDetailsScreen() {
           </Text>
         </View>
 
-        {/* Working Hours Section */}
+        {}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Working Hours</Text>
           <View style={styles.workingHoursRow}>
-            <MaterialCommunityIcons name="clock-outline" size={20} color="#3C72F2" />
+            <MaterialCommunityIcons name="clock-outline" size={20} color={Colors.color3C72F2} />
             <Text style={styles.workingHoursText}>24/7 Open</Text>
           </View>
         </View>
         
-        {/* Extra padding at bottom for scroll */}
-        <View style={{ height: 20 }} />
+        {}
+        <View style={styles.spacerHeight20} />
       </ScrollView>
 
-      {/* Footer Book Button */}
+      {}
       <View style={styles.footer}>
         <TouchableOpacity style={styles.bookBtn} onPress={() => navigation.navigate('Appointments', { hospital })}>
           <Text style={styles.bookBtnText}>Book Appointment</Text>
@@ -117,9 +118,14 @@ export default function HospitalDetailsScreen() {
 }
 
 const styles = StyleSheet.create({
+  spacerWidth48: { width: 48 },
+  inlineFontsize16FontweightBold: { fontSize: 16, fontWeight: 'bold', color: Colors.color333 },
+  inlineFontsize14Color666: { fontSize: 14, color: Colors.color666 },
+  spacerHeight20: { height: 20 },
+
   safeArea: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: Colors.colorF5F5F5,
   },
   header: {
     flexDirection: 'row',
@@ -127,26 +133,26 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 14,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.colorFFF,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    borderBottomColor: Colors.colorE0E0E0,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: Colors.color333,
   },
   content: {
     flex: 1,
     padding: 16,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: Colors.colorFFF,
     marginBottom: 16,
     borderRadius: 8,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#EAEAEA',
+    borderColor: Colors.colorEAEAEA,
   },
   hospitalProfileRow: {
     flexDirection: 'row',
@@ -170,7 +176,7 @@ const styles = StyleSheet.create({
   hospitalName: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: Colors.color333,
     marginBottom: 4,
   },
   addressPill: {
@@ -178,7 +184,7 @@ const styles = StyleSheet.create({
   },
   hospitalAddress: {
     fontSize: 14,
-    color: '#666',
+    color: Colors.color666,
   },
   ratingRow: {
     flexDirection: 'row',
@@ -191,12 +197,12 @@ const styles = StyleSheet.create({
   },
   statText: {
     fontSize: 14,
-    color: '#555',
+    color: Colors.color555,
     marginLeft: 4,
   },
   statsDivider: {
     height: 1,
-    backgroundColor: '#EAEAEA',
+    backgroundColor: Colors.colorEAEAEA,
     marginVertical: 16,
   },
   contactButtonsRow: {
@@ -211,24 +217,24 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#CCC',
-    backgroundColor: '#FAFAFA',
+    borderColor: Colors.colorCCC,
+    backgroundColor: Colors.background,
   },
   contactButtonText: {
     fontSize: 13,
     fontWeight: '500',
     marginLeft: 6,
-    color: '#333',
+    color: Colors.color333,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
+    color: Colors.color333,
     marginBottom: 12,
   },
   sectionText: {
     fontSize: 14,
-    color: '#555',
+    color: Colors.color555,
     lineHeight: 22,
   },
   workingHoursRow: {
@@ -238,23 +244,23 @@ const styles = StyleSheet.create({
   },
   workingHoursText: {
     fontSize: 14,
-    color: '#333',
+    color: Colors.color333,
     marginLeft: 8,
   },
   footer: {
-    backgroundColor: '#FFF',
+    backgroundColor: Colors.colorFFF,
     padding: 16,
     borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
+    borderTopColor: Colors.colorE0E0E0,
   },
   bookBtn: {
-    backgroundColor: '#007AFF',
+    backgroundColor: Colors.color007AFF,
     borderRadius: 8,
     paddingVertical: 14,
     alignItems: 'center',
   },
   bookBtnText: {
-    color: '#FFF',
+    color: Colors.colorFFF,
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -265,7 +271,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 16,
-    color: '#888',
+    color: Colors.color888,
   }
 });
 

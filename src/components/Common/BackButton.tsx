@@ -1,8 +1,9 @@
 import React from 'react';
 import { TouchableOpacity, StyleSheet, StyleProp, ViewStyle } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import Feather from 'react-native-vector-icons/Feather';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
+import { Colors } from '../../theme/colors';
 
 export interface BackButtonProps {
   onPress: () => void;
@@ -18,7 +19,7 @@ export default function BackButton({
   iconFamily = 'MaterialCommunityIcons',
   iconName,
   size = 28,
-  color = '#333',
+  color = Colors.color333,
   style,
 }: BackButtonProps) {
   
@@ -26,7 +27,7 @@ export default function BackButton({
     if (iconName) return iconName;
     if (iconFamily === 'Ionicons') return 'arrow-back';
     if (iconFamily === 'Feather') return 'chevron-left';
-    return 'arrow-left'; // default for MaterialCommunityIcons
+    return 'arrow-left'; 
   };
 
   const renderIcon = () => {

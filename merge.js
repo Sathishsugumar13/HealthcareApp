@@ -16,30 +16,30 @@ let appendedCode = '';
 for (const comp of componentsToInline) {
     let compContent = fs.readFileSync(comp.path, 'utf-8');
     
-    // Remove imports from the component file
+    
     compContent = compContent.replace(/import .*?;\n/g, '');
     compContent = compContent.replace(/import .*?\n/g, '');
     
     // Replace 'export default function' with 'function'
     compContent = compContent.replace('export default function ' + comp.name, 'function ' + comp.name);
     
-    // Rename styles to componentNameStyles
+    
     const styleName = comp.name.charAt(0).toLowerCase() + comp.name.slice(1) + 'Styles';
     compContent = compContent.replace(/const styles = StyleSheet\.create/g, 'const ' + styleName + ' = StyleSheet.create');
     
-    // Replace styles. with styleName. inside the component
+    
     compContent = compContent.replace(/styles\./g, styleName + '.');
     
-    // Fix relative image paths in Common components since they moved one level up
-    // From Common/Card/Card.tsx to HomeComponent/HomeComponent.tsx
-    // The images were something like '../../../assets/' or '../../../theme/'
-    // Now from HomeComponent.tsx, assets are '../../assets/' and theme is '../../theme/'
+    
+    
+    
+    
     compContent = compContent.replace(/\.\.\/\.\.\/\.\.\/theme/g, '../../theme');
     compContent = compContent.replace(/\.\.\/\.\.\/\.\.\/assets/g, '../../assets');
     
     appendedCode += '\n' + compContent + '\n';
     
-    // Remove import from HomeComponent
+    
     const importRegex = new RegExp('import ' + comp.name + ' from \\\'' + comp.importPath + '\\\';\\\n');
     homeContent = homeContent.replace(importRegex, '');
 }

@@ -1,12 +1,8 @@
-/**
- * Component: SuccessModal
- * Originally created for: Common use across auth screens (SignUp, ForgotPassword)
- * Usage: Modal to show success messages
- */
+
 import React from 'react';
 import { Colors } from '../../theme/colors';
 import { Modal, View, Text, Pressable, StyleSheet } from 'react-native';
-import Feather from 'react-native-vector-icons/Feather';
+import { Feather } from '@expo/vector-icons';
 
 interface SuccessModalProps {
   visible: boolean;
@@ -50,7 +46,7 @@ export default function SuccessModal({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: Colors.overlay40,
     justifyContent: 'center',
     alignItems: 'center',
   },

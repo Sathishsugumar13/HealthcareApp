@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import HomeScreen from '../screens/HomeScreen';
 import ReportsScreen from '../screens/ReportsScreen';
@@ -9,24 +10,38 @@ import NotificationScreen from '../screens/NotificationScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
 import { useGlobalNotifications } from '../context/NotificationContext';
+import { Colors } from '../theme/colors';
 
 const Tab = createBottomTabNavigator();
 
 export default function MainTabNavigator(props: any) {
   const { unreadCount } = useGlobalNotifications();
+  const [userObj, setUserObj] = useState<any>(props.route?.params?.user || null);
 
-  // let's get the user from route params safely
-  let userObj = null;
-  if (props.route && props.route.params && props.route.params.user) {
-    userObj = props.route.params.user;
-  } else {
-    console.log("no user object found in route params");
-  }
+  useEffect(() => {
+    if (!userObj) {
+      const fetchUser = async () => {
+        const data = await AsyncStorage.getItem('user');
+        if (data) {
+          setUserObj(JSON.parse(data));
+        }
+      };
+      fetchUser();
+    }
+  }, []);
 
   const doLogout = () => {
     console.log("logout button clicked in tabs");
-    props.navigation.replace('SignIn');
+    props.navigation.reset({
+      index: 0,
+      routes: [{ name: 'SignIn' }],
+    });
   }
+
+  const handleUpdateUser = async (updatedUser: any) => {
+    setUserObj(updatedUser);
+    await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
+  };
 
   return (
     <Tab.Navigator
@@ -47,12 +62,12 @@ export default function MainTabNavigator(props: any) {
 
           return <MaterialCommunityIcons name={iconName} size={32} color={color} />;
         },
-        tabBarActiveTintColor: '#3572E1',
-        tabBarInactiveTintColor: '#8A8A8A',
+        tabBarActiveTintColor: Colors.color3572E1,
+        tabBarInactiveTintColor: Colors.color8A8A8A,
         tabBarStyle: {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: Colors.white,
           borderTopWidth: 1,
-          borderTopColor: '#F0F0F0',
+          borderTopColor: Colors.colorF0F0F0,
           paddingTop: 12,
           height: Platform.OS === 'ios' ? 95 : 80,
           paddingBottom: Platform.OS === 'ios' ? 28 : 15,
@@ -65,7 +80,7 @@ export default function MainTabNavigator(props: any) {
       })}
     >
       <Tab.Screen name="Home">
-        {(screenProps) => <HomeScreen {...screenProps} user={userObj} onLogout={doLogout} />}
+        {(screenProps) => <HomeScreen {...screenProps} user={userObj} onLogout={doLogout} onUpdateUser={handleUpdateUser} />}
       </Tab.Screen>
       <Tab.Screen name="Reports" component={ReportsScreen} />
       <Tab.Screen 
@@ -73,11 +88,11 @@ export default function MainTabNavigator(props: any) {
         component={NotificationScreen} 
         options={{
           tabBarBadge: unreadCount > 0 ? unreadCount : undefined,
-          tabBarBadgeStyle: { backgroundColor: 'red', color: 'white' },
+          tabBarBadgeStyle: { backgroundColor: Colors.red, color: Colors.white },
         }}
       />
       <Tab.Screen name="Profile">
-         {(screenProps) => <ProfileScreen {...screenProps} user={userObj} onLogout={doLogout} />}
+         {(screenProps) => <ProfileScreen {...screenProps} user={userObj} onLogout={doLogout} onUpdateUser={handleUpdateUser} />}
       </Tab.Screen>
     </Tab.Navigator>
   );

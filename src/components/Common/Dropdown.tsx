@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Colors } from '../../theme/colors';
 
 export interface DropdownItem {
   label: string;
@@ -18,7 +19,7 @@ interface DropdownProps {
 export default function Dropdown({ data, value, onSelect, placeholder = 'Select...' }: DropdownProps) {
   const [visible, setVisible] = useState(false);
 
-  const selectedItem = data.find(item => item.value === value) || data[0]; // fallback to first item
+  const selectedItem = data.find(item => item.value === value) || data[0]; 
 
   return (
     <View style={styles.container}>
@@ -29,11 +30,11 @@ export default function Dropdown({ data, value, onSelect, placeholder = 'Select.
       >
         <View style={styles.dropdownButtonContent}>
           {selectedItem.icon && (
-            <MaterialCommunityIcons name={selectedItem.icon} size={16} color="#333" style={{ marginRight: 6 }} />
+            <MaterialCommunityIcons name={selectedItem.icon} size={16} color={Colors.color333} style={styles.inlineMarginright6} />
           )}
           <Text style={styles.dropdownButtonText}>{selectedItem.label}</Text>
         </View>
-        <MaterialCommunityIcons name={visible ? "chevron-up" : "chevron-down"} size={20} color="#666" style={{ marginLeft: 8 }} />
+        <MaterialCommunityIcons name={visible ? "chevron-up" : "chevron-down"} size={20} color={Colors.color666} style={styles.inlineMarginleft8} />
       </TouchableOpacity>
 
       {visible && (
@@ -54,8 +55,8 @@ export default function Dropdown({ data, value, onSelect, placeholder = 'Select.
                   <MaterialCommunityIcons 
                     name={item.icon} 
                     size={18} 
-                    color={item.value === value ? "#4A80F0" : "#555"} 
-                    style={{ marginRight: 8 }} 
+                    color={item.value === value ? Colors.color4A80F0 : Colors.color555} 
+                    style={styles.inlineMarginright8} 
                   />
                 )}
                 <Text style={[styles.dropdownMenuItemText, item.value === value && styles.dropdownMenuItemTextActive]}>
@@ -71,6 +72,10 @@ export default function Dropdown({ data, value, onSelect, placeholder = 'Select.
 }
 
 const styles = StyleSheet.create({
+  inlineMarginright6: { marginRight: 6 },
+  inlineMarginleft8: { marginLeft: 8 },
+  inlineMarginright8: { marginRight: 8 },
+
   container: {
     paddingHorizontal: 16,
     zIndex: 9999,
@@ -81,9 +86,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     alignSelf: 'flex-start',
-    backgroundColor: '#FFF',
+    backgroundColor: Colors.colorFFF,
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: Colors.colorE0E0E0,
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 8,
@@ -94,7 +99,7 @@ const styles = StyleSheet.create({
   },
   dropdownButtonText: {
     fontSize: 14,
-    color: '#333',
+    color: Colors.color333,
     fontWeight: '500',
   },
   dropdownMenu: {
@@ -103,12 +108,12 @@ const styles = StyleSheet.create({
     left: 16,
     marginTop: 5,
     minWidth: 180,
-    backgroundColor: '#FFF',
+    backgroundColor: Colors.colorFFF,
     borderRadius: 8,
     maxHeight: 250,
     paddingVertical: 4,
     elevation: 10,
-    shadowColor: '#000',
+    shadowColor: Colors.color000,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
@@ -121,14 +126,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   dropdownMenuItemActive: {
-    backgroundColor: '#F0F5FF',
+    backgroundColor: Colors.colorF0F5FF,
   },
   dropdownMenuItemText: {
     fontSize: 14,
-    color: '#333',
+    color: Colors.color333,
   },
   dropdownMenuItemTextActive: {
-    color: '#4A80F0',
+    color: Colors.color4A80F0,
     fontWeight: '600',
   }
 });

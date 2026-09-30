@@ -14,9 +14,10 @@ import { Colors } from '../theme/colors';
 import CustomButton from '../components/Common/CustomButton';
 import PaginationDots from '../components/Onboarding/PaginationDots';
 import Logo from '../components/Common/Logo';
+import { images } from '../assets/images';
 
 export default function Onboarding(props: any) {
-  // state to track which page we are on
+  
   let initPage = 1;
   if (props.route && props.route.params && props.route.params.initialPage) {
     initPage = props.route.params.initialPage;
@@ -33,7 +34,7 @@ export default function Onboarding(props: any) {
     props.navigation.navigate('SignUp');
   };
 
-  // if user is on the last page (page 3)
+  
   if (currentPage === 3) {
     return (
       <SafeAreaView style={styles.last} edges={['top', 'bottom']}>
@@ -52,39 +53,43 @@ export default function Onboarding(props: any) {
           Login to Stay healthy and fit
         </Text>
 
-        <CustomButton 
-          title="Login" 
-          onPress={onLoginBtnClick} 
-          style={{ width: '100%', marginBottom: 15 }} 
-        />
-
-        <CustomButton 
-          title="Sign Up" 
-          variant="outline"
-          onPress={onSignUpBtnClick} 
-          style={{ width: '100%' }}
-        />
+        <View style={styles.buttonContainer}>
+          <View style={styles.loginButtonWrapper}>
+            <CustomButton
+              title="Login"
+              onPress={onLoginBtnClick}
+            />
+          </View>
+          
+          <View style={styles.signupButtonWrapper}>
+            <CustomButton
+              title="Sign Up"
+              variant="outline"
+              onPress={onSignUpBtnClick} 
+            />
+          </View>
+        </View>
 
       </SafeAreaView>
     );
   }
 
-  // variables for image and title based on current page
+  
   let currentImage;
   let currentTitle;
 
   if (currentPage === 1) {
-    currentImage = require('../assets/images/onboarding-1.png');
+    currentImage = images.onboarding.onboarding1;
     currentTitle = 'Find a lot of specialist doctor in one place';
   } else {
-    currentImage = require('../assets/images/onboarding-2.png');
+    currentImage = images.onboarding.onboarding2;
     currentTitle = 'Get advice only from a doctor you believe in.';
   }
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
 
-      {/* Skip button jumps to page 3 */}
+      {}
       <Pressable
         style={styles.skip}
         onPress={() => setCurrentPage(3)}
@@ -105,7 +110,7 @@ export default function Onboarding(props: any) {
         
         <PaginationDots totalPages={2} currentPage={currentPage} />
 
-        {/* Go to next page by adding 1 */}
+        {}
         <CustomButton 
           rightIcon="arrow-right"
           iconFamily="Feather" 
@@ -169,7 +174,7 @@ const styles = StyleSheet.create({
   healthcare: {
     fontSize: 28,
     fontWeight: '800',
-    color: '#223A6A',
+    color: Colors.brandDark,
     marginTop: 10,
     marginBottom: 50,
   },
@@ -183,5 +188,13 @@ const styles = StyleSheet.create({
     color: Colors.secondaryText,
     fontSize: 16,
     marginBottom: 30,
+  },
+  buttonContainer: {
+    width: '100%',
+  },
+  loginButtonWrapper: {
+    marginBottom: 15,
+  },
+  signupButtonWrapper: {
   },
 });

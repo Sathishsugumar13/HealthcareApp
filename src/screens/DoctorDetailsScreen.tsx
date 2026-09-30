@@ -1,9 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import BackButton from '../components/Common/BackButton';
+import ContactActionButtons from '../components/Common/ContactActionButtons';
+import DoctorInfoCard from '../components/Common/DoctorInfoCard';
+import { Colors } from '../theme/colors';
 
 export default function DoctorDetailsScreen() {
   const navigation = useNavigation<any>();
@@ -16,7 +19,7 @@ export default function DoctorDetailsScreen() {
         <View style={styles.header}>
           <BackButton onPress={() => navigation.goBack()} />
           <Text style={styles.headerTitle}>Error</Text>
-          <View style={{ width: 48 }} />
+          <View style={styles.spacerWidth48} />
         </View>
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>No Doctor Data found!</Text>
@@ -27,57 +30,17 @@ export default function DoctorDetailsScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* Header */}
+      {}
       <View style={styles.header}>
         <BackButton onPress={() => navigation.goBack()} />
-        <Text style={styles.headerTitle}>Doctor Details</Text>
-        <View style={{ width: 48 }} />
+        <Text style={styles.headerTitle}>{doctor.name}</Text>
+        <View style={styles.spacerWidth48} />
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Doctor Info Card */}
-        <View style={styles.card}>
-          <View style={styles.doctorProfileRow}>
-            <View style={styles.doctorImageWrapper}>
-              <Image source={doctor.image} style={styles.doctorImage} />
-            </View>
-            <View style={styles.doctorInfoText}>
-              <Text style={styles.doctorName}>{doctor.name}</Text>
-              <View style={styles.specializationPill}>
-                <Text style={styles.doctorSpecialization}>{doctor.specialization}</Text>
-              </View>
-              <View style={styles.ratingRow}>
-                <View style={styles.statRow}>
-                  <MaterialCommunityIcons name="star" size={14} color="#FFB800" />
-                  <Text style={styles.statText}>{doctor.rating}</Text>
-                </View>
-                <View style={styles.statRow}>
-                  <MaterialCommunityIcons name="briefcase-variant-outline" size={14} color="#777" />
-                  <Text style={styles.statText}>{doctor.experience}</Text>
-                </View>
-              </View>
-            </View>
-          </View>
-          
-          <View style={styles.statsDivider} />
-          
-          {/* Contact Buttons */}
-          <View style={styles.contactButtonsRow}>
-            <TouchableOpacity 
-              style={[styles.contactButton, { backgroundColor: '#E8F0FE', borderColor: '#E8F0FE', marginRight: 6 }]}
-              onPress={() => navigation.navigate('Chat', { recipientName: doctor.name })}
-            >
-              <MaterialCommunityIcons name="message-processing-outline" size={20} color="#1A73E8" />
-              <Text style={[styles.contactButtonText, { color: '#1A73E8' }]}>Message</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.contactButton, { backgroundColor: '#E6F4EA', borderColor: '#E6F4EA', marginLeft: 6 }]}>
-              <MaterialCommunityIcons name="phone-in-talk-outline" size={20} color="#137333" />
-              <Text style={[styles.contactButtonText, { color: '#137333' }]}>Call</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        <DoctorInfoCard doctor={doctor} hideName={true} />
 
-        {/* About Section */}
+        {}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>About Doctor</Text>
           <Text style={styles.sectionText}>
@@ -85,16 +48,16 @@ export default function DoctorDetailsScreen() {
           </Text>
         </View>
 
-        {/* Working Hours Section */}
+        {}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Working Hours</Text>
           <View style={styles.workingHoursRow}>
-            <MaterialCommunityIcons name="clock-outline" size={20} color="#3C72F2" />
+            <MaterialCommunityIcons name="clock-outline" size={20} color={Colors.color3C72F2} />
             <Text style={styles.workingHoursText}>Monday - Friday, 09:00 AM - 05:00 PM</Text>
           </View>
         </View>
 
-        {/* Review Section */}
+        {}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Patient Reviews</Text>
           
@@ -107,7 +70,7 @@ export default function DoctorDetailsScreen() {
                 <Text style={styles.reviewName}>Alice Williams</Text>
               </View>
               <View style={styles.reviewRatingBadge}>
-                <MaterialCommunityIcons name="star" size={16} color="#FFB800" />
+                <MaterialCommunityIcons name="star" size={16} color={Colors.colorFFB800} />
                 <Text style={styles.reviewRatingText}>5.0</Text>
               </View>
             </View>
@@ -117,11 +80,11 @@ export default function DoctorDetailsScreen() {
           </View>
         </View>
         
-        {/* Extra padding at bottom for scroll */}
-        <View style={{ height: 20 }} />
+        {}
+        <View style={styles.spacerHeight20} />
       </ScrollView>
 
-      {/* Footer Book Button */}
+      {}
       <View style={styles.footer}>
         <TouchableOpacity style={styles.bookBtn} onPress={() => navigation.navigate('Appointments', { doctor })}>
           <Text style={styles.bookBtnText}>Book Appointment</Text>
@@ -132,9 +95,12 @@ export default function DoctorDetailsScreen() {
 }
 
 const styles = StyleSheet.create({
+  spacerWidth48: { width: 48 },
+  spacerHeight20: { height: 20 },
+
   safeArea: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: Colors.colorF5F5F5,
   },
   header: {
     flexDirection: 'row',
@@ -142,26 +108,26 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 14,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.colorFFF,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    borderBottomColor: Colors.colorE0E0E0,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: Colors.color333,
   },
   content: {
     flex: 1,
     padding: 16,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: Colors.colorFFF,
     marginBottom: 16,
     borderRadius: 8,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#EAEAEA',
+    borderColor: Colors.colorEAEAEA,
   },
   doctorProfileRow: {
     flexDirection: 'row',
@@ -185,7 +151,7 @@ const styles = StyleSheet.create({
   doctorName: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: Colors.color333,
     marginBottom: 4,
   },
   specializationPill: {
@@ -193,7 +159,7 @@ const styles = StyleSheet.create({
   },
   doctorSpecialization: {
     fontSize: 14,
-    color: '#666',
+    color: Colors.color666,
   },
   ratingRow: {
     flexDirection: 'row',
@@ -206,12 +172,12 @@ const styles = StyleSheet.create({
   },
   statText: {
     fontSize: 14,
-    color: '#555',
+    color: Colors.color555,
     marginLeft: 4,
   },
   statsDivider: {
     height: 1,
-    backgroundColor: '#EAEAEA',
+    backgroundColor: Colors.colorEAEAEA,
     marginVertical: 16,
   },
   contactButtonsRow: {
@@ -226,24 +192,24 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#CCC',
-    backgroundColor: '#FAFAFA',
+    borderColor: Colors.colorCCC,
+    backgroundColor: Colors.background,
   },
   contactButtonText: {
     fontSize: 15,
     fontWeight: '500',
     marginLeft: 8,
-    color: '#333',
+    color: Colors.color333,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
+    color: Colors.color333,
     marginBottom: 12,
   },
   sectionText: {
     fontSize: 14,
-    color: '#555',
+    color: Colors.color555,
     lineHeight: 22,
   },
   workingHoursRow: {
@@ -253,7 +219,7 @@ const styles = StyleSheet.create({
   },
   workingHoursText: {
     fontSize: 14,
-    color: '#333',
+    color: Colors.color333,
     marginLeft: 8,
   },
   reviewItem: {
@@ -273,7 +239,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#3C72F2',
+    backgroundColor: Colors.color3C72F2,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
@@ -281,12 +247,12 @@ const styles = StyleSheet.create({
   avatarText: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#FFF',
+    color: Colors.colorFFF,
   },
   reviewName: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#333',
+    color: Colors.color333,
   },
   reviewRatingBadge: {
     flexDirection: 'row',
@@ -295,23 +261,23 @@ const styles = StyleSheet.create({
   reviewRatingText: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#333',
+    color: Colors.color333,
     marginLeft: 4,
   },
   footer: {
-    backgroundColor: '#FFF',
+    backgroundColor: Colors.colorFFF,
     padding: 16,
     borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
+    borderTopColor: Colors.colorE0E0E0,
   },
   bookBtn: {
-    backgroundColor: '#007AFF',
+    backgroundColor: Colors.color007AFF,
     borderRadius: 8,
     paddingVertical: 14,
     alignItems: 'center',
   },
   bookBtnText: {
-    color: '#FFF',
+    color: Colors.colorFFF,
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -322,7 +288,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 16,
-    color: '#888',
+    color: Colors.color888,
   }
 });
 

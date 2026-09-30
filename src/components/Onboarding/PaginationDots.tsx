@@ -1,8 +1,3 @@
-/**
- * Component: PaginationDots
- * Originally created for: Onboarding Page
- * Usage: Indicators for swiping pages
- */
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Colors } from '../../theme/colors';

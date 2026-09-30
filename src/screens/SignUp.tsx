@@ -9,10 +9,10 @@ import SuccessModal from '../components/Common/SuccessModal';
 import SignUpForm from '../components/SignUp/SignUpForm';
 
 export default function SignUp(props: any) {
-  // state to show or hide the success popup
+  
   const [isSuccessPopupOpen, setIsSuccessPopupOpen] = useState(false);
 
-  // function to close the popup and go back to sign in
+  
   const handleSuccessPopupClose = () => {
     setIsSuccessPopupOpen(false);
     console.log("Success! Going to SignIn page now.");
@@ -32,7 +32,7 @@ export default function SignUp(props: any) {
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       
-      {/* Success Modal */}
+      {}
       <SuccessModal 
         visible={isSuccessPopupOpen}
         title="Account Created!"
@@ -42,10 +42,10 @@ export default function SignUp(props: any) {
 
       <ScrollView contentContainerStyle={styles.contentContainer}>
         
-        {/* Header */}
+        {}
         <Header title="Sign Up" onBackPress={handleBack} />
 
-        {/* The sign up form component */}
+        {}
         <SignUpForm 
           onSuccess={() => setIsSuccessPopupOpen(true)}
           onSignIn={goToSignIn}

@@ -1,16 +1,14 @@
 import { useState } from 'react';
-import { Text, Pressable, Platform, StyleSheet } from 'react-native';
+import { Text, Pressable, Platform, StyleSheet, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '../../theme/colors';
 
 import CustomInput from './CustomInput';
 import CustomButton from '../Common/CustomButton';
-import Divider from './Divider';
 import SocialButton from './SocialButton';
-import AuthBottomLink from '../Common/AuthBottomLink';
 
 export default function SignInForm(props: any) {
-  // state for login form
+  
   const [emailValue, setEmailValue] = useState('');
   const [passwordValue, setPasswordValue] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -34,18 +32,18 @@ export default function SignInForm(props: any) {
       let data = await AsyncStorage.getItem('user');
       savedUserString = data;
 
-      // if no user is found
+      
       if (savedUserString === null) {
         setErrorMsg('No account found. Please sign up first.');
       } else {
-        // user is found, parse it
+        
         const savedUserObject = JSON.parse(savedUserString);
 
-        // check if email and password match
+        
         if (savedUserObject.email !== emailValue || savedUserObject.password !== passwordValue) {
           setErrorMsg('Invalid Email id or Password.');
         } else {
-          // login success
+          
           console.log('Login success for user: ', savedUserObject.email);
           props.onLogin(savedUserObject);
         }
@@ -81,25 +79,30 @@ export default function SignInForm(props: any) {
 
       <CustomButton title="Sign In" onPress={handleLoginClick} />
 
-      <AuthBottomLink 
-        text="Don't have an account? " 
-        linkText="Sign up" 
-        onPress={props.onSignUp} 
-      />
+      <View style={styles.authLinkContainer}>
+        <Text style={styles.authBottomText}>Don't have an account? </Text>
+        <Pressable onPress={props.onSignUp}>
+          <Text style={styles.authLink}>Sign up</Text>
+        </Pressable>
+      </View>
 
-      <Divider text="OR" />
+      <View style={styles.dividerContainer}>
+        <View style={styles.dividerLine} />
+        <Text style={styles.dividerText}>OR</Text>
+        <View style={styles.dividerLine} />
+      </View>
 
       <SocialButton 
         title="Sign in with Google" 
         icon="google" 
-        color="#DB4437" 
+        color={Colors.colorDB4437} 
         provider="google"
       />
 
       <SocialButton 
         title="Sign in with Facebook" 
         icon="facebook" 
-        color="#4267B2" 
+        color={Colors.color4267B2} 
         provider="facebook"
       />
     </>
@@ -122,6 +125,36 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     fontWeight: '600',
     fontSize: 14,
+  },
+  authLinkContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 20,
+    marginBottom: 40, 
+  },
+  authBottomText: {
+    fontSize: 15,
+    color: Colors.text,
+  },
+  authLink: {
+    color: Colors.primary,
+    fontWeight: '700',
+    fontSize: 15,
+  },
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: Colors.border,
+  },
+  dividerText: {
+    marginHorizontal: 10,
+    color: Colors.secondaryText,
+    fontWeight: '600',
   },
 });
 

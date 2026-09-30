@@ -7,6 +7,7 @@ interface NotificationContextProps {
   unreadCount: number;
   readIds: string[];
   markAsRead: (id: string) => void;
+  deleteNotification: (id: string) => void;
 }
 
 const NotificationContext = createContext<NotificationContextProps>({
@@ -14,11 +15,17 @@ const NotificationContext = createContext<NotificationContextProps>({
   unreadCount: 0,
   readIds: [],
   markAsRead: () => {},
+  deleteNotification: () => {},
 });
 
 export const NotificationProvider = ({ children }: { children: ReactNode }) => {
-  const { notifications } = usePushNotifications();
+  const { notifications: rawNotifications } = usePushNotifications();
   const [readIds, setReadIds] = React.useState<string[]>([]);
+  const [deletedIds, setDeletedIds] = React.useState<string[]>([]);
+
+  const notifications = rawNotifications.filter(
+    (n) => !deletedIds.includes(n.request.identifier)
+  );
 
   const unreadCount = notifications.filter(
     (n) => !readIds.includes(n.request.identifier)
@@ -28,8 +35,12 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
     setReadIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
   };
 
+  const deleteNotification = (id: string) => {
+    setDeletedIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
+  };
+
   return (
-    <NotificationContext.Provider value={{ notifications, unreadCount, readIds, markAsRead }}>
+    <NotificationContext.Provider value={{ notifications, unreadCount, readIds, markAsRead, deleteNotification }}>
       {children}
     </NotificationContext.Provider>
   );

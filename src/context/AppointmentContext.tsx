@@ -3,10 +3,13 @@ import React, { createContext, useState, useContext } from 'react';
 export interface Appointment {
   id: string;
   patientName: string;
+  phone?: string;
   doctorName: string;
   specialization: string;
   date: string;
   image?: any;
+  paymentMethod?: string;
+  paymentStatus?: string;
 }
 
 interface AppointmentContextType {

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Pressable, Text, StyleSheet, ActivityIndicator, StyleProp, ViewStyle, TextStyle, View } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Feather from 'react-native-vector-icons/Feather';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 export interface CustomButtonProps {
@@ -63,7 +63,7 @@ export default function CustomButton({
         containerStyle.elevation = 0;
         break;
       case 'danger':
-        containerStyle.backgroundColor = '#FF4D4D';
+        containerStyle.backgroundColor = Colors.error;
         break;
     }
 

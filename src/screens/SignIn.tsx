@@ -15,7 +15,10 @@ export default function SignIn(props: any) {
 
   const loginSuccess = (data: any) => {
     console.log("login success function called, passing data: ", data);
-    props.navigation.replace('MainTab', { user: data });
+    props.navigation.reset({
+      index: 0,
+      routes: [{ name: 'MainTab', params: { user: data } }],
+    });
   };
 
   const goToSignUp = () => {
@@ -32,7 +35,7 @@ export default function SignIn(props: any) {
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       <ScrollView contentContainerStyle={styles.contentContainer}>
         
-        {/* Header component */}
+        {}
         <Header 
           title="Sign In" 
           onBackPress={handleBackButtonClick} 

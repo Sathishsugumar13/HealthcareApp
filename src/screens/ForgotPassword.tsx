@@ -17,7 +17,7 @@ export default function ForgotPassword(props: any) {
 
   const handleSuccessPopupClose = () => {
     setIsSuccessModalOpen(false);
-    // Go back to sign in after closing success modal
+    
     console.log("popup closed, going back");
     props.navigation.goBack();
   };

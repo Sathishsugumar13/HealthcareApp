@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Feather, AntDesign } from '@expo/vector-icons';
+import { Colors } from '../../theme/colors';
 
 export interface ProfileMenuItemProps {
   title: string;
@@ -12,15 +13,15 @@ export interface ProfileMenuItemProps {
 export default function ProfileMenuItem({ title, iconName, iconType, onPress }: ProfileMenuItemProps) {
   let iconComponent = null;
   if (iconType === 'Feather') {
-    iconComponent = <Feather name={iconName as any} size={20} color="#4A80F0" />;
+    iconComponent = <Feather name={iconName as any} size={20} color={Colors.color4A80F0} />;
   }
   if (iconType === 'AntDesign') {
-    iconComponent = <AntDesign name={iconName as any} size={20} color="#4A80F0" />;
+    iconComponent = <AntDesign name={iconName as any} size={20} color={Colors.color4A80F0} />;
   }
 
   return (
     <TouchableOpacity style={styles.menuItem} onPress={onPress}>
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <View style={styles.inlineFlexdirectionRowAlignite}>
         <View style={styles.iconCircle}>
           {iconComponent}
         </View>
@@ -32,19 +33,21 @@ export default function ProfileMenuItem({ title, iconName, iconType, onPress }: 
 }
 
 const styles = StyleSheet.create({
+  inlineFlexdirectionRowAlignite: { flexDirection: 'row', alignItems: 'center' },
+
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: Colors.colorF0F0F0,
   },
   iconCircle: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#EEF3FF',
+    backgroundColor: Colors.colorEEF3FF,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15,
@@ -52,6 +55,6 @@ const styles = StyleSheet.create({
   menuText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'black',
+    color: Colors.black,
   },
 });

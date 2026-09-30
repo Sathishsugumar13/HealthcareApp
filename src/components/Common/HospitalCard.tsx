@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 export interface HospitalCardProps {
   name: string;
-  location?: string; // made optional to support address
+  location?: string; 
   address?: string;
   distance?: string;
   rating: string;
@@ -36,13 +36,13 @@ export default function HospitalCard({ name, location, address, distance, rating
             </View>
           )}
           <View style={hospitalCardStyles.infoItem}>
-            <MaterialCommunityIcons name="star" size={14} color="#FFD700" />
+            <MaterialCommunityIcons name="star" size={14} color={Colors.colorFFD700} />
             <Text style={hospitalCardStyles.infoText}>{rating}</Text>
           </View>
         </View>
         {doctors && doctors.length > 0 && (
           <Text style={hospitalCardStyles.doctorsText} numberOfLines={1}>
-            <Text style={{fontWeight: 'bold'}}>Doctors: </Text>{doctors.join(', ')}
+            <Text style={hospitalCardStyles.inlineFontweightBold}>Doctors: </Text>{doctors.join(', ')}
           </Text>
         )}
       </View>
@@ -56,6 +56,8 @@ export default function HospitalCard({ name, location, address, distance, rating
 }
 
 const hospitalCardStyles = StyleSheet.create({
+  inlineFontweightBold: { fontWeight: 'bold' },
+
   container: {
     flexDirection: 'row',
     backgroundColor: Colors.white,
@@ -77,7 +79,7 @@ const hospitalCardStyles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 8,
-    backgroundColor: '#E8E8E8',
+    backgroundColor: Colors.border,
     marginRight: 12,
   },
   details: {
@@ -109,7 +111,7 @@ const hospitalCardStyles = StyleSheet.create({
     marginLeft: 4,
   },
   statusContainer: {
-    backgroundColor: '#E6F0FF',
+    backgroundColor: Colors.colorE6F0FF,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 8,

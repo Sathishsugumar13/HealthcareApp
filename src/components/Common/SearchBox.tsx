@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, TextInput, StyleSheet, TouchableOpacity, StyleProp, ViewStyle } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Colors } from '../../theme/colors';
 
 export interface SearchBoxProps {
   value: string;
@@ -21,22 +22,22 @@ export default function SearchBox({
   return (
     <View style={[styles.searchContainer, style]}>
       {iconFamily === 'Ionicons' ? (
-        <Ionicons name="search-outline" size={20} color="#A0A0A0" style={styles.searchIcon} />
+        <Ionicons name="search-outline" size={20} color={Colors.secondaryText} style={styles.searchIcon} />
       ) : (
-        <MaterialCommunityIcons name="magnify" size={24} color="#A0A0A0" style={styles.searchIcon} />
+        <MaterialCommunityIcons name="magnify" size={24} color={Colors.secondaryText} style={styles.searchIcon} />
       )}
       
       <TextInput
         style={styles.searchInput}
         placeholder={placeholder}
-        placeholderTextColor="#A0A0A0"
+        placeholderTextColor={Colors.secondaryText}
         value={value}
         onChangeText={onChangeText}
       />
       
       {value.length > 0 && (
         <TouchableOpacity onPress={() => onChangeText('')} style={styles.clearIcon}>
-          <MaterialCommunityIcons name="close-circle" size={20} color="#A0A0A0" />
+          <MaterialCommunityIcons name="close-circle" size={20} color={Colors.secondaryText} />
         </TouchableOpacity>
       )}
     </View>
@@ -47,8 +48,10 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F5F5F5',
+    backgroundColor: Colors.white,
     borderRadius: 12,
+    borderWidth: 1,
+    borderColor: Colors.colorE0E0E0,
     paddingHorizontal: 12,
     height: 50,
   },
@@ -58,7 +61,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 14,
-    color: '#333',
+    color: Colors.color333,
   },
   clearIcon: {
     padding: 4,
