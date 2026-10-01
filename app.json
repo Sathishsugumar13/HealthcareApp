@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./src/assets/expo/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "splash": {
       "image": "./src/assets/expo/splash-icon.png",
       "resizeMode": "contain",
