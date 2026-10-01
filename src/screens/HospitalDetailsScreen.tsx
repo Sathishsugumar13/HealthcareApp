@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import BackButton from '../components/Common/BackButton';
@@ -49,7 +49,7 @@ export default function HospitalDetailsScreen() {
               </View>
               <View style={styles.ratingRow}>
                 <View style={styles.statRow}>
-                  <MaterialCommunityIcons name="star" size={14} color={Colors.colorFFB800} />
+                  <Ionicons name="star" size={14} color={Colors.colorFFB800} />
                   <Text style={styles.statText}>{hospital.rating}</Text>
                 </View>
               </View>
@@ -61,15 +61,15 @@ export default function HospitalDetailsScreen() {
           {}
           <View style={styles.contactButtonsRow}>
             <TouchableOpacity style={[styles.contactButton, { backgroundColor: Colors.colorFCE8E8, borderColor: Colors.colorFCE8E8, marginRight: 4 }]} onPress={() => Alert.alert('Mail', `Mail sent to ${hospital.name}`)}>
-              <MaterialCommunityIcons name="email-outline" size={20} color={Colors.colorD93025} />
+              <Ionicons name="mail-outline" size={20} color={Colors.colorD93025} />
               <Text style={[styles.contactButtonText, { color: Colors.colorD93025 }]}>Mail</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.contactButton, { backgroundColor: Colors.colorE8F0FE, borderColor: Colors.colorE8F0FE, marginHorizontal: 4 }]} onPress={() => navigation.navigate('Chat', { recipientName: hospital.name })}>
-              <MaterialCommunityIcons name="message-processing-outline" size={20} color={Colors.color1A73E8} />
+              <Ionicons name="chatbubble-ellipses-outline" size={20} color={Colors.color1A73E8} />
               <Text style={[styles.contactButtonText, { color: Colors.color1A73E8 }]}>Message</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.contactButton, { backgroundColor: Colors.colorE6F4EA, borderColor: Colors.colorE6F4EA, marginLeft: 4 }]} onPress={() => Alert.alert('Calling', `Dialing ${hospital.name}...`)}>
-              <MaterialCommunityIcons name="phone-in-talk-outline" size={20} color={Colors.color137333} />
+              <Ionicons name="call-outline" size={20} color={Colors.color137333} />
               <Text style={[styles.contactButtonText, { color: Colors.color137333 }]}>Call</Text>
             </TouchableOpacity>
           </View>
@@ -98,7 +98,7 @@ export default function HospitalDetailsScreen() {
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Working Hours</Text>
           <View style={styles.workingHoursRow}>
-            <MaterialCommunityIcons name="clock-outline" size={20} color={Colors.color3C72F2} />
+            <Ionicons name="time-outline" size={20} color={Colors.color3C72F2} />
             <Text style={styles.workingHoursText}>24/7 Open</Text>
           </View>
         </View>

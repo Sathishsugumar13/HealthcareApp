@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, TextInput, KeyboardAvoidingView, Platform, ScrollView, Alert, Modal } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { usePharmacy } from '../../../context/PharmacyContext';
@@ -51,7 +51,7 @@ export default function PharmacyComponent() {
 
   const handleBuy = () => {
     if (selectedPharmacy) {
-      navigation.navigate('PharmacyCheckout', {
+      navigation.navigate('Payment', {
         pharmacy: selectedPharmacy,
         message: message
       });
@@ -103,7 +103,7 @@ export default function PharmacyComponent() {
             <View style={styles.divider} />
 
             <View style={styles.sectionHeader}>
-              <MaterialCommunityIcons name="pill" size={22} color={Colors.color3C72F2} />
+              <Ionicons name="medkit-outline" size={22} color={Colors.color3C72F2} />
               <Text style={styles.sectionTitle}>Available Tablets</Text>
             </View>
             
@@ -118,7 +118,7 @@ export default function PharmacyComponent() {
             <View style={styles.divider} />
 
             <View style={styles.sectionHeader}>
-              <MaterialCommunityIcons name="clipboard-edit-outline" size={22} color={Colors.color3C72F2} />
+              <Ionicons name="document-text-outline" size={22} color={Colors.color3C72F2} />
               <Text style={styles.sectionTitle}>Order Medicines</Text>
             </View>
             
@@ -138,7 +138,7 @@ export default function PharmacyComponent() {
             <View style={styles.uploadButtonsContainer}>
               <TouchableOpacity style={[styles.uploadButton, { backgroundColor: Colors.colorFFF5EB, borderColor: Colors.colorFFD6B3 }]} onPress={handleUploadPrescription}>
                 <View style={[styles.uploadIconWrapper, { backgroundColor: Colors.colorFFE4CC }]}>
-                  <MaterialCommunityIcons name="file-document-outline" size={24} color={Colors.colorFF7A00} />
+                  <Ionicons name="document-text-outline" size={24} color={Colors.colorFF7A00} />
                 </View>
                 <Text style={styles.uploadButtonTitle}>Prescription</Text>
                 <Text style={styles.uploadButtonSub}>Tap to upload</Text>
@@ -146,7 +146,7 @@ export default function PharmacyComponent() {
 
               <TouchableOpacity style={[styles.uploadButton, { backgroundColor: Colors.colorF0FDF4, borderColor: Colors.colorBBF7D0 }]} onPress={handleUploadTabletImage}>
                 <View style={[styles.uploadIconWrapper, { backgroundColor: Colors.colorDCFCE7 }]}>
-                  <MaterialCommunityIcons name="camera-outline" size={24} color={Colors.color16A34A} />
+                  <Ionicons name="camera-outline" size={24} color={Colors.color16A34A} />
                 </View>
                 <Text style={styles.uploadButtonTitle}>Tablet Image</Text>
                 <Text style={styles.uploadButtonSub}>Tap to upload</Text>
@@ -154,7 +154,7 @@ export default function PharmacyComponent() {
             </View>
 
             <TouchableOpacity style={styles.buyButton} onPress={handleBuy}>
-              <MaterialCommunityIcons name="cart-outline" size={22} color={Colors.colorFFF} style={styles.buyIcon} />
+              <Ionicons name="cart-outline" size={22} color={Colors.colorFFF} style={styles.buyIcon} />
               <Text style={styles.buyButtonText}>Buy Now</Text>
             </TouchableOpacity>
 
@@ -388,10 +388,12 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   inputContainer: {
-    backgroundColor: Colors.colorF8F9FA,
-    borderRadius: 16,
+    backgroundColor: Colors.white,
+    borderRadius: 12,
     padding: 16,
     marginBottom: 20,
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   textInput: {
     fontSize: 15,
@@ -410,7 +412,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginHorizontal: 6,
     borderWidth: 1.5,
-    borderStyle: 'dashed',
+    borderStyle: 'solid',
   },
   uploadIconWrapper: {
     width: 50,

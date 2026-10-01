@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Pressable, View, Text, StyleSheet } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 interface TermsCheckboxProps {
@@ -13,7 +13,7 @@ export default function TermsCheckbox({ agree, onToggle }: TermsCheckboxProps) {
   return (
     <Pressable style={styles.terms} onPress={onToggle}>
       <View style={[styles.checkbox, agree && styles.checkboxActive]}>
-        {agree && <Feather name="check" size={14} color={Colors.white} />}
+        {agree && <Ionicons name="checkmark" size={14} color={Colors.white} />}
       </View>
       <Text style={styles.termsText}>
         I agree to the healthcare{' '}

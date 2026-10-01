@@ -1,22 +1,22 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Feather, AntDesign } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 export interface ProfileMenuItemProps {
   title: string;
   iconName: string;
-  iconType: 'Feather' | 'AntDesign';
+  iconType: 'Ionicons';
   onPress: () => void;
 }
 
 export default function ProfileMenuItem({ title, iconName, iconType, onPress }: ProfileMenuItemProps) {
   let iconComponent = null;
-  if (iconType === 'Feather') {
-    iconComponent = <Feather name={iconName as any} size={20} color={Colors.color4A80F0} />;
+  if (iconType === 'Ionicons') {
+    iconComponent = <Ionicons name={iconName as any} size={20} color={Colors.color4A80F0} />;
   }
-  if (iconType === 'AntDesign') {
-    iconComponent = <AntDesign name={iconName as any} size={20} color={Colors.color4A80F0} />;
+  if (iconType === 'Ionicons') {
+    iconComponent = <Ionicons name={iconName as any} size={20} color={Colors.color4A80F0} />;
   }
 
   return (
@@ -27,7 +27,7 @@ export default function ProfileMenuItem({ title, iconName, iconType, onPress }: 
         </View>
         <Text style={styles.menuText}>{title}</Text>
       </View>
-      <Feather name="chevron-right" size={20} color="gray" />
+      <Ionicons name="chevron-forward" size={20} color="gray" />
     </TouchableOpacity>
   );
 }

@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { View, TextInput, Pressable, TextInputProps, StyleSheet } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 interface CustomInputProps extends TextInputProps {
@@ -14,7 +14,7 @@ export default function CustomInput({ icon, isPassword = false, ...props }: Cust
 
   return (
     <View style={styles.inputContainer}>
-      <Feather name={icon} size={20} color={Colors.secondaryText} style={styles.icon} />
+      <Ionicons name={icon} size={20} color={Colors.secondaryText} style={styles.icon} />
       <TextInput
         style={styles.input}
         placeholderTextColor={Colors.secondaryText}
@@ -24,7 +24,7 @@ export default function CustomInput({ icon, isPassword = false, ...props }: Cust
       />
       {isPassword && (
         <Pressable onPress={() => setShowPass(!showPass)}>
-          <Feather name={showPass ? 'eye' : 'eye-off'} size={20} color={Colors.secondaryText} />
+          <Ionicons name={showPass ? 'eye' : 'eye-off'} size={20} color={Colors.secondaryText} />
         </Pressable>
       )}
     </View>

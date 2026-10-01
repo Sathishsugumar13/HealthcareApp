@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, TextInput, ActivityIndicator, ScrollView } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 interface PaymentGatewayModalProps {
@@ -66,7 +66,7 @@ export default function PaymentGatewayModal({
                   <Text style={styles.inlineColorFffFontweightBold}>{app.name[0]}</Text>
                 </View>
                 <Text style={styles.upiText}>{app.name}</Text>
-                <MaterialCommunityIcons name="chevron-right" size={20} color={Colors.color999} />
+                <Ionicons name="chevron-forward" size={20} color={Colors.color999} />
               </TouchableOpacity>
             ))}
           </View>
@@ -170,9 +170,9 @@ export default function PaymentGatewayModal({
                     }, 1000);
                   }}
                 >
-                  <MaterialCommunityIcons name="bank" size={24} color={Colors.color555} />
+                  <Ionicons name="business-outline" size={24} color={Colors.color555} />
                   <Text style={styles.bankText}>{bank}</Text>
-                  <MaterialCommunityIcons name="chevron-right" size={20} color={Colors.color999} />
+                  <Ionicons name="chevron-forward" size={20} color={Colors.color999} />
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -210,7 +210,7 @@ export default function PaymentGatewayModal({
       case 'success':
         return (
           <View style={styles.processingContent}>
-            <MaterialCommunityIcons name="check-circle" size={80} color={Colors.color00C473} />
+            <Ionicons name="checkmark-circle" size={80} color={Colors.color00C473} />
             <Text style={styles.successText}>Payment Successful!</Text>
             <Text style={styles.successSub}>Redirecting to app...</Text>
           </View>
@@ -227,12 +227,12 @@ export default function PaymentGatewayModal({
         <View style={styles.modalContainer}>
           {(simStep !== 'processing' && simStep !== 'success') && (
             <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
-              <MaterialCommunityIcons name="close" size={24} color={Colors.color333} />
+              <Ionicons name="close" size={24} color={Colors.color333} />
             </TouchableOpacity>
           )}
           
           <View style={styles.gwHeader}>
-            <MaterialCommunityIcons name="shield-check" size={20} color={Colors.color00C473} />
+            <Ionicons name="shield-checkmark" size={20} color={Colors.color00C473} />
             <Text style={styles.gwHeaderText}>Secure Payment Gateway</Text>
           </View>
 

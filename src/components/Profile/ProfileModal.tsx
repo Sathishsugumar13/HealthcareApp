@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Pressable, Image, Modal, TextInput } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 interface ProfileModalProps {
@@ -71,7 +71,7 @@ export default function ProfileModal({
           <View style={styles.profileModalHeader}>
             <Text style={styles.profileModalTitle}>Profile Info</Text>
             <Pressable onPress={handleClose}>
-              <MaterialCommunityIcons name="close" size={24} color={Colors.color333} />
+              <Ionicons name="close" size={24} color={Colors.color333} />
             </Pressable>
           </View>
           {modalView === 'info' ? (
@@ -81,11 +81,11 @@ export default function ProfileModal({
                   {profileImageHook.profileImage ? (
                     <Image source={{ uri: profileImageHook.profileImage }} style={styles.avatarImage} />
                   ) : (
-                    <MaterialCommunityIcons name="account" size={50} color={Colors.gray} />
+                    <Ionicons name="person" size={50} color={Colors.gray} />
                   )}
                 </View>
                 <View style={styles.editBadge}>
-                  <MaterialCommunityIcons name="camera" size={16} color={Colors.colorFFF} />
+                  <Ionicons name="camera" size={16} color={Colors.colorFFF} />
                 </View>
               </Pressable>
 
@@ -101,10 +101,10 @@ export default function ProfileModal({
                     />
                     <View style={styles.inlineActions}>
                       <Pressable style={styles.iconBtn} onPress={() => setIsEditingName(false)}>
-                        <MaterialCommunityIcons name="close-circle" size={24} color={Colors.error} />
+                        <Ionicons name="close-circle" size={24} color={Colors.error} />
                       </Pressable>
                       <Pressable style={styles.iconBtn} onPress={handleSaveName}>
-                        <MaterialCommunityIcons name="check-circle" size={24} color={Colors.success} />
+                        <Ionicons name="checkmark-circle" size={24} color={Colors.success} />
                       </Pressable>
                     </View>
                   </View>
@@ -113,7 +113,7 @@ export default function ProfileModal({
                     <Text style={styles.profileModalNameText}>{user?.name || 'User'}</Text>
                     <View style={styles.editIconContainer}>
                       <Pressable onPress={() => setIsEditingName(true)} style={styles.editIconBtn}>
-                        <MaterialCommunityIcons name="pencil" size={18} color={Colors.color3C72F2} />
+                        <Ionicons name="pencil" size={18} color={Colors.color3C72F2} />
                       </Pressable>
                     </View>
                   </View>
@@ -134,10 +134,10 @@ export default function ProfileModal({
                     />
                     <View style={styles.inlineActions}>
                       <Pressable style={styles.iconBtn} onPress={() => setIsEditingEmail(false)}>
-                        <MaterialCommunityIcons name="close-circle" size={24} color={Colors.error} />
+                        <Ionicons name="close-circle" size={24} color={Colors.error} />
                       </Pressable>
                       <Pressable style={styles.iconBtn} onPress={handleSaveEmail}>
-                        <MaterialCommunityIcons name="check-circle" size={24} color={Colors.success} />
+                        <Ionicons name="checkmark-circle" size={24} color={Colors.success} />
                       </Pressable>
                     </View>
                   </View>
@@ -146,7 +146,7 @@ export default function ProfileModal({
                     <Text style={styles.profileModalEmailText}>{user?.email || 'user@example.com'}</Text>
                     <View style={styles.editIconContainer}>
                       <Pressable onPress={() => setIsEditingEmail(true)} style={styles.editIconBtn}>
-                        <MaterialCommunityIcons name="pencil" size={18} color={Colors.color3C72F2} />
+                        <Ionicons name="pencil" size={18} color={Colors.color3C72F2} />
                       </Pressable>
                     </View>
                   </View>
@@ -154,7 +154,7 @@ export default function ProfileModal({
               </View>
 
               <Pressable style={styles.logoutButton} onPress={handleUserLogout}>
-                <MaterialCommunityIcons name="logout" size={20} color={Colors.error} />
+                <Ionicons name="log-out-outline" size={20} color={Colors.error} />
                 <Text style={styles.logoutText}>Logout</Text>
               </Pressable>
             </View>
@@ -165,23 +165,23 @@ export default function ProfileModal({
                   {profileImageHook.profileImage ? (
                     <Image source={{ uri: profileImageHook.profileImage }} style={[styles.avatarImage, { width: 120, height: 120, borderRadius: 60 }]} />
                   ) : (
-                    <MaterialCommunityIcons name="account" size={60} color={Colors.gray} />
+                    <Ionicons name="person" size={60} color={Colors.gray} />
                   )}
                 </View>
               </View>
 
               <Pressable style={styles.photoActionButton} onPress={() => handlePhotoAction(profileImageHook.takePhoto)}>
-                <MaterialCommunityIcons name="camera" size={24} color={Colors.color3C72F2} />
+                <Ionicons name="camera" size={24} color={Colors.color3C72F2} />
                 <Text style={styles.photoActionText}>Take Photo</Text>
               </Pressable>
 
               <Pressable style={styles.photoActionButton} onPress={() => handlePhotoAction(profileImageHook.pickImage)}>
-                <MaterialCommunityIcons name="image" size={24} color={Colors.color3C72F2} />
+                <Ionicons name="image" size={24} color={Colors.color3C72F2} />
                 <Text style={styles.photoActionText}>Choose from Gallery</Text>
               </Pressable>
 
               <Pressable style={[styles.photoActionButton, { borderBottomWidth: 0 }]} onPress={() => handlePhotoAction(profileImageHook.removePhoto)}>
-                <MaterialCommunityIcons name="delete" size={24} color={Colors.error} />
+                <Ionicons name="trash-outline" size={24} color={Colors.error} />
                 <Text style={[styles.photoActionText, { color: Colors.error }]}>Remove Photo</Text>
               </Pressable>
 

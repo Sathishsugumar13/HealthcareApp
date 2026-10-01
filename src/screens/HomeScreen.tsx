@@ -29,6 +29,7 @@ import { SERVICES, ARTICLES, HOSPITALS } from '../context/HomeConst';
 export default function HomeScreen(props: any) {
   const navigation = useNavigation<any>();
   const { appointments } = useAppointment();
+  const upcomingAppointment = appointments.find(appt => appt.paymentStatus !== 'Completed');
   const { orders } = usePharmacy();
 
   const profileImageHook = useProfileImage(props.user);
@@ -168,20 +169,20 @@ export default function HomeScreen(props: any) {
               <PromoBanner />
 
               {}
-              {appointments.length > 0 && (
+              {upcomingAppointment && (
                 <>
                   <SectionHeader title="Upcoming Appointment" onSeeAll={() => openSeeAllPopup('Upcoming Appointment')} />
                   <AppointmentCard
-                    doctorName={appointments[0].doctorName}
-                    specialization={appointments[0].specialization}
-                    date={appointments[0].date.split(' at ')[0] || appointments[0].date}
-                    time={appointments[0].date.split(' at ')[1] || appointments[0].date}
+                    doctorName={upcomingAppointment.doctorName}
+                    specialization={upcomingAppointment.specialization}
+                    date={upcomingAppointment.date.split(' at ')[0] || upcomingAppointment.date}
+                    time={upcomingAppointment.date.split(' at ')[1] || upcomingAppointment.date}
                     status="Confirmed"
-                    imageSource={appointments[0].image || images.doctors.drArun}
-                    patientName={appointments[0].patientName}
-                    phone={appointments[0].phone}
-                    paymentMethod={appointments[0].paymentMethod}
-                    paymentStatus={appointments[0].paymentStatus}
+                    imageSource={upcomingAppointment.image || images.doctors.drArun}
+                    patientName={upcomingAppointment.patientName}
+                    phone={upcomingAppointment.phone}
+                    paymentMethod={upcomingAppointment.paymentMethod}
+                    paymentStatus={upcomingAppointment.paymentStatus}
                     containerStyle={{ marginBottom: 24 }}
                   />
                 </>

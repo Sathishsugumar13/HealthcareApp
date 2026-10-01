@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 import { images } from '../../assets/images';
 
@@ -22,7 +22,7 @@ export default function HomeHeader({ profileImageHook, user }: HomeHeaderProps) 
           {profileImageHook.profileImage ? (
             <Image source={{ uri: profileImageHook.profileImage }} style={styles.smallAvatarImage} />
           ) : (
-            <MaterialCommunityIcons name="account" size={30} color={Colors.gray} />
+            <Ionicons name="person" size={30} color={Colors.gray} />
           )}
         </Pressable>
         <Text style={styles.welcomeText}>welcome !</Text>

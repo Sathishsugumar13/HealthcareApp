@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, TextInput, ScrollView, Platform } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import SearchBox from '../../Common/SearchBox';
@@ -20,19 +20,15 @@ export interface Doctor {
   image: any;
 }
 
-export interface Specialization {
-  id: string;
-  name: string;
-  icon: string;
-}
+export interface Specialization { id: string; name: string; icon: string; iconFamily?: 'Ionicons' | 'FontAwesome5'; }
 
 
 const SPECIALIZATIONS: Specialization[] = [
-  { id: '1', name: 'Cardiologist', icon: 'heart-pulse' },
-  { id: '2', name: 'Dentist', icon: 'tooth-outline' },
-  { id: '3', name: 'Neurologist', icon: 'brain' },
-  { id: '4', name: 'Orthopedist', icon: 'bone' },
-  { id: '5', name: 'Pediatrician', icon: 'baby-face-outline' },
+  { id: '1', name: 'Cardiologist', icon: 'heartbeat', iconFamily: 'FontAwesome5' },
+  { id: '2', name: 'Dentist', icon: 'tooth', iconFamily: 'FontAwesome5' },
+  { id: '3', name: 'Neurologist', icon: 'brain', iconFamily: 'FontAwesome5' },
+  { id: '4', name: 'Orthopedist', icon: 'bone', iconFamily: 'FontAwesome5' },
+  { id: '5', name: 'Pediatrician', icon: 'baby', iconFamily: 'FontAwesome5' },
 ];
 
 export const ALL_DOCTORS: Doctor[] = [
@@ -99,7 +95,8 @@ export default function DoctorsListComponent() {
     ...SPECIALIZATIONS.map(spec => ({
       label: spec.name,
       value: spec.name,
-      icon: spec.icon,
+        icon: spec.icon,
+        iconFamily: spec.iconFamily,
     }))
   ];
 
@@ -116,7 +113,7 @@ export default function DoctorsListComponent() {
           value={searchQuery}
           onChangeText={setSearchQuery}
           placeholder="Search by name or specialization..."
-          iconFamily="MaterialCommunityIcons"
+          iconFamily="Ionicons"
         />
       </View>
 
@@ -139,7 +136,7 @@ export default function DoctorsListComponent() {
           />
         ) : (
           <View style={styles.emptyContainer}>
-            <MaterialCommunityIcons name="doctor" size={64} color={Colors.colorCCC} />
+            <Ionicons name="medkit" size={64} color={Colors.colorCCC} />
             <Text style={styles.emptyText}>No doctors found</Text>
           </View>
         )}

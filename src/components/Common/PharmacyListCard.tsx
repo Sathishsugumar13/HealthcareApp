@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 interface PharmacyListCardProps {
@@ -14,7 +14,7 @@ export default function PharmacyListCard({ pharmacy, onSelect }: PharmacyListCar
       <View style={styles.pharmacyImageWrapper}>
         <Image source={pharmacy.image} style={styles.pharmacyImage} />
         <View style={styles.ratingBadge}>
-          <MaterialCommunityIcons name="star" size={12} color={Colors.colorFFF} />
+          <Ionicons name="star" size={12} color={Colors.colorFFF} />
           <Text style={styles.ratingText}>{pharmacy.rating}</Text>
         </View>
       </View>
@@ -22,7 +22,7 @@ export default function PharmacyListCard({ pharmacy, onSelect }: PharmacyListCar
         <View style={styles.pharmacyTitleRow}>
           <Text style={styles.pharmacyName}>{pharmacy.name}</Text>
           <View style={styles.distanceBadge}>
-            <MaterialCommunityIcons name="map-marker-outline" size={12} color={Colors.color3C72F2} />
+            <Ionicons name="location-outline" size={12} color={Colors.color3C72F2} />
             <Text style={styles.distanceText}>{pharmacy.distance}</Text>
           </View>
         </View>

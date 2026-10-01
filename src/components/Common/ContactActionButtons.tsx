@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert, Linking } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { Colors } from '../../theme/colors';
 
@@ -18,7 +18,7 @@ export default function ContactActionButtons({ recipientName, phoneNumber }: Con
         style={[styles.contactButton, { backgroundColor: Colors.colorE8F0FE, borderColor: Colors.colorE8F0FE, marginRight: 4 }]}
         onPress={() => navigation.navigate('Chat', { recipientName })}
       >
-        <MaterialCommunityIcons name="message-processing-outline" size={18} color={Colors.color1A73E8} />
+        <Ionicons name="chatbubble-ellipses-outline" size={18} color={Colors.color1A73E8} />
         <Text style={[styles.contactButtonText, { color: Colors.color1A73E8 }]}>Message</Text>
       </TouchableOpacity>
       <TouchableOpacity 
@@ -31,14 +31,14 @@ export default function ContactActionButtons({ recipientName, phoneNumber }: Con
           }
         }}
       >
-        <MaterialCommunityIcons name="phone-in-talk-outline" size={18} color={Colors.color137333} />
+        <Ionicons name="call-outline" size={18} color={Colors.color137333} />
         <Text style={[styles.contactButtonText, { color: Colors.color137333 }]}>Call</Text>
       </TouchableOpacity>
       <TouchableOpacity 
         style={[styles.contactButton, { backgroundColor: '#FCE8E6', borderColor: '#FCE8E6', marginLeft: 4 }]}
         onPress={() => Alert.alert('Video Call', `Starting video call with ${phoneNumber || recipientName}...`)}
       >
-        <MaterialCommunityIcons name="video-outline" size={18} color="#D93025" />
+        <Ionicons name="videocam-outline" size={18} color="#D93025" />
         <Text style={[styles.contactButtonText, { color: '#D93025' }]}>Video</Text>
       </TouchableOpacity>
     </View>

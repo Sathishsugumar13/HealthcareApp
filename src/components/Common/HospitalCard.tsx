@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 export interface HospitalCardProps {
@@ -31,12 +31,12 @@ export default function HospitalCard({ name, location, address, distance, rating
         <View style={hospitalCardStyles.infoRow}>
           {distance && (
             <View style={hospitalCardStyles.infoItem}>
-              <MaterialCommunityIcons name="map-marker" size={14} color={Colors.primary} />
+              <Ionicons name="location" size={14} color={Colors.primary} />
               <Text style={hospitalCardStyles.infoText}>{distance}</Text>
             </View>
           )}
           <View style={hospitalCardStyles.infoItem}>
-            <MaterialCommunityIcons name="star" size={14} color={Colors.colorFFD700} />
+            <Ionicons name="star" size={14} color={Colors.colorFFD700} />
             <Text style={hospitalCardStyles.infoText}>{rating}</Text>
           </View>
         </View>

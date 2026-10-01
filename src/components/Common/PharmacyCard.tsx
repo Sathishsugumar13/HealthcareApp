@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 export interface PharmacyCardProps {
@@ -24,7 +24,7 @@ export default function PharmacyCard({
     <View style={pharmacyCardStyles.container}>
       <View style={pharmacyCardStyles.headerRow}>
         <View style={pharmacyCardStyles.iconContainer}>
-          <MaterialCommunityIcons name="pill" size={24} color={Colors.primary} />
+          <Ionicons name="medkit-outline" size={24} color={Colors.primary} />
         </View>
         <View style={pharmacyCardStyles.details}>
           <Text style={pharmacyCardStyles.medicine} numberOfLines={2}>{medicine}</Text>
@@ -39,7 +39,7 @@ export default function PharmacyCard({
         <View style={pharmacyCardStyles.extraDetailsContainer}>
           <View style={pharmacyCardStyles.infoRow}>
             <View style={pharmacyCardStyles.infoRowLeft}>
-              <MaterialCommunityIcons name="account-outline" size={16} color={Colors.color64748B} />
+              <Ionicons name="person-outline" size={16} color={Colors.color64748B} />
               <Text style={pharmacyCardStyles.infoLabel}>Patient</Text>
             </View>
             <Text style={pharmacyCardStyles.infoValue}>{patientName}</Text>
@@ -48,7 +48,7 @@ export default function PharmacyCard({
           {phone && (
             <View style={pharmacyCardStyles.infoRow}>
               <View style={pharmacyCardStyles.infoRowLeft}>
-                <MaterialCommunityIcons name="phone-outline" size={16} color={Colors.color64748B} />
+                <Ionicons name="call-outline" size={16} color={Colors.color64748B} />
                 <Text style={pharmacyCardStyles.infoLabel}>Phone</Text>
               </View>
               <Text style={pharmacyCardStyles.infoValue}>{phone}</Text>
@@ -58,7 +58,7 @@ export default function PharmacyCard({
           {address && (
             <View style={[pharmacyCardStyles.infoRow, { alignItems: 'flex-start' }]}>
               <View style={pharmacyCardStyles.infoRowLeft}>
-                <MaterialCommunityIcons name="map-marker-outline" size={16} color={Colors.color64748B} />
+                <Ionicons name="location-outline" size={16} color={Colors.color64748B} />
                 <Text style={pharmacyCardStyles.infoLabel}>Address</Text>
               </View>
               <Text style={[pharmacyCardStyles.infoValue, { flex: 1, textAlign: 'right', marginLeft: 16 }]} numberOfLines={2}>{address}</Text>
@@ -69,7 +69,7 @@ export default function PharmacyCard({
           
           <View style={pharmacyCardStyles.infoRow}>
             <View style={pharmacyCardStyles.infoRowLeft}>
-              <MaterialCommunityIcons name="credit-card-outline" size={16} color={Colors.color64748B} />
+              <Ionicons name="card-outline" size={16} color={Colors.color64748B} />
               <Text style={pharmacyCardStyles.infoLabel}>Method</Text>
             </View>
             <Text style={pharmacyCardStyles.infoValue}>{paymentMethod || 'N/A'}</Text>
@@ -77,7 +77,7 @@ export default function PharmacyCard({
 
           <View style={pharmacyCardStyles.infoRow}>
             <View style={pharmacyCardStyles.infoRowLeft}>
-              <MaterialCommunityIcons name="shield-check-outline" size={16} color={Colors.color64748B} />
+              <Ionicons name="shield-checkmark-outline" size={16} color={Colors.color64748B} />
               <Text style={pharmacyCardStyles.infoLabel}>Status</Text>
             </View>
             <Text style={[

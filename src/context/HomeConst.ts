@@ -1,10 +1,10 @@
 import { images } from '../assets/images';
 
 export const SERVICES = [
-  { title: 'Doctor', icon: 'stethoscope' },
-  { title: 'Pharmacy', icon: 'pill' },
-  { title: 'Hospital', icon: 'hospital-building' },
-  { title: 'Appointments', icon: 'calendar-check' },
+  { title: 'Doctor', icon: 'doctor', iconFamily: 'Fontisto' },
+  { title: 'Pharmacy', icon: 'medical-outline', iconFamily: 'Ionicons' },
+  { title: 'Hospital', icon: 'hospital-building', iconFamily: 'MaterialCommunityIcons' },
+  { title: 'Appointments', icon: 'calendar-check-o', iconFamily: 'FontAwesome' },
 ];
 
 export const ARTICLES = [

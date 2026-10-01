@@ -99,14 +99,14 @@ export default function SignUpForm(props: any) {
       ) : null}
 
       <CustomInput
-        icon="user"
+        icon="person-outline"
         placeholder="Enter your name"
         value={userName}
         onChangeText={(text: string) => setUserName(text)}
       />
 
       <CustomInput
-        icon="mail"
+        icon="mail-outline"
         placeholder="Enter your email id"
         value={userEmail}
         onChangeText={(text: string) => setUserEmail(text)}
@@ -114,7 +114,7 @@ export default function SignUpForm(props: any) {
       />
 
       <CustomInput
-        icon="lock"
+        icon="lock-closed-outline"
         placeholder="Enter your password"
         value={userPassword}
         onChangeText={(text: string) => setUserPassword(text)}
@@ -122,7 +122,7 @@ export default function SignUpForm(props: any) {
       />
 
       <CustomInput
-        icon="lock"
+        icon="lock-closed-outline"
         placeholder="Confirm your password"
         value={confirmPassword}
         onChangeText={(text: string) => setConfirmPassword(text)}

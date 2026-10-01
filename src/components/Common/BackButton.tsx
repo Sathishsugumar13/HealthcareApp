@@ -1,13 +1,10 @@
 import React from 'react';
 import { TouchableOpacity, StyleSheet, StyleProp, ViewStyle } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
-import { Feather } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 export interface BackButtonProps {
   onPress: () => void;
-  iconFamily?: 'MaterialCommunityIcons' | 'Ionicons' | 'Feather';
   iconName?: string;
   size?: number;
   color?: string;
@@ -16,34 +13,15 @@ export interface BackButtonProps {
 
 export default function BackButton({
   onPress,
-  iconFamily = 'MaterialCommunityIcons',
-  iconName,
+  iconName = 'chevron-back',
   size = 28,
   color = Colors.color333,
   style,
 }: BackButtonProps) {
   
-  const getIconName = () => {
-    if (iconName) return iconName;
-    if (iconFamily === 'Ionicons') return 'arrow-back';
-    if (iconFamily === 'Feather') return 'chevron-left';
-    return 'arrow-left'; 
-  };
-
-  const renderIcon = () => {
-    const name = getIconName();
-    if (iconFamily === 'Ionicons') {
-      return <Ionicons name={name} size={size} color={color} />;
-    }
-    if (iconFamily === 'Feather') {
-      return <Feather name={name} size={size} color={color} />;
-    }
-    return <MaterialCommunityIcons name={name} size={size} color={color} />;
-  };
-
   return (
     <TouchableOpacity style={[styles.backButton, style]} onPress={onPress} activeOpacity={0.7}>
-      {renderIcon()}
+      <Ionicons name={iconName as any} size={size} color={color} />
     </TouchableOpacity>
   );
 }

@@ -2,7 +2,7 @@
 import React from 'react';
 import { Colors } from '../../theme/colors';
 import { Modal, View, Text, Pressable, StyleSheet } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
 interface SuccessModalProps {
   visible: boolean;
@@ -27,7 +27,7 @@ export default function SuccessModal({
       <View style={styles.overlay}>
         <View style={styles.modalContainer}>
           <View style={styles.iconContainer}>
-            <Feather name="check" size={40} color={Colors.success} />
+            <Ionicons name="checkmark" size={40} color={Colors.success} />
           </View>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.message}>{message}</Text>

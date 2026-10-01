@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Alert } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import BackButton from '../../Common/BackButton';
@@ -94,11 +94,11 @@ export default function HospitalComponent() {
   const renderStateItem = ({ item }: { item: any }) => (
     <TouchableOpacity style={styles.listItemCard} onPress={() => setSelectedState(item)}>
       <View style={styles.listIconWrapper}>
-        <MaterialCommunityIcons name={item.icon} size={24} color={Colors.color3C72F2} />
+        <Ionicons name={item.icon} size={24} color={Colors.color3C72F2} />
       </View>
       <Text style={styles.listItemText}>{item.name}</Text>
       <View style={styles.chevronWrapper}>
-        <MaterialCommunityIcons name="chevron-right" size={20} color={Colors.color3C72F2} />
+        <Ionicons name="chevron-forward" size={20} color={Colors.color3C72F2} />
       </View>
     </TouchableOpacity>
   );
@@ -106,11 +106,11 @@ export default function HospitalComponent() {
   const renderDistrictItem = ({ item }: { item: any }) => (
     <TouchableOpacity style={styles.listItemCard} onPress={() => setSelectedDistrict(item)}>
       <View style={styles.listIconWrapper}>
-        <MaterialCommunityIcons name="city-variant-outline" size={24} color={Colors.color00C473} />
+        <Ionicons name="business-outline" size={24} color={Colors.color00C473} />
       </View>
       <Text style={styles.listItemText}>{item.name}</Text>
       <View style={styles.chevronWrapper}>
-        <MaterialCommunityIcons name="chevron-right" size={20} color={Colors.color3C72F2} />
+        <Ionicons name="chevron-forward" size={20} color={Colors.color3C72F2} />
       </View>
     </TouchableOpacity>
   );

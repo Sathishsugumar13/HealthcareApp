@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, Alert } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 interface DateTimePickerModalProps {
   isVisible: boolean;
   onClose: () => void;
-  tempDate: number | null;
-  setTempDate: (date: number | null) => void;
+  tempDate: Date | null;
+  setTempDate: (date: Date | null) => void;
   tempTime: string | null;
   setTempTime: (time: string | null) => void;
   onConfirm: () => void;
@@ -22,6 +22,15 @@ export default function DateTimePickerModal({
   setTempTime, 
   onConfirm 
 }: DateTimePickerModalProps) {
+  const [viewDate, setViewDate] = useState(new Date());
+
+  const handlePrevMonth = () => {
+    setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1));
+  };
+  
+  const handleNextMonth = () => {
+    setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1));
+  };
   
   return (
     <Modal visible={isVisible} transparent animationType="fade" onRequestClose={onClose}>
@@ -30,11 +39,15 @@ export default function DateTimePickerModal({
           
           <View style={styles.calendarHeader}>
             <Text style={styles.calendarMonthText}>
-              {new Date().toLocaleString('default', { month: 'long' })} {new Date().getFullYear()}
+              {viewDate.toLocaleString('default', { month: 'long' })} {viewDate.getFullYear()}
             </Text>
             <View style={styles.calendarNav}>
-              <MaterialCommunityIcons name="chevron-left" size={24} color={Colors.color333} />
-              <MaterialCommunityIcons name="chevron-right" size={24} color={Colors.color333} style={styles.inlineMarginleft16} />
+              <TouchableOpacity onPress={handlePrevMonth}>
+                <Ionicons name="chevron-back" size={24} color={Colors.color333} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleNextMonth}>
+                <Ionicons name="chevron-forward" size={24} color={Colors.color333} style={styles.inlineMarginleft16} />
+              </TouchableOpacity>
             </View>
           </View>
           
@@ -45,36 +58,53 @@ export default function DateTimePickerModal({
           </View>
           
           <View style={styles.calendarGrid}>
-            {Array.from({ length: 31 }, (_, i) => i + 1).map(day => {
-              let todayDate = new Date().getDate();
-              let isOldDate = day < todayDate;
-              return (
-              <TouchableOpacity 
-                key={day} 
-                style={[styles.calendarDateCell, tempDate === day && styles.calendarDateCellActive, isOldDate && { opacity: 0.3 }]}
-                onPress={() => {
-                  if (isOldDate) {
-                    Alert.alert('Invalid Date', 'Old dates cannot be selected.');
-                  } else {
-                    setTempDate(day);
-                    setTempTime(null);
-                  }
-                }}
-                activeOpacity={isOldDate ? 1 : 0.2}
-              >
-                <Text style={[styles.calendarDateText, tempDate === day && styles.calendarDateTextActive]}>
-                  {day}
-                </Text>
-              </TouchableOpacity>
-            )})}
+            {(() => {
+              const year = viewDate.getFullYear();
+              const month = viewDate.getMonth();
+              const daysInMonth = new Date(year, month + 1, 0).getDate();
+              const firstDayOfWeek = new Date(year, month, 1).getDay();
+              const cells = [];
+              
+              for (let i = 0; i < firstDayOfWeek; i++) {
+                cells.push(<View key={`empty-${i}`} style={styles.calendarEmptyCell} />);
+              }
+              
+              for (let day = 1; day <= daysInMonth; day++) {
+                let cellDate = new Date(year, month, day);
+                let today = new Date();
+                today.setHours(0,0,0,0);
+                let isOldDate = cellDate < today;
+                cells.push(
+                  <View key={`day-${day}`} style={styles.calendarCellWrapper}>
+                    <TouchableOpacity 
+                      style={[styles.calendarDateCell, tempDate?.getDate() === day && tempDate?.getMonth() === month && tempDate?.getFullYear() === year && styles.calendarDateCellActive, isOldDate && { opacity: 0.3 }]}
+                      onPress={() => {
+                        if (isOldDate) {
+                          Alert.alert('Invalid Date', 'Old dates cannot be selected.');
+                        } else {
+                          setTempDate(new Date(year, month, day));
+                          setTempTime(null);
+                        }
+                      }}
+                      activeOpacity={isOldDate ? 1 : 0.2}
+                    >
+                      <Text style={[styles.calendarDateText, tempDate?.getDate() === day && tempDate?.getMonth() === month && tempDate?.getFullYear() === year && styles.calendarDateTextActive]}>
+                        {day}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                );
+              }
+              return cells;
+            })()}
           </View>
 
           <Text style={styles.timeTitle}>Select Time</Text>
           <View style={styles.timeGrid}>
             {['09:00 AM', '10:30 AM', '11:00 AM', '02:00 PM', '04:00 PM', '06:30 PM'].map(time => {
               let isOldTime = false;
-              let todayDate = new Date().getDate();
-              if (tempDate === todayDate) {
+              let today = new Date();
+              if (tempDate?.getDate() === today.getDate() && tempDate?.getMonth() === today.getMonth() && tempDate?.getFullYear() === today.getFullYear()) {
                 let [timePart, modifier] = time.split(' ');
                 let [hours, minutes] = timePart.split(':');
                 let hr = parseInt(hours, 10);
@@ -152,11 +182,10 @@ const styles = StyleSheet.create({
   },
   calendarDaysRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     marginBottom: 10,
   },
   calendarDayLabel: {
-    width: 36,
+    width: '14.28%',
     textAlign: 'center',
     fontSize: 13,
     color: Colors.color888,
@@ -165,8 +194,15 @@ const styles = StyleSheet.create({
   calendarGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     marginBottom: 20,
+  },
+  calendarCellWrapper: {
+    width: '14.28%',
+    alignItems: 'center',
+  },
+  calendarEmptyCell: {
+    width: '14.28%',
   },
   calendarDateCell: {
     width: 36,
@@ -177,8 +213,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   calendarDateCellActive: {
-    backgroundColor: Colors.color8B5CF6,
-    shadowColor: Colors.color8B5CF6,
+    backgroundColor: Colors.primary,
+    shadowColor: Colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
@@ -227,7 +263,7 @@ const styles = StyleSheet.create({
     color: Colors.color3C72F2,
   },
   confirmDateTimeButton: {
-    backgroundColor: Colors.color00C473,
+    backgroundColor: Colors.primary,
     paddingVertical: 14,
     borderRadius: 12,
     alignItems: 'center',

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import HomeScreen from '../screens/HomeScreen';
@@ -53,14 +53,14 @@ export default function MainTabNavigator(props: any) {
           if (route.name === 'Home') {
             iconName = focused ? 'home' : 'home-outline';
           } else if (route.name === 'Reports') {
-            iconName = focused ? 'clipboard-pulse' : 'clipboard-pulse-outline';
+            return <MaterialCommunityIcons name="file-sign" size={32} color={color} />;
           } else if (route.name === 'Notification') {
-            iconName = focused ? 'bell' : 'bell-outline';
+            iconName = focused ? 'notifications' : 'notifications-outline';
           } else if (route.name === 'Profile') {
-            iconName = focused ? 'account' : 'account-outline';
+            iconName = focused ? 'person' : 'person-outline';
           }
 
-          return <MaterialCommunityIcons name={iconName} size={32} color={color} />;
+          return <Ionicons name={iconName as any} size={32} color={color} />;
         },
         tabBarActiveTintColor: Colors.color3572E1,
         tabBarInactiveTintColor: Colors.color8A8A8A,

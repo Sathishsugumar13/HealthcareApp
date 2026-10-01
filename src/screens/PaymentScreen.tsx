@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Modal, TextInput, ActivityIndicator, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons } from '@expo/vector-icons';
 import { useAppointment } from '../context/AppointmentContext';
+import { usePharmacy } from '../context/PharmacyContext';
 import BackButton from '../components/Common/BackButton';
 import PaymentGatewayModal from '../components/Common/PaymentGatewayModal';
 import PaymentMethodSelector from '../components/Common/PaymentMethodSelector';
@@ -13,8 +15,9 @@ export default function PaymentScreen() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const { addAppointment } = useAppointment();
+    const { addOrder } = usePharmacy();
   
-  const { apptDetails, successMsg } = route.params || {};
+  const { apptDetails, successMsg, pharmacy } = route.params || {};
   
   const [selectedMethod, setSelectedMethod] = useState<string>('upi');
   
@@ -33,13 +36,42 @@ export default function PaymentScreen() {
   
   // Bank state
   const [selectedBank, setSelectedBank] = useState('');
+    const [patientName, setPatientName] = useState('');
+    const [phone, setPhone] = useState('');
+    const [address, setAddress] = useState('');
+  const [savedCards, setSavedCards] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const userDataString = await AsyncStorage.getItem('my_details');
+        if (userDataString) {
+          const userObj = JSON.parse(userDataString);
+          if (userObj.name) setPatientName(userObj.name);
+          if (userObj.phone) setPhone(userObj.phone);
+          if (userObj.address) setAddress(userObj.address);
+        }
+      } catch (error) {
+        console.error('Error loading user details in payment screen', error);
+      }
+    };
+    fetchUserDetails();
+      const fetchCards = async () => {
+        try {
+          const data = await AsyncStorage.getItem('@saved_cards');
+          if (data) setSavedCards(JSON.parse(data));
+        } catch (e) {}
+      };
+      fetchCards();
+    }, []);
 
   const paymentMethods = [
-    { id: 'upi', name: 'UPI', icon: 'qrcode-scan' },
-    { id: 'card', name: 'Credit / Debit Card', icon: 'credit-card-outline' },
-    { id: 'netbanking', name: 'Net Banking', icon: 'bank-outline' },
-    { id: 'cash', name: 'Pay at Clinic', icon: 'cash' },
-  ];
+      ...savedCards.map(c => ({ id: `saved_card_${c.id}`, name: `${c.type || 'Card'} **** ${c.number.slice(-4)}`, icon: 'card' as any })),
+      { id: 'upi', name: 'UPI', icon: 'qr-code-outline' },
+      { id: 'card', name: savedCards.length > 0 ? 'Add New Card' : 'Credit / Debit Card', icon: 'add-circle-outline' },
+      { id: 'netbanking', name: 'Net Banking', icon: 'business-outline' },
+      { id: 'cash', name: pharmacy ? 'Cash on Delivery' : 'Pay at Clinic', icon: 'cash-outline' },
+    ];
   
   const upiApps = [
     { name: 'Google Pay', color: Colors.color4285F4 },
@@ -50,19 +82,37 @@ export default function PaymentScreen() {
   const banks = ['State Bank of India', 'HDFC Bank', 'ICICI Bank', 'Axis Bank'];
 
   const finalizeAppointment = () => {
-    if (apptDetails) {
       const pMethodName = paymentMethods.find(m => m.id === selectedMethod)?.name || selectedMethod;
-      const pStatus = selectedMethod === 'cash' ? 'Unpaid (Pay at Clinic)' : 'Paid';
       
-      const finalApptDetails = {
-        ...apptDetails,
-        paymentMethod: pMethodName,
-        paymentStatus: pStatus
-      };
-      addAppointment(finalApptDetails);
-    }
-    setShowSimModal(false);
-    Alert.alert('Success', successMsg || 'Payment successful and appointment booked!', [
+      if (pharmacy) {
+        if (!patientName || !phone || !address) {
+          Alert.alert('Error', 'Please fill in Name, Phone, and Address.');
+          return;
+        }
+        if (phone.length !== 10) {
+          Alert.alert('Error', 'Phone number must be exactly 10 digits.');
+          return;
+        }
+        const pStatus = selectedMethod === 'cash' ? 'Pending (COD)' : 'Paid';
+        addOrder({
+          id: `order_${Date.now()}`,
+          pharmacyName: pharmacy.name,
+          phone: phone,
+          address: address,
+          paymentMethod: pMethodName,
+          paymentStatus: pStatus
+        });
+      } else if (apptDetails) {
+        const pStatus = selectedMethod === 'cash' ? 'Unpaid (Pay at Clinic)' : 'Paid';
+        const finalApptDetails = {
+          ...apptDetails,
+          paymentMethod: pMethodName,
+          paymentStatus: pStatus
+        };
+        addAppointment(finalApptDetails);
+      }
+      setShowSimModal(false);
+    Alert.alert(pharmacy ? 'Order Confirmed' : 'Success', pharmacy ? 'Your pharmacy order has been placed successfully!' : (successMsg || 'Payment successful and appointment booked!'), [
       { text: 'OK', onPress: () => navigation.navigate('MainTab') }
     ]);
   };
@@ -87,7 +137,10 @@ export default function PaymentScreen() {
     
     setShowSimModal(true);
     
-    if (selectedMethod === 'upi') {
+    if (selectedMethod.startsWith('saved_card_')) {
+      setSimStep('processing');
+      simulateProcessing();
+    } else if (selectedMethod === 'upi') {
       setSimStep('upi_apps');
     } else if (selectedMethod === 'card') {
       setSimStep('card_form');
@@ -113,28 +166,79 @@ export default function PaymentScreen() {
 
       <ScrollView style={styles.container}>
         <View style={styles.summaryCard}>
-          <Text style={styles.summaryTitle}>Consultation Details</Text>
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Patient:</Text>
-            <Text style={styles.summaryValue}>{apptDetails?.patientName || 'N/A'}</Text>
-          </View>
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Phone:</Text>
-            <Text style={styles.summaryValue}>{apptDetails?.phone || 'N/A'}</Text>
-          </View>
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Doctor:</Text>
-            <Text style={styles.summaryValue}>{apptDetails?.doctorName || 'N/A'}</Text>
-          </View>
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Date:</Text>
-            <Text style={styles.summaryValue}>{apptDetails?.date || 'N/A'}</Text>
-          </View>
-          <View style={styles.divider} />
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Consultation Fee:</Text>
-            <Text style={styles.feeValue}>₹500</Text>
-          </View>
+          <Text style={styles.summaryTitle}>{pharmacy ? 'Pharmacy Order Details' : 'Consultation Details'}</Text>
+          
+          {pharmacy ? (
+            <>
+              <View style={styles.inputRow}>
+                <Text style={styles.inputLabel}>Name</Text>
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="Enter your name"
+                  value={patientName}
+                  onChangeText={setPatientName}
+                />
+              </View>
+              
+              <View style={styles.inputRow}>
+                <Text style={styles.inputLabel}>Phone Number</Text>
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="Enter phone number"
+                  keyboardType="numeric"
+                  maxLength={10}
+                  value={phone}
+                  onChangeText={(text) => setPhone(text.replace(/[^0-9]/g, ''))}
+                />
+              </View>
+    
+              <View style={styles.inputRow}>
+                <Text style={styles.inputLabel}>Delivery Address</Text>
+                <TextInput
+                  style={[styles.textInput, { height: 80, textAlignVertical: 'top' }]}
+                  placeholder="Enter full address"
+                  multiline
+                  value={address}
+                  onChangeText={setAddress}
+                />
+              </View>
+              
+              <View style={styles.divider} />
+              
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>Pharmacy:</Text>
+                <Text style={styles.summaryValue}>{pharmacy.name}</Text>
+              </View>
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>Total Amount:</Text>
+                <Text style={styles.feeValue}>₹{pharmacy.id === 'p1' ? '1250' : '450'}</Text>
+              </View>
+            </>
+          ) : (
+            <>
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>Patient:</Text>
+                <Text style={styles.summaryValue}>{apptDetails?.patientName || 'N/A'}</Text>
+              </View>
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>Phone:</Text>
+                <Text style={styles.summaryValue}>{apptDetails?.phone || 'N/A'}</Text>
+              </View>
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>Doctor:</Text>
+                <Text style={styles.summaryValue}>{apptDetails?.doctorName || 'N/A'}</Text>
+              </View>
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>Date:</Text>
+                <Text style={styles.summaryValue}>{apptDetails?.date || 'N/A'}</Text>
+              </View>
+              <View style={styles.divider} />
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>Consultation Fee:</Text>
+                <Text style={styles.feeValue}>₹500</Text>
+              </View>
+            </>
+          )}
         </View>
 
         <PaymentMethodSelector 
@@ -149,7 +253,7 @@ export default function PaymentScreen() {
       <View style={styles.footer}>
         <TouchableOpacity style={styles.payButton} onPress={handlePayNow}>
           <Text style={styles.payButtonText}>
-            {selectedMethod === 'cash' ? 'Confirm Appointment' : 'Pay ₹500 & Book'}
+            {selectedMethod === 'cash' ? (pharmacy ? 'Place Order (COD)' : 'Confirm Appointment') : (pharmacy ? 'Pay & Place Order' : 'Pay ₹500 & Book')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -194,6 +298,16 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
   },
   summaryTitle: { fontSize: 16, fontWeight: '700', color: Colors.color333, marginBottom: 12 },
+  inputRow: { marginBottom: 12 },
+  textInput: {
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 14,
+    backgroundColor: Colors.white,
+    color: Colors.color333
+  },
   summaryRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
   summaryLabel: { fontSize: 14, color: Colors.color666 },
   summaryValue: { fontSize: 14, color: Colors.color333, fontWeight: '500' },

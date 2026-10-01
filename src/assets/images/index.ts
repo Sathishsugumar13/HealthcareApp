@@ -8,7 +8,6 @@ export const images = {
   common: {
     facebookLogo: require('./common/facebook_logo.png'),
     googleLogo: require('./common/google-logo.png'),
-    googleLogo: require('./common/google_logo.png'),
     healthcareLogo: require('./common/healthcare-logo.png'),
     homeDoctor: require('./common/home_doctor.png'),
     noData: require('./common/no_data.png'),

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 interface PaymentMethod {
@@ -30,7 +30,7 @@ export default function PaymentMethodSelector({ methods, selectedMethod, onSelec
           onPress={() => onSelect(method.id)}
         >
           <View style={styles.methodIcon}>
-            <MaterialCommunityIcons 
+            <Ionicons 
               name={method.icon} 
               size={24} 
               color={selectedMethod === method.id ? Colors.color3C72F2 : Colors.color666} 
@@ -43,7 +43,7 @@ export default function PaymentMethodSelector({ methods, selectedMethod, onSelec
             {method.name}
           </Text>
           {selectedMethod === method.id && (
-            <MaterialCommunityIcons name="check-circle" size={24} color={Colors.color3C72F2} />
+            <Ionicons name="checkmark-circle" size={24} color={Colors.color3C72F2} />
           )}
         </TouchableOpacity>
       ))}

@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
+import { Alert, DeviceEventEmitter } from 'react-native';
+import CustomAlertModal from './src/components/Common/CustomAlertModal';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import Splash from './src/screens/Splash';
@@ -22,9 +24,18 @@ import DoctorDetailsScreen from './src/screens/DoctorDetailsScreen';
 import HospitalDetailsScreen from './src/screens/HospitalDetailsScreen';
 import ChatScreen from './src/screens/ChatScreen';
 import PaymentScreen from './src/screens/PaymentScreen';
-import PharmacyCheckoutScreen from './src/screens/PharmacyCheckoutScreen';
+import SavedScreen from './src/screens/SavedScreen';
+import MyAppointmentsScreen from './src/screens/MyAppointmentsScreen';
+import MyDetailsScreen from './src/screens/MyDetailsScreen';
+import PaymentMethodsScreen from './src/screens/PaymentMethodsScreen';
 
 const Stack = createNativeStackNavigator();
+
+// Override default Alert.alert to use our custom modal globally
+Alert.alert = (title, message, buttons) => {
+  DeviceEventEmitter.emit('SHOW_CUSTOM_ALERT', { title, message, buttons });
+};
+
 
 export default function App() {
   console.log("App component started rendering"); 
@@ -35,6 +46,7 @@ export default function App() {
         <NotificationProvider>
           <PharmacyProvider>
           <AppointmentProvider>
+            <CustomAlertModal />
             <NavigationContainer>
             <Stack.Navigator 
               screenOptions={{ headerShown: false }} 
@@ -53,7 +65,10 @@ export default function App() {
               <Stack.Screen name="Appointments" component={AppointmentsScreen} />
               <Stack.Screen name="Chat" component={ChatScreen} />
               <Stack.Screen name="Payment" component={PaymentScreen} />
-              <Stack.Screen name="PharmacyCheckout" component={PharmacyCheckoutScreen} />
+              <Stack.Screen name="Saved" component={SavedScreen} />
+              <Stack.Screen name="MyAppointments" component={MyAppointmentsScreen} />
+              <Stack.Screen name="MyDetails" component={MyDetailsScreen} />
+              <Stack.Screen name="PaymentMethods" component={PaymentMethodsScreen} />
               <Stack.Screen name="MainTab" component={MainTabNavigator} />
             </Stack.Navigator>
           </NavigationContainer>

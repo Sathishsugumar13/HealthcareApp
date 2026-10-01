@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Modal, Pressable } from 'react-native';
 import { Colors } from '../../theme/colors';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
 interface LogoutModalProps {
   isVisible: boolean;
@@ -15,7 +15,7 @@ export default function LogoutModal({ isVisible, onCancel, onConfirm }: LogoutMo
       <View style={styles.overlay}>
         <View style={styles.modalContent}>
           <View style={styles.iconContainer}>
-            <MaterialCommunityIcons name="logout" size={40} color={Colors.error} />
+            <Ionicons name="log-out-outline" size={40} color={Colors.error} />
           </View>
           <Text style={styles.title}>Logout</Text>
           <Text style={styles.message}>Are you sure you want to logout?</Text>

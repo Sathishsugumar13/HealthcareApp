@@ -1,7 +1,5 @@
 import React from 'react';
 import { Pressable, Text, StyleSheet, ActivityIndicator, StyleProp, ViewStyle, TextStyle, View } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Feather } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
@@ -13,7 +11,7 @@ export interface CustomButtonProps {
   textStyle?: StyleProp<TextStyle>;
   leftIcon?: string;
   rightIcon?: string;
-  iconFamily?: 'MaterialCommunityIcons' | 'Feather' | 'Ionicons';
+  iconFamily?: 'Ionicons';
   iconSize?: number;
   iconColor?: string;
   isLoading?: boolean;
@@ -81,13 +79,13 @@ export default function CustomButton({
 
   const renderIcon = (iconName: string) => {
     const finalColor = iconColor || getTextColor();
-    if (iconFamily === 'Feather') {
-      return <Feather name={iconName} size={iconSize} color={finalColor} />;
+    if (iconFamily === 'Ionicons') {
+      return <Ionicons name={iconName} size={iconSize} color={finalColor} />;
     }
     if (iconFamily === 'Ionicons') {
       return <Ionicons name={iconName} size={iconSize} color={finalColor} />;
     }
-    return <MaterialCommunityIcons name={iconName} size={iconSize} color={finalColor} />;
+    return <Ionicons name={iconName} size={iconSize} color={finalColor} />;
   };
 
   return (

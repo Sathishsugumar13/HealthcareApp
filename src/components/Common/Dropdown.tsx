@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 export interface DropdownItem {
   label: string;
   value: string | null;
   icon?: string;
+  iconFamily?: 'Ionicons' | 'FontAwesome5';
 }
 
 interface DropdownProps {
@@ -21,6 +22,14 @@ export default function Dropdown({ data, value, onSelect, placeholder = 'Select.
 
   const selectedItem = data.find(item => item.value === value) || data[0]; 
 
+  const renderIcon = (item: DropdownItem, size: number, color: string, style: any) => {
+    if (!item.icon) return null;
+    if (item.iconFamily === 'FontAwesome5') {
+      return <FontAwesome5 name={item.icon as any} size={size} color={color} style={style} />;
+    }
+    return <Ionicons name={item.icon as any} size={size} color={color} style={style} />;
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity 
@@ -29,12 +38,10 @@ export default function Dropdown({ data, value, onSelect, placeholder = 'Select.
         activeOpacity={0.7}
       >
         <View style={styles.dropdownButtonContent}>
-          {selectedItem.icon && (
-            <MaterialCommunityIcons name={selectedItem.icon} size={16} color={Colors.color333} style={styles.inlineMarginright6} />
-          )}
+          {renderIcon(selectedItem, 16, Colors.color333, styles.inlineMarginright6)}
           <Text style={styles.dropdownButtonText}>{selectedItem.label}</Text>
         </View>
-        <MaterialCommunityIcons name={visible ? "chevron-up" : "chevron-down"} size={20} color={Colors.color666} style={styles.inlineMarginleft8} />
+        <Ionicons name={visible ? "chevron-up" : "chevron-down"} size={20} color={Colors.color666} style={styles.inlineMarginleft8} />
       </TouchableOpacity>
 
       {visible && (
@@ -51,14 +58,7 @@ export default function Dropdown({ data, value, onSelect, placeholder = 'Select.
                   setVisible(false);
                 }}
               >
-                {item.icon && (
-                  <MaterialCommunityIcons 
-                    name={item.icon} 
-                    size={18} 
-                    color={item.value === value ? Colors.color4A80F0 : Colors.color555} 
-                    style={styles.inlineMarginright8} 
-                  />
-                )}
+                {renderIcon(item, 18, item.value === value ? Colors.color4A80F0 : Colors.color555, styles.inlineMarginright8)}
                 <Text style={[styles.dropdownMenuItemText, item.value === value && styles.dropdownMenuItemTextActive]}>
                   {item.label}
                 </Text>

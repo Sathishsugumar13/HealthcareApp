@@ -1,23 +1,21 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 
-import { Feather } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { AntDesign } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import StatBox from './StatBox';
 import ProfileMenuItem from './ProfileMenuItem';
 import { Colors } from '../../theme/colors';
 
 export default function ProfileContent(props: any) {
-
+  const navigation = useNavigation<any>();
   
   const menuItems = [
-    { id: 1, title: 'My Saved', icon: 'heart', type: 'Feather' },
-    { id: 2, title: 'Appointment', icon: 'file-text', type: 'Feather' },
-    { id: 3, title: 'Payment Method', icon: 'credit-card', type: 'Feather' },
-    { id: 4, title: 'FAQs', icon: 'message-circle', type: 'Feather' },
-    { id: 5, title: 'Logout', icon: 'log-out', type: 'Feather' },
+      { id: 0, title: 'My Details', icon: 'person', type: 'Ionicons' },
+    { id: 1, title: 'My Saved', icon: 'heart', type: 'Ionicons' },
+    { id: 2, title: 'Appointment', icon: 'document-text', type: 'Ionicons' },
+    { id: 3, title: 'Payment Method', icon: 'card', type: 'Ionicons' },
+    { id: 5, title: 'Logout', icon: 'log-out', type: 'Ionicons' },
   ];
 
   
@@ -37,7 +35,7 @@ export default function ProfileContent(props: any) {
             />
           ) : (
             <View style={[styles.profileImage, { backgroundColor: Colors.colorF0F0F0, justifyContent: 'center', alignItems: 'center' }]}>
-              <MaterialCommunityIcons name="account" size={50} color="gray" />
+              <Ionicons name="person" size={50} color="gray" />
             </View>
           )}
         </TouchableOpacity>
@@ -54,12 +52,12 @@ export default function ProfileContent(props: any) {
         <View style={styles.divider}></View>
 
         {}
-        <StatBox iconFamily="Ionicons" iconName="water" label="Calories" value="756cal" />
+        <StatBox iconFamily="Ionicons" iconName="flame" label="Calories" value="756cal" />
 
         <View style={styles.divider}></View>
 
         {}
-        <StatBox iconFamily="MaterialCommunityIcons" iconName="weight" label="Weight" value="155lbs" />
+        <StatBox iconFamily="FontAwesome5" iconName="weight" label="Weight" value="155lbs" />
       </View>
 
       {}
@@ -71,13 +69,21 @@ export default function ProfileContent(props: any) {
               key={item.id}
               title={item.title}
               iconName={item.icon}
-              iconType={item.type as 'Feather' | 'AntDesign'}
+              iconType={item.type as 'Ionicons'}
               onPress={() => {
                 if (item.title === 'Logout') {
-                  if (props.onLogoutPress) {
-                    props.onLogoutPress();
+                    if (props.onLogoutPress) {
+                      props.onLogoutPress();
+                    }
+                  } else if (item.title === 'My Details') {
+                      navigation.navigate('MyDetails');
+                    } else if (item.title === 'My Saved') {
+                    navigation.navigate('Saved');
+                  } else if (item.title === 'Payment Method') {
+                      navigation.navigate('PaymentMethods');
+                    } else if (item.title === 'Appointment') {
+                    navigation.navigate('MyAppointments');
                   }
-                }
               }}
             />
           )

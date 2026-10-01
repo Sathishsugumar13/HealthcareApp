@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 export interface StatBoxProps {
-  iconFamily: 'Ionicons' | 'MaterialCommunityIcons';
+  iconFamily: 'Ionicons' | 'FontAwesome5' | 'MaterialCommunityIcons';
   iconName: string;
   label: string;
   value: string;
@@ -13,10 +13,12 @@ export interface StatBoxProps {
 export default function StatBox({ iconFamily, iconName, label, value }: StatBoxProps) {
   return (
     <View style={styles.statBox}>
-      {iconFamily === 'Ionicons' ? (
-        <Ionicons name={iconName as any} size={24} color={Colors.color4A80F0} />
-      ) : (
+      {iconFamily === 'FontAwesome5' ? (
+        <FontAwesome5 name={iconName as any} size={24} color={Colors.color4A80F0} />
+      ) : iconFamily === 'MaterialCommunityIcons' ? (
         <MaterialCommunityIcons name={iconName as any} size={24} color={Colors.color4A80F0} />
+      ) : (
+        <Ionicons name={iconName as any} size={24} color={Colors.color4A80F0} />
       )}
       <Text style={styles.statLabel}>{label}</Text>
       <Text style={styles.statValue}>{value}</Text>

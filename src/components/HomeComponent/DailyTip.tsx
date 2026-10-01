@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 export default function DailyTip() {
   return (
     <View style={styles.dailyTipCard}>
       <View style={styles.dailyTipIconContainer}>
-        <MaterialCommunityIcons name="lightbulb-on-outline" size={24} color={Colors.colorFFA500} />
+        <Ionicons name="bulb-outline" size={24} color={Colors.colorFFA500} />
       </View>
       <Text style={styles.dailyTipText}>Drink enough water and stay hydrated every day.</Text>
     </View>

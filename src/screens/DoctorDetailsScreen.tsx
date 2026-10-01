@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import BackButton from '../components/Common/BackButton';
@@ -52,7 +52,7 @@ export default function DoctorDetailsScreen() {
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Working Hours</Text>
           <View style={styles.workingHoursRow}>
-            <MaterialCommunityIcons name="clock-outline" size={20} color={Colors.color3C72F2} />
+            <Ionicons name="time-outline" size={20} color={Colors.color3C72F2} />
             <Text style={styles.workingHoursText}>Monday - Friday, 09:00 AM - 05:00 PM</Text>
           </View>
         </View>
@@ -70,7 +70,7 @@ export default function DoctorDetailsScreen() {
                 <Text style={styles.reviewName}>Alice Williams</Text>
               </View>
               <View style={styles.reviewRatingBadge}>
-                <MaterialCommunityIcons name="star" size={16} color={Colors.colorFFB800} />
+                <Ionicons name="star" size={16} color={Colors.colorFFB800} />
                 <Text style={styles.reviewRatingText}>5.0</Text>
               </View>
             </View>

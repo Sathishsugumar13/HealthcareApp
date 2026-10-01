@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 import BackButton from '../Common/BackButton';
 
@@ -15,7 +15,7 @@ export default function Header({ title, onBackPress }: HeaderProps) {
     <View style={styles.header}>
       {onBackPress ? (
         <View style={styles.backBtn}>
-          <BackButton iconFamily="Feather" onPress={onBackPress} size={32} color={Colors.text} style={styles.inlineMarginleft10} />
+          <BackButton iconFamily="Ionicons" onPress={onBackPress} size={32} color={Colors.text} style={styles.inlineMarginleft10} />
         </View>
       ) : (
         <View style={styles.backBtn} />

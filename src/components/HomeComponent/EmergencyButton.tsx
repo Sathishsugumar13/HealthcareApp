@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, Linking } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 export default function EmergencyButton() {
@@ -8,13 +8,13 @@ export default function EmergencyButton() {
     <View style={styles.emergencyContainer}>
       <Pressable style={styles.emergencyCallButton} onPress={() => { Linking.openURL('tel:+917904176040').catch(err => console.error('Failed to open dialer', err)); }}>
         <View style={styles.emergencyCallIconCircle}>
-          <MaterialCommunityIcons name="phone-in-talk" size={26} color={Colors.colorFFF} />
+          <Ionicons name="call" size={26} color={Colors.colorFFF} />
         </View>
         <View style={styles.emergencyCallTextWrapper}>
           <Text style={styles.emergencyCallTitle}>Call Ambulance</Text>
           <Text style={styles.emergencyCallSub}>Dial +917904176040 immediately</Text>
         </View>
-        <MaterialCommunityIcons name="ambulance" size={28} color={Colors.colorFFD1D1} style={styles.inlineOpacity05} />
+        <FontAwesome5 name="ambulance" size={28} color={Colors.colorFFD1D1} style={styles.inlineOpacity05} />
       </Pressable>
     </View>
   );

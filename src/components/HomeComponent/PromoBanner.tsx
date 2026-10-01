@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 export default function PromoBanner() {
@@ -11,7 +11,7 @@ export default function PromoBanner() {
         <Text style={styles.bannerDescription}>Take care of your health every day.</Text>
       </View>
       <View style={styles.bannerImageContainer}>
-        <MaterialCommunityIcons name="heart-pulse" size={48} color={Colors.white} />
+        <FontAwesome name="heartbeat" size={48} color={Colors.white} />
       </View>
     </View>
   );

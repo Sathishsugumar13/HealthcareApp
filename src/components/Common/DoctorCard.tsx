@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
 import { Doctor } from '../HomeComponent/doctorsList/doctorsList';
 import { Colors } from '../../theme/colors';
@@ -25,11 +25,11 @@ export default function DoctorCard({ item, onPress, onChatPress }: DoctorCardPro
           </View>
           <View style={styles.doctorStats}>
             <View style={styles.statRow}>
-              <MaterialCommunityIcons name="star" size={14} color={Colors.colorFFB800} />
+              <Ionicons name="star" size={14} color={Colors.colorFFB800} />
               <Text style={styles.statText}>{item.rating}</Text>
             </View>
             <View style={styles.statRow}>
-              <MaterialCommunityIcons name="briefcase-variant-outline" size={14} color={Colors.color777} />
+              <Ionicons name="briefcase-outline" size={14} color={Colors.color777} />
               <Text style={styles.statText}>{item.experience}</Text>
             </View>
           </View>
@@ -41,10 +41,10 @@ export default function DoctorCard({ item, onPress, onChatPress }: DoctorCardPro
               style={[styles.actionIconButton, { backgroundColor: Colors.colorEDE9FE }]}
               onPress={() => onChatPress(item)}
             >
-              <MaterialCommunityIcons name="message-processing-outline" size={16} color={Colors.color8B5CF6} />
+              <Ionicons name="chatbubble-ellipses-outline" size={16} color={Colors.color8B5CF6} />
             </TouchableOpacity>
             <TouchableOpacity style={[styles.actionIconButton, { marginTop: 8, backgroundColor: Colors.colorE6F9F0 }]}>
-              <MaterialCommunityIcons name="phone-in-talk-outline" size={16} color={Colors.color00C473} />
+              <Ionicons name="call-outline" size={16} color={Colors.color00C473} />
             </TouchableOpacity>
           </View>
         </View>

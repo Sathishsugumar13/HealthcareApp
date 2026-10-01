@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 export interface ArticleCardProps {
@@ -13,13 +14,41 @@ export interface ArticleCardProps {
 export default function ArticleCard({ title, date, read, imageSource }: ArticleCardProps) {
   const [isBookmarked, setIsBookmarked] = useState(false);
 
+  useEffect(() => {
+    AsyncStorage.getItem('@saved_articles').then(data => {
+      if (data) {
+        const articles = JSON.parse(data);
+        const exists = articles.some((a: any) => a.title === title);
+        if (exists) setIsBookmarked(true);
+      }
+    });
+  }, [title]);
+
+  const toggleBookmark = async () => {
+    const newState = !isBookmarked;
+    setIsBookmarked(newState);
+    try {
+      const data = await AsyncStorage.getItem('@saved_articles');
+      let articles = data ? JSON.parse(data) : [];
+      
+      if (newState) {
+        articles.push({ id: Date.now().toString(), type: 'Article', name: title, date, readTime: read, imageSource });
+      } else {
+        articles = articles.filter((a: any) => a.name !== title);
+      }
+      await AsyncStorage.setItem('@saved_articles', JSON.stringify(articles));
+    } catch (e) {
+      console.log('Error saving article', e);
+    }
+  };
+
   return (
     <Pressable style={articleCardStyles.container}>
       {imageSource ? (
         <Image source={imageSource} style={articleCardStyles.articleImage} />
       ) : (
         <View style={articleCardStyles.imagePlaceholder}>
-          <MaterialCommunityIcons name="image-outline" size={30} color={Colors.colorB0B0B0} />
+          <Ionicons name="image-outline" size={30} color={Colors.colorB0B0B0} />
         </View>
       )}
       <View style={articleCardStyles.content}>
@@ -29,8 +58,8 @@ export default function ArticleCard({ title, date, read, imageSource }: ArticleC
           <Text style={articleCardStyles.metaText}>{read}</Text>
         </View>
       </View>
-      <Pressable style={articleCardStyles.bookmarkButton} onPress={() => setIsBookmarked(!isBookmarked)}>
-        <MaterialCommunityIcons 
+      <Pressable style={articleCardStyles.bookmarkButton} onPress={toggleBookmark}>
+        <Ionicons 
           name={isBookmarked ? "bookmark" : "bookmark-outline"} 
           size={24} 
           color={Colors.color3C72F2} 

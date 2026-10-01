@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import ContactActionButtons from './ContactActionButtons';
 import { Colors } from '../../theme/colors';
 
@@ -23,17 +23,17 @@ export default function DoctorInfoCard({ doctor, hideName = false }: DoctorInfoC
           </View>
           <View style={styles.ratingRow}>
             <View style={styles.statRow}>
-              <MaterialCommunityIcons name="star" size={14} color={Colors.colorFFB800} />
+              <Ionicons name="star" size={14} color={Colors.colorFFB800} />
               <Text style={styles.statText}>{doctor.rating}</Text>
             </View>
             <View style={styles.statRow}>
-              <MaterialCommunityIcons name="briefcase-variant-outline" size={14} color={Colors.color777} />
+              <Ionicons name="briefcase-outline" size={14} color={Colors.color777} />
               <Text style={styles.statText}>{doctor.experience}</Text>
             </View>
           </View>
           {doctor.phone && (
             <View style={[styles.ratingRow, { marginTop: 6 }]}>
-              <MaterialCommunityIcons name="phone-outline" size={14} color={Colors.color777} />
+              <Ionicons name="call-outline" size={14} color={Colors.color777} />
               <Text style={styles.statText}>{doctor.phone}</Text>
             </View>
           )}

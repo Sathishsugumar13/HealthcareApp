@@ -58,7 +58,7 @@ export default function SignInForm(props: any) {
       ) : null}
 
       <CustomInput
-        icon="mail"
+        icon="mail-outline"
         placeholder="Enter your email id"
         value={emailValue}
         onChangeText={(text: string) => setEmailValue(text)}
@@ -66,7 +66,7 @@ export default function SignInForm(props: any) {
       />
 
       <CustomInput
-        icon="lock"
+        icon="lock-closed-outline"
         placeholder="Enter your password"
         value={passwordValue}
         onChangeText={(text: string) => setPasswordValue(text)}

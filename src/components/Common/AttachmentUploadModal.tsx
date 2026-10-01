@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, Alert } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import { Colors } from '../../theme/colors';
@@ -64,24 +64,24 @@ export default function AttachmentUploadModal({
           <Text style={styles.uploadModalTitle}>{title}</Text>
           
           <TouchableOpacity style={styles.uploadOptionButton} onPress={handleCamera}>
-            <MaterialCommunityIcons name="camera-outline" size={24} color={Colors.color3C72F2} />
+            <Ionicons name="camera-outline" size={24} color={Colors.color3C72F2} />
             <Text style={styles.uploadOptionText}>Take Photo</Text>
           </TouchableOpacity>
           
           <TouchableOpacity style={styles.uploadOptionButton} onPress={handleGallery}>
-            <MaterialCommunityIcons name="image-outline" size={24} color={Colors.color3C72F2} />
+            <Ionicons name="image-outline" size={24} color={Colors.color3C72F2} />
             <Text style={styles.uploadOptionText}>Choose from Gallery</Text>
           </TouchableOpacity>
 
           {allowDocument && (
             <TouchableOpacity style={styles.uploadOptionButton} onPress={handleDocument}>
-              <MaterialCommunityIcons name="file-document-outline" size={24} color={Colors.color3C72F2} />
+              <Ionicons name="document-text-outline" size={24} color={Colors.color3C72F2} />
               <Text style={styles.uploadOptionText}>Choose Document</Text>
             </TouchableOpacity>
           )}
 
           <TouchableOpacity style={[styles.uploadOptionButton, { borderBottomWidth: 0 }]} onPress={onClose}>
-            <MaterialCommunityIcons name="close" size={24} color={Colors.error} />
+            <Ionicons name="close" size={24} color={Colors.error} />
             <Text style={[styles.uploadOptionText, { color: Colors.error }]}>Cancel</Text>
           </TouchableOpacity>
         </TouchableOpacity>

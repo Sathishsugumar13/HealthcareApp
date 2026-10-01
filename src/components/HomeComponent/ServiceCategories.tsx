@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons, Fontisto, MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 interface ServiceCategoriesProps {
@@ -14,7 +14,15 @@ export default function ServiceCategories({ SERVICES, handleServicePress }: Serv
       {SERVICES.map((service, index) => (
         <Pressable key={index} style={styles.serviceCardContainer} onPress={() => handleServicePress(service)}>
           <View style={styles.serviceIconContainer}>
-            <MaterialCommunityIcons name={service.icon} size={28} color={Colors.white} />
+            {service.iconFamily === 'Fontisto' ? (
+              <Fontisto name={service.icon} size={26} color={Colors.white} />
+            ) : service.iconFamily === 'MaterialCommunityIcons' ? (
+              <MaterialCommunityIcons name={service.icon} size={28} color={Colors.white} />
+            ) : service.iconFamily === 'FontAwesome' ? (
+              <FontAwesome name={service.icon} size={26} color={Colors.white} />
+            ) : (
+              <Ionicons name={service.icon} size={28} color={Colors.white} />
+            )}
           </View>
           <Text style={styles.serviceTitle} numberOfLines={1} adjustsFontSizeToFit>{service.title}</Text>
         </Pressable>

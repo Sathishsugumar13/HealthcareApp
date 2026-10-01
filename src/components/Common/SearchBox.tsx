@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, TextInput, StyleSheet, TouchableOpacity, StyleProp, ViewStyle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 export interface SearchBoxProps {
@@ -9,7 +8,7 @@ export interface SearchBoxProps {
   onChangeText: (text: string) => void;
   placeholder?: string;
   style?: StyleProp<ViewStyle>;
-  iconFamily?: 'Ionicons' | 'MaterialCommunityIcons';
+  iconFamily?: 'Ionicons';
 }
 
 export default function SearchBox({
@@ -24,7 +23,7 @@ export default function SearchBox({
       {iconFamily === 'Ionicons' ? (
         <Ionicons name="search-outline" size={20} color={Colors.secondaryText} style={styles.searchIcon} />
       ) : (
-        <MaterialCommunityIcons name="magnify" size={24} color={Colors.secondaryText} style={styles.searchIcon} />
+        <Ionicons name="search" size={24} color={Colors.secondaryText} style={styles.searchIcon} />
       )}
       
       <TextInput
@@ -37,7 +36,7 @@ export default function SearchBox({
       
       {value.length > 0 && (
         <TouchableOpacity onPress={() => onChangeText('')} style={styles.clearIcon}>
-          <MaterialCommunityIcons name="close-circle" size={20} color={Colors.secondaryText} />
+          <Ionicons name="close-circle" size={20} color={Colors.secondaryText} />
         </TouchableOpacity>
       )}
     </View>

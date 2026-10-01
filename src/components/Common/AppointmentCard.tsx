@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 export interface AppointmentCardProps {
@@ -56,7 +56,7 @@ export default function AppointmentCard({
         <View style={appointmentCardStyles.extraDetailsContainer}>
           <View style={appointmentCardStyles.infoRow}>
             <View style={appointmentCardStyles.infoRowLeft}>
-              <MaterialCommunityIcons name="account-outline" size={16} color={Colors.color64748B} />
+              <Ionicons name="person-outline" size={16} color={Colors.color64748B} />
               <Text style={appointmentCardStyles.infoLabel}>Patient</Text>
             </View>
             <Text style={appointmentCardStyles.infoValue}>{patientName}</Text>
@@ -65,7 +65,7 @@ export default function AppointmentCard({
           {phone && (
             <View style={appointmentCardStyles.infoRow}>
               <View style={appointmentCardStyles.infoRowLeft}>
-                <MaterialCommunityIcons name="phone-outline" size={16} color={Colors.color64748B} />
+                <Ionicons name="call-outline" size={16} color={Colors.color64748B} />
                 <Text style={appointmentCardStyles.infoLabel}>Phone</Text>
               </View>
               <Text style={appointmentCardStyles.infoValue}>{phone}</Text>
@@ -76,7 +76,7 @@ export default function AppointmentCard({
 
           <View style={appointmentCardStyles.infoRow}>
             <View style={appointmentCardStyles.infoRowLeft}>
-              <MaterialCommunityIcons name="credit-card-outline" size={16} color={Colors.color64748B} />
+              <Ionicons name="card-outline" size={16} color={Colors.color64748B} />
               <Text style={appointmentCardStyles.infoLabel}>Method</Text>
             </View>
             <Text style={appointmentCardStyles.infoValue}>{paymentMethod || 'Pay at Clinic'}</Text>
@@ -84,7 +84,7 @@ export default function AppointmentCard({
 
           <View style={appointmentCardStyles.infoRow}>
             <View style={appointmentCardStyles.infoRowLeft}>
-              <MaterialCommunityIcons name="shield-check-outline" size={16} color={Colors.color64748B} />
+              <Ionicons name="shield-checkmark-outline" size={16} color={Colors.color64748B} />
               <Text style={appointmentCardStyles.infoLabel}>Status</Text>
             </View>
             <Text style={[
@@ -99,11 +99,11 @@ export default function AppointmentCard({
 
       <View style={appointmentCardStyles.appointmentDetails}>
         <View style={appointmentCardStyles.detailItem}>
-          <MaterialCommunityIcons name="calendar-month-outline" size={16} color={Colors.secondaryText} />
+          <Ionicons name="calendar-outline" size={16} color={Colors.secondaryText} />
           <Text style={appointmentCardStyles.detailText}>{date}</Text>
         </View>
         <View style={appointmentCardStyles.detailItem}>
-          <MaterialCommunityIcons name="clock-outline" size={16} color={Colors.secondaryText} />
+          <Ionicons name="time-outline" size={16} color={Colors.secondaryText} />
           <Text style={appointmentCardStyles.detailText}>{time}</Text>
         </View>
       </View>

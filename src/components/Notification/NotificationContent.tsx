@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { useGlobalNotifications } from '../../context/NotificationContext';
 
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import NotificationCard from '../Common/NotificationCard';
 import { images } from '../../assets/images';
 import { Colors } from '../../theme/colors';

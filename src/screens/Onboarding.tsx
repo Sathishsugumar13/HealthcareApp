@@ -112,8 +112,9 @@ export default function Onboarding(props: any) {
 
         {}
         <CustomButton 
-          rightIcon="arrow-right"
-          iconFamily="Feather" 
+          rightIcon="arrow-forward-outline"
+          iconFamily="Ionicons" 
+          iconSize={28}
           isRound={true}
           onPress={() => setCurrentPage(currentPage + 1)} 
         />

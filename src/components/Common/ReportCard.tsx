@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 export interface Report {
@@ -18,7 +18,7 @@ export default function ReportCard({ item, onPress }: ReportCardProps) {
   return (
     <TouchableOpacity style={styles.listItem} onPress={onPress}>
       <View style={styles.iconBox}>
-        <MaterialCommunityIcons name="clipboard-pulse-outline" size={20} color={Colors.color5D85CE} />
+        <Ionicons name="clipboard-outline" size={20} color={Colors.color5D85CE} />
       </View>
       
       <View style={styles.flex1}>
@@ -27,7 +27,7 @@ export default function ReportCard({ item, onPress }: ReportCardProps) {
       </View>
       
       <View>
-        <Feather name="more-horizontal" size={20} color="black" />
+        <Ionicons name="ellipsis-horizontal" size={20} color="black" />
       </View>
     </TouchableOpacity>
   );

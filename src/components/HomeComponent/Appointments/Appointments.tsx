@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Modal, FlatList, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useAppointment } from '../../../context/AppointmentContext';
@@ -131,7 +131,13 @@ export default function AppointmentsComponent() {
 
   // Calendar Modal State
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
-  const [tempDate, setTempDate] = useState<number | null>(parseInt(date.substring(0, 2), 10));
+  const [tempDate, setTempDate] = useState<Date | null>(() => {
+    const parts = date.split(' at ')[0].split('/');
+    if (parts.length === 3) {
+      return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+    }
+    return new Date();
+  });
   const [tempTime, setTempTime] = useState<string | null>(date.split(' at ')[1]);
 
   const handleBack = () => {
@@ -147,10 +153,10 @@ export default function AppointmentsComponent() {
       Alert.alert('Error', 'Please select a time.');
       return;
     }
-    const dayStr = tempDate < 10 ? `0${tempDate}` : `${tempDate}`;
-    let today = new Date();
-    let mm = today.getMonth() + 1;
-    let yyyy = today.getFullYear();
+    const day = tempDate.getDate();
+    const dayStr = day < 10 ? `0${day}` : `${day}`;
+    let mm = tempDate.getMonth() + 1;
+    let yyyy = tempDate.getFullYear();
     let monthStr = mm < 10 ? `0${mm}` : `${mm}`;
     setDate(`${dayStr}/${monthStr}/${yyyy} at ${tempTime}`);
     setIsCalendarVisible(false);
@@ -328,13 +334,13 @@ export default function AppointmentsComponent() {
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
           
           <View style={styles.sectionHeader}>
-            <MaterialCommunityIcons name="account-details-outline" size={24} color={Colors.color3C72F2} />
+            <Ionicons name="person-circle-outline" size={24} color={Colors.color3C72F2} />
             <Text style={styles.sectionTitle}>Patient Information</Text>
           </View>
           
           <View style={styles.inputContainer}>
             <View style={styles.iconCircle}>
-              <MaterialCommunityIcons name="account-outline" size={20} color={Colors.color3C72F2} />
+              <Ionicons name="person-outline" size={20} color={Colors.color3C72F2} />
             </View>
             <TextInput
               style={styles.textInput}
@@ -347,7 +353,7 @@ export default function AppointmentsComponent() {
 
           <View style={styles.inputContainer}>
             <View style={styles.iconCircle}>
-              <MaterialCommunityIcons name="phone-outline" size={20} color={Colors.color3C72F2} />
+              <Ionicons name="call-outline" size={20} color={Colors.color3C72F2} />
             </View>
             <TextInput
               style={styles.textInput}
@@ -362,7 +368,7 @@ export default function AppointmentsComponent() {
 
           <View style={styles.inputContainer}>
             <View style={styles.iconCircle}>
-              <MaterialCommunityIcons name="calendar-month-outline" size={20} color={Colors.color3C72F2} />
+              <Ionicons name="calendar-outline" size={20} color={Colors.color3C72F2} />
             </View>
             <TextInput
               style={styles.textInput}
@@ -378,20 +384,24 @@ export default function AppointmentsComponent() {
               </TouchableOpacity>
             )}
             <TouchableOpacity onPress={() => {
-              let parsedDay = parseInt(date.substring(0, 2), 10);
+              let parts = date.split(' at ')[0].split('/');
               let parsedTime = date.split(' at ')[1];
-              setTempDate(isNaN(parsedDay) ? new Date().getDate() : parsedDay);
+              if (parts.length === 3) {
+                setTempDate(new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0])));
+              } else {
+                setTempDate(new Date());
+              }
               setTempTime(parsedTime || null);
               setIsCalendarVisible(true);
             }} style={styles.calendarButton}>
-              <MaterialCommunityIcons name="calendar-search" size={24} color={Colors.color8B5CF6} />
+              <Ionicons name="calendar-clear-outline" size={24} color={Colors.color8B5CF6} />
             </TouchableOpacity>
           </View>
 
           {!isPreFilled && (
             <>
               <View style={styles.sectionHeader}>
-                <MaterialCommunityIcons name="hand-extended-outline" size={24} color={Colors.color3C72F2} />
+                <Ionicons name="hand-left-outline" size={24} color={Colors.color3C72F2} />
                 <Text style={styles.sectionTitle}>Appointment Type</Text>
               </View>
               
@@ -402,7 +412,7 @@ export default function AppointmentsComponent() {
                   activeOpacity={0.8}
                 >
                   <View style={[styles.typeIconWrapper, appointmentType === 'doctor' && styles.typeIconWrapperActive]}>
-                    <MaterialCommunityIcons name="stethoscope" size={28} color={appointmentType === 'doctor' ? Colors.color3C72F2 : Colors.color777} />
+                    <Ionicons name="medkit-outline" size={28} color={appointmentType === 'doctor' ? Colors.color3C72F2 : Colors.color777} />
                   </View>
                   <Text style={[styles.typeCardText, appointmentType === 'doctor' && styles.typeCardTextActive]}>Doctor</Text>
                 </TouchableOpacity>
@@ -413,7 +423,7 @@ export default function AppointmentsComponent() {
                   activeOpacity={0.8}
                 >
                   <View style={[styles.typeIconWrapper, appointmentType === 'hospital' && styles.typeIconWrapperActive]}>
-                    <MaterialCommunityIcons name="hospital-building" size={28} color={appointmentType === 'hospital' ? Colors.color3C72F2 : Colors.color777} />
+                    <Ionicons name="business" size={28} color={appointmentType === 'hospital' ? Colors.color3C72F2 : Colors.color777} />
                   </View>
                   <Text style={[styles.typeCardText, appointmentType === 'hospital' && styles.typeCardTextActive]}>Hospital</Text>
                 </TouchableOpacity>
@@ -426,7 +436,7 @@ export default function AppointmentsComponent() {
           {appointmentType === 'doctor' ? (
             <View style={styles.flowContainer}>
               <View style={styles.sectionHeader}>
-                <MaterialCommunityIcons name="doctor" size={24} color={Colors.color3C72F2} />
+                <Ionicons name="medkit" size={24} color={Colors.color3C72F2} />
                 <Text style={styles.sectionTitle}>Doctor Details</Text>
               </View>
               
@@ -435,7 +445,7 @@ export default function AppointmentsComponent() {
                 <Text style={selectedSpecialization ? styles.dropdownTextSelected : styles.dropdownTextPlaceholder}>
                   {selectedSpecialization ? selectedSpecialization.name : 'Select Specialization'}
                 </Text>
-                <MaterialCommunityIcons name="chevron-down" size={24} color={Colors.color777} />
+                <Ionicons name="chevron-down" size={24} color={Colors.color777} />
               </TouchableOpacity>
 
               <Text style={styles.label}>Select Doctor</Text>
@@ -450,7 +460,7 @@ export default function AppointmentsComponent() {
                 <Text style={selectedDoctor ? styles.dropdownTextSelected : styles.dropdownTextPlaceholder}>
                   {selectedDoctor ? selectedDoctor.name : (selectedSpecialization ? 'Select Doctor' : 'Select Specialization First')}
                 </Text>
-                <MaterialCommunityIcons name="chevron-down" size={24} color={Colors.color777} />
+                <Ionicons name="chevron-down" size={24} color={Colors.color777} />
               </TouchableOpacity>
 
               <Text style={styles.label}>Consultation Mode</Text>
@@ -459,7 +469,7 @@ export default function AppointmentsComponent() {
                   style={[styles.modeButton, consultationMode === 'offline' && styles.modeButtonActive]}
                   onPress={() => setConsultationMode('offline')}
                 >
-                  <MaterialCommunityIcons name="office-building-marker-outline" size={20} color={consultationMode === 'offline' ? Colors.colorFFF : Colors.color777} />
+                  <Ionicons name="business-outline" size={20} color={consultationMode === 'offline' ? Colors.colorFFF : Colors.color777} />
                   <Text style={[styles.modeButtonText, consultationMode === 'offline' && styles.modeButtonTextActive]}>Offline</Text>
                 </TouchableOpacity>
 
@@ -467,7 +477,7 @@ export default function AppointmentsComponent() {
                   style={[styles.modeButton, consultationMode === 'online' && styles.modeButtonActive]}
                   onPress={() => setConsultationMode('online')}
                 >
-                  <MaterialCommunityIcons name="video-outline" size={22} color={consultationMode === 'online' ? Colors.colorFFF : Colors.color777} />
+                  <Ionicons name="videocam-outline" size={22} color={consultationMode === 'online' ? Colors.colorFFF : Colors.color777} />
                   <Text style={[styles.modeButtonText, consultationMode === 'online' && styles.modeButtonTextActive]}>Online</Text>
                 </TouchableOpacity>
               </View>
@@ -475,7 +485,7 @@ export default function AppointmentsComponent() {
           ) : (
             <View style={styles.flowContainer}>
               <View style={styles.sectionHeader}>
-                <MaterialCommunityIcons name="hospital-marker" size={24} color={Colors.color3C72F2} />
+                <Ionicons name="location-outline" size={24} color={Colors.color3C72F2} />
                 <Text style={styles.sectionTitle}>Hospital Details</Text>
               </View>
               
@@ -484,7 +494,7 @@ export default function AppointmentsComponent() {
                 <Text style={selectedState ? styles.dropdownTextSelected : styles.dropdownTextPlaceholder}>
                   {selectedState ? selectedState.name : 'Select State'}
                 </Text>
-                <MaterialCommunityIcons name="chevron-down" size={24} color={Colors.color777} />
+                <Ionicons name="chevron-down" size={24} color={Colors.color777} />
               </TouchableOpacity>
 
               <Text style={styles.label}>District</Text>
@@ -499,7 +509,7 @@ export default function AppointmentsComponent() {
                 <Text style={selectedDistrict ? styles.dropdownTextSelected : styles.dropdownTextPlaceholder}>
                   {selectedDistrict ? selectedDistrict.name : (selectedState ? 'Select District' : 'Select State First')}
                 </Text>
-                <MaterialCommunityIcons name="chevron-down" size={24} color={Colors.color777} />
+                <Ionicons name="chevron-down" size={24} color={Colors.color777} />
               </TouchableOpacity>
 
               <Text style={styles.label}>Select Hospital</Text>
@@ -514,7 +524,7 @@ export default function AppointmentsComponent() {
                 <Text style={selectedHospital ? styles.dropdownTextSelected : styles.dropdownTextPlaceholder}>
                   {selectedHospital ? selectedHospital.name : (selectedDistrict ? 'Select Hospital' : 'Select District First')}
                 </Text>
-                <MaterialCommunityIcons name="chevron-down" size={24} color={Colors.color777} />
+                <Ionicons name="chevron-down" size={24} color={Colors.color777} />
               </TouchableOpacity>
 
               <Text style={styles.label}>Specialization</Text>
@@ -530,7 +540,7 @@ export default function AppointmentsComponent() {
                 <Text style={selectedSpecialization ? styles.dropdownTextSelected : styles.dropdownTextPlaceholder}>
                   {selectedSpecialization ? selectedSpecialization.name : (selectedHospital ? 'Select Specialization' : 'Select Hospital First')}
                 </Text>
-                <MaterialCommunityIcons name="chevron-down" size={24} color={Colors.color777} />
+                <Ionicons name="chevron-down" size={24} color={Colors.color777} />
               </TouchableOpacity>
 
               <Text style={styles.label}>Select Doctor</Text>
@@ -545,7 +555,7 @@ export default function AppointmentsComponent() {
                 <Text style={selectedDoctor ? styles.dropdownTextSelected : styles.dropdownTextPlaceholder}>
                   {selectedDoctor ? selectedDoctor.name : (selectedSpecialization ? 'Select Doctor' : 'Select Specialization First')}
                 </Text>
-                <MaterialCommunityIcons name="chevron-down" size={24} color={Colors.color777} />
+                <Ionicons name="chevron-down" size={24} color={Colors.color777} />
               </TouchableOpacity>
             </View>
           )}
@@ -553,14 +563,14 @@ export default function AppointmentsComponent() {
           <View style={styles.divider} />
           
           <View style={styles.sectionHeader}>
-            <MaterialCommunityIcons name="folder-clock-outline" size={24} color={Colors.color3C72F2} />
+            <Ionicons name="folder-open-outline" size={24} color={Colors.color3C72F2} />
             <Text style={styles.sectionTitle}>Old Reports (Optional)</Text>
           </View>
 
           <View style={styles.reportsContainer}>
             <TouchableOpacity style={styles.oldReportsUploadBox} onPress={handleAddOldReport}>
               <View style={styles.uploadIconCircle}>
-                <MaterialCommunityIcons name="cloud-upload-outline" size={28} color={Colors.color3C72F2} />
+                <Ionicons name="cloud-upload-outline" size={28} color={Colors.color3C72F2} />
               </View>
               <Text style={styles.oldReportsUploadTitle}>Upload Old Reports</Text>
               <Text style={styles.oldReportsUploadSub}>Medical, Scan, or Lab reports</Text>
@@ -570,9 +580,9 @@ export default function AppointmentsComponent() {
               <View style={styles.uploadedFilesList}>
                 {oldReports.map((fileName, index) => (
                   <View key={index} style={styles.uploadedFileItem}>
-                    <MaterialCommunityIcons name={fileName.endsWith('.jpg') ? "file-image-outline" : "file-document-outline"} size={20} color={Colors.color00C473} />
+                    <Ionicons name={fileName.endsWith('.jpg') ? "file-image-outline" : "file-document-outline"} size={20} color={Colors.color00C473} />
                     <Text style={styles.uploadedFileName}>{fileName}</Text>
-                    <MaterialCommunityIcons name="check-circle" size={18} color={Colors.color00C473} style={styles.inlineMarginleftAuto} />
+                    <Ionicons name="checkmark-circle" size={18} color={Colors.color00C473} style={styles.inlineMarginleftAuto} />
                   </View>
                 ))}
               </View>
@@ -664,8 +674,10 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.colorF8F9FA,
-    borderRadius: 20,
+    backgroundColor: Colors.white,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: 12,
     paddingHorizontal: 12,
     marginBottom: 16,
     height: 60,
@@ -696,11 +708,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 20,
-    backgroundColor: Colors.colorFFF,
-    borderRadius: 20,
+    backgroundColor: Colors.white,
+    borderRadius: 12,
     marginHorizontal: 6,
-    borderWidth: 1.5,
-    borderColor: Colors.colorEBEBEB,
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   typeCardActive: {
     backgroundColor: Colors.colorF4F7FE,
@@ -746,12 +758,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.colorF8F9FA,
+    backgroundColor: Colors.white,
     paddingVertical: 14,
-    borderRadius: 20,
+    borderRadius: 12,
     marginHorizontal: 4,
     borderWidth: 1,
-    borderColor: Colors.colorE0E0E0,
+    borderColor: Colors.border,
   },
   modeButtonActive: {
     backgroundColor: Colors.color3C72F2,
@@ -785,8 +797,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Colors.colorF8F9FA,
-    borderRadius: 20,
+    backgroundColor: Colors.white,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: 12,
     paddingHorizontal: 20,
     marginBottom: 16,
     height: 60,
@@ -813,7 +827,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: Colors.colorF8F9FA,
     paddingVertical: 24,
-    borderRadius: 20,
+    borderRadius: 12,
     marginBottom: 16,
     borderWidth: 2,
     borderColor: Colors.colorE5F1F8,

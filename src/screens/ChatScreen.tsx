@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform, Alert } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -111,7 +111,7 @@ export default function ChatScreen() {
           <Text style={styles.headerSubtitle}>Online</Text>
         </View>
         <TouchableOpacity style={styles.phoneButton}>
-          <MaterialCommunityIcons name="phone-outline" size={24} color={Colors.color3C72F2} />
+          <Ionicons name="call-outline" size={24} color={Colors.color3C72F2} />
         </TouchableOpacity>
       </View>
 
@@ -131,35 +131,35 @@ export default function ChatScreen() {
           <View style={styles.attachmentMenu}>
             <TouchableOpacity style={styles.attachmentOption} onPress={pickDocument}>
               <View style={[styles.attachmentIconWrapper, { backgroundColor: '#5E66D1' }]}>
-                <MaterialCommunityIcons name="file-document" size={26} color="#FFF" />
+                <Ionicons name="document-text" size={26} color="#FFF" />
               </View>
               <Text style={styles.attachmentText}>Document</Text>
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.attachmentOption} onPress={pickCamera}>
               <View style={[styles.attachmentIconWrapper, { backgroundColor: '#D93025' }]}>
-                <MaterialCommunityIcons name="camera" size={26} color="#FFF" />
+                <Ionicons name="camera" size={26} color="#FFF" />
               </View>
               <Text style={styles.attachmentText}>Camera</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.attachmentOption} onPress={pickImage}>
               <View style={[styles.attachmentIconWrapper, { backgroundColor: '#E95273' }]}>
-                <MaterialCommunityIcons name="image" size={26} color="#FFF" />
+                <Ionicons name="image" size={26} color="#FFF" />
               </View>
               <Text style={styles.attachmentText}>Gallery</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.attachmentOption} onPress={pickAudio}>
               <View style={[styles.attachmentIconWrapper, { backgroundColor: '#E87C28' }]}>
-                <MaterialCommunityIcons name="headphones" size={26} color="#FFF" />
+                <Ionicons name="headset" size={26} color="#FFF" />
               </View>
               <Text style={styles.attachmentText}>Audio</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.attachmentOption} onPress={pickContact}>
               <View style={[styles.attachmentIconWrapper, { backgroundColor: '#2196F3' }]}>
-                <MaterialCommunityIcons name="account" size={26} color="#FFF" />
+                <Ionicons name="person" size={26} color="#FFF" />
               </View>
               <Text style={styles.attachmentText}>Contact</Text>
             </TouchableOpacity>
@@ -169,7 +169,7 @@ export default function ChatScreen() {
         {}
         <View style={styles.inputContainer}>
           <TouchableOpacity style={styles.attachButton} onPress={() => setShowAttachmentMenu(!showAttachmentMenu)}>
-            <MaterialCommunityIcons name="paperclip" size={24} color={Colors.color888} />
+            <Ionicons name="attach" size={24} color={Colors.color888} />
           </TouchableOpacity>
           
           <TextInput
@@ -185,7 +185,7 @@ export default function ChatScreen() {
             style={[styles.sendButton, inputText.trim().length > 0 && styles.sendButtonActive]} 
             onPress={sendMessage}
           >
-            <MaterialCommunityIcons name="send" size={20} color={Colors.colorFFF} />
+            <Ionicons name="send" size={20} color={Colors.colorFFF} />
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>

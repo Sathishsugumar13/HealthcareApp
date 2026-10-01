@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, FlatList } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 interface DropdownItem {
@@ -30,7 +30,7 @@ export default function ReusableDropdownModal({
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>{title}</Text>
             <TouchableOpacity onPress={onClose}>
-              <MaterialCommunityIcons name="close" size={24} color={Colors.color333} />
+              <Ionicons name="close" size={24} color={Colors.color333} />
             </TouchableOpacity>
           </View>
           <FlatList
@@ -40,7 +40,7 @@ export default function ReusableDropdownModal({
             renderItem={({ item }) => (
               <TouchableOpacity style={styles.modalListItem} onPress={() => onSelect(item)}>
                 <Text style={styles.modalListItemText}>{item.name}</Text>
-                <MaterialCommunityIcons name="chevron-right" size={20} color={Colors.colorCCC} />
+                <Ionicons name="chevron-forward" size={20} color={Colors.colorCCC} />
               </TouchableOpacity>
             )}
             ListEmptyComponent={<Text style={styles.modalEmptyText}>No items found.</Text>}

@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { Text, StyleSheet, TouchableOpacity, View, Animated, PanResponder } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 interface NotificationCardProps {
@@ -103,7 +103,7 @@ export default function NotificationCard({ item, isUnread, onPress, onDelete }: 
           style={styles.deleteAction} 
           onPress={handleDeletePress}
         >
-          <MaterialCommunityIcons name="delete" size={24} color={Colors.white} />
+          <Ionicons name="trash-outline" size={24} color={Colors.white} />
           <Text style={styles.deleteText}>Delete</Text>
         </TouchableOpacity>
       </View>

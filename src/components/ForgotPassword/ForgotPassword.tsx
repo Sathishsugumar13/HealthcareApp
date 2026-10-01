@@ -157,7 +157,7 @@ export default function ForgotPasswordForm(props: any) {
           {errorText !== '' && <Text style={styles.errorText}>{errorText}</Text>}
 
           <CustomInput
-            icon="mail"
+            icon="mail-outline"
             placeholder="Enter your email id"
             value={emailValue}
             onChangeText={(text: string) => setEmailValue(text)}
@@ -247,7 +247,7 @@ export default function ForgotPasswordForm(props: any) {
           {errorText !== '' && <Text style={styles.errorText}>{errorText}</Text>}
 
           <CustomInput
-            icon="lock"
+            icon="lock-closed-outline"
             placeholder="New password"
             value={newPasswordValue}
             onChangeText={(text: string) => setNewPasswordValue(text)}
@@ -255,7 +255,7 @@ export default function ForgotPasswordForm(props: any) {
           />
 
           <CustomInput
-            icon="lock"
+            icon="lock-closed-outline"
             placeholder="Confirm password"
             value={confirmPasswordValue}
             onChangeText={(text: string) => setConfirmPasswordValue(text)}

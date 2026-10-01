@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, Modal } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import ArticleCard from '../Common/ArticleCard';
 import HospitalCard from '../Common/HospitalCard';
@@ -108,13 +107,13 @@ export default function SeeAllModal({
               <>
                 <View style={[styles.dailyTipCard, { marginBottom: 10 }]}>
                   <View style={styles.dailyTipIconContainer}>
-                    <MaterialCommunityIcons name="lightbulb-on-outline" size={24} color={Colors.colorFFA500} />
+                    <Ionicons name="bulb-outline" size={24} color={Colors.colorFFA500} />
                   </View>
                   <Text style={styles.dailyTipText}>Drink enough water and stay hydrated every day.</Text>
                 </View>
                 <View style={styles.dailyTipCard}>
                   <View style={styles.dailyTipIconContainer}>
-                    <MaterialCommunityIcons name="lightbulb-on-outline" size={24} color={Colors.colorFFA500} />
+                    <Ionicons name="bulb-outline" size={24} color={Colors.colorFFA500} />
                   </View>
                   <Text style={styles.dailyTipText}>Walk for at least 30 minutes to stay active.</Text>
                 </View>
