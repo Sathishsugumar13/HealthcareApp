@@ -4,11 +4,11 @@
     "slug": "HealthcareApp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/expo/icon.png",
+    "icon": "./src/assets/images/common/healthcare-logo.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": false,
     "splash": {
-      "image": "./src/assets/expo/splash-icon.png",
+      "image": "./src/assets/images/common/healthcare-logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -18,7 +18,7 @@
     "android": {
       "package": "com.sathishsugumar.healthcareapp",
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/expo/adaptive-icon.png",
+        "foregroundImage": "./src/assets/images/common/healthcare-logo.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
