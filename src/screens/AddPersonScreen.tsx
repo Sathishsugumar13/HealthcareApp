@@ -34,6 +34,7 @@ export default function AddPersonScreen() {
   
   const [flatNo, setFlatNo] = useState('');
   const [street, setStreet] = useState('');
+  const [street2, setStreet2] = useState('');
   const [city, setCity] = useState('');
   const [pincode, setPincode] = useState('');
   const [stateName, setStateName] = useState('');
@@ -54,6 +55,7 @@ export default function AddPersonScreen() {
       setBloodGroup(p.bloodGroup || '');
       setFlatNo(p.flatNo || '');
       setStreet(p.street || '');
+      setStreet2(p.street2 || '');
       setCity(p.city || '');
       setPincode(p.pincode || '');
       setStateName(p.stateName || '');
@@ -87,7 +89,7 @@ export default function AddPersonScreen() {
       if (editingId) {
         const index = usersList.findIndex((u: any) => u.id === editingId);
         if (index !== -1) {
-          usersList[index] = { ...usersList[index], name, email, phone, dob, bloodGroup, flatNo, street, city, pincode, stateName, country };
+          usersList[index] = { ...usersList[index], name, email, phone, dob, bloodGroup, flatNo, street, street2, city, pincode, stateName, country };
         }
       } else {
         const newUser = {
@@ -99,6 +101,7 @@ export default function AddPersonScreen() {
           bloodGroup,
           flatNo,
           street,
+          street2,
           city,
           pincode,
           stateName,
@@ -212,10 +215,18 @@ export default function AddPersonScreen() {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Street / Area</Text>
+            <Text style={styles.label}>Street / Area (Line 1)</Text>
             <View style={styles.inputWrapper}>
               <Ionicons name="map-outline" size={20} color={Colors.color666} style={styles.inputIcon} />
               <TextInput style={styles.input} value={street} onChangeText={setStreet} placeholder="Enter Street / Area" />
+            </View>
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Street / Area (Line 2)</Text>
+            <View style={styles.inputWrapper}>
+              <Ionicons name="map-outline" size={20} color={Colors.color666} style={styles.inputIcon} />
+              <TextInput style={styles.input} value={street2} onChangeText={setStreet2} placeholder="Landmark / Locality (Optional)" />
             </View>
           </View>
 

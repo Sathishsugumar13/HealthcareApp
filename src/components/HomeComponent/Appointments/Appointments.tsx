@@ -14,6 +14,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 
 import { SPECIALIZATIONS, DOCTORS, STATES, DISTRICTS, HOSPITALS } from '../../../data/mockData';
+import { ALL_DOCTORS } from '../doctorsList/doctorsList';
 const APPOINTMENT_TYPES = [
   { id: '1', name: 'General Consultation', fee: 500, icon: 'medkit' },
   { id: '2', name: 'Reporting Discussion', fee: 300, icon: 'document-text' },

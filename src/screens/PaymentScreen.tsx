@@ -94,6 +94,7 @@ export default function PaymentScreen() {
   const [savedProfiles, setSavedProfiles] = useState<any[]>([]);
   const [selectedProfileName, setSelectedProfileName] = useState('');
   const [addressLine2, setAddressLine2] = useState('');
+    const [addressLine3, setAddressLine3] = useState('');
   const [city, setCity] = useState('');
   const [stateName, setStateName] = useState('');
   const [country] = useState('India');
@@ -132,6 +133,7 @@ export default function PaymentScreen() {
       setPhone(profile.phone || '');
       setAddressLine1(profile.flatNo || '');
       setAddressLine2(profile.street || '');
+        setAddressLine3(profile.street2 || '');
       setCity(profile.city || '');
       setStateName(profile.stateName || '');
       setPincode(profile.pincode || '');
@@ -180,7 +182,7 @@ export default function PaymentScreen() {
             patientName: patientName,
             date: new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }),
             message: tabletPrices.length > 0 ? tabletPrices.map((t: any) => t.name).join(', ') : 'Prescription Order',
-            address: [addressLine1, addressLine2, city, stateName, pincode, country].filter(Boolean).join(', '),
+            address: [addressLine1, addressLine2, addressLine3, city, stateName, pincode, country].filter(Boolean).join(', '),
             paymentMethod: pMethodName,
             paymentStatus: pStatus,
             items: tabletPrices,
@@ -332,14 +334,23 @@ export default function PaymentScreen() {
                 </View>
                 
                 <View style={styles.inputRow}>
-                  <Text style={{ fontSize: 13, color: Colors.color555, marginBottom: 6 }}>Street / Area</Text>
-                  <TextInput
-                    style={styles.textInput}
-                    placeholder="Street, Area, Landmark"
-                    value={addressLine2}
-                    onChangeText={setAddressLine2}
-                  />
-                </View>
+                    <Text style={{ fontSize: 13, color: Colors.color555, marginBottom: 6 }}>Street / Area (Line 1)</Text>
+                    <TextInput
+                      style={styles.textInput}
+                      placeholder="Street, Area"
+                      value={addressLine2}
+                      onChangeText={setAddressLine2}
+                    />
+                  </View>
+                  <View style={styles.inputRow}>
+                    <Text style={{ fontSize: 13, color: Colors.color555, marginBottom: 6 }}>Street / Area (Line 2)</Text>
+                    <TextInput
+                      style={styles.textInput}
+                      placeholder="Landmark / Locality (Optional)"
+                      value={addressLine3}
+                      onChangeText={setAddressLine3}
+                    />
+                  </View>
 
                 <View style={styles.rowInputs}>
                   <View style={[styles.inputRow, { flex: 1, marginRight: 8 }]}>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, TextInput, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, TextInput, ActivityIndicator, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
@@ -21,6 +21,7 @@ export default function PaymentGatewayModal({
   amount
 }: PaymentGatewayModalProps) {
   const [cardNumber, setCardNumber] = React.useState('');
+  const [cardHolder, setCardHolder] = React.useState('');
   const [expiry, setExpiry] = React.useState('');
   const [cvv, setCvv] = React.useState('');
   const [otp, setOtp] = React.useState('');
@@ -108,6 +109,16 @@ export default function PaymentGatewayModal({
           <View style={styles.simContent}>
             <Text style={styles.simTitle}>Enter Card Details</Text>
             <View style={styles.inputWrapper}>
+              <Text style={styles.inputLabel}>Card Holder Name</Text>
+              <TextInput 
+                style={styles.inputField} 
+                placeholder="Name on card" 
+                value={cardHolder}
+                onChangeText={setCardHolder}
+                autoCapitalize="characters"
+              />
+            </View>
+            <View style={styles.inputWrapper}>
               <Text style={styles.inputLabel}>Card Number</Text>
               <TextInput 
                 style={styles.inputField} 
@@ -144,8 +155,8 @@ export default function PaymentGatewayModal({
               </View>
             </View>
             <TouchableOpacity 
-              style={[styles.simPayBtn, (!cardNumber || !expiry || !cvv) && { opacity: 0.5 }]} 
-              disabled={!cardNumber || !expiry || !cvv}
+              style={[styles.simPayBtn, (!cardNumber || !cardHolder || !expiry || !cvv) && { opacity: 0.5 }]} 
+              disabled={!cardNumber || !cardHolder || !expiry || !cvv}
               onPress={() => {
                 setSimStep('processing');
                 setTimeout(() => {
@@ -254,7 +265,7 @@ export default function PaymentGatewayModal({
 
   return (
     <Modal visible={isVisible} transparent animationType="slide">
-      <View style={styles.modalOverlay}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.modalOverlay}>
         <View style={styles.modalContainer}>
           {(simStep !== 'processing' && simStep !== 'success') && (
             <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
@@ -269,7 +280,7 @@ export default function PaymentGatewayModal({
 
           {renderSimContent()}
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
@@ -282,12 +293,12 @@ const styles = StyleSheet.create({
     flex: 1, backgroundColor: Colors.overlay50, justifyContent: 'flex-end'
   },
   modalContainer: {
-    backgroundColor: Colors.colorFFF, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, minHeight: 400
+    backgroundColor: Colors.colorFFF, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40, minHeight: 400
   },
   closeBtn: { position: 'absolute', top: 20, right: 20, zIndex: 10 },
   gwHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 20, paddingBottom: 15, borderBottomWidth: 1, borderBottomColor: Colors.colorEEE },
   gwHeaderText: { marginLeft: 8, fontSize: 14, color: Colors.color666, fontWeight: '600' },
-  simContent: { flex: 1 },
+  simContent: {  },
   simTitle: { fontSize: 20, fontWeight: '700', color: Colors.color333, marginBottom: 8 },
   simSubtitle: { fontSize: 14, color: Colors.color666, marginBottom: 20 },
   

@@ -24,7 +24,11 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   const [deletedIds, setDeletedIds] = React.useState<string[]>([]);
 
   const notifications = rawNotifications.filter(
-    (n) => !deletedIds.includes(n.request.identifier)
+    (n) => {
+      const isDeleted = deletedIds.includes(n.request.identifier);
+      const hasContent = n.request.content?.title || n.request.content?.body;
+      return !isDeleted && hasContent;
+    }
   );
 
   const unreadCount = notifications.filter(

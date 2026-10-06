@@ -11,33 +11,59 @@ export default function MyAppointmentsScreen() {
   const navigation = useNavigation<any>();
   const { appointments } = useAppointment();
 
-  const parseDateString = (dateStr: string) => {
-    const months: any = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
+  const formatAndParseDate = (dateStr: string) => {
     try {
-      const parts = dateStr.replace('at ', '').trim().split(' ');
-      if (parts.length < 5) return 0;
-      const day = parseInt(parts[0], 10);
-      const month = months[parts[1]];
-      const year = parseInt(parts[2], 10);
-      const timeParts = parts[3].split(':');
+      let day, month, year, time, ampm;
+      const cleanStr = dateStr.replace('at ', '').trim();
+      
+      if (cleanStr.includes('/')) {
+        // Old format: "07/10/2026 10:30 AM"
+        const parts = cleanStr.split(' ');
+        const dateParts = parts[0].split('/');
+        day = parseInt(dateParts[0], 10);
+        month = parseInt(dateParts[1], 10) - 1;
+        year = parseInt(dateParts[2], 10);
+        time = parts[1];
+        ampm = parts[2];
+      } else {
+        // New format: "07 Oct 2026 10:30 AM"
+        const monthsMap: any = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
+        const parts = cleanStr.split(' ');
+        if (parts.length < 5) return { timestamp: 0, formattedDate: dateStr };
+        day = parseInt(parts[0], 10);
+        month = monthsMap[parts[1]];
+        year = parseInt(parts[2], 10);
+        time = parts[3];
+        ampm = parts[4];
+      }
+
+      if (isNaN(day) || isNaN(month) || isNaN(year)) return { timestamp: 0, formattedDate: dateStr };
+
+      const timeParts = time.split(':');
       let hours = parseInt(timeParts[0], 10);
       const minutes = parseInt(timeParts[1], 10);
-      const ampm = parts[4];
       
       if (ampm === 'PM' && hours < 12) hours += 12;
       if (ampm === 'AM' && hours === 12) hours = 0;
   
-      return new Date(year, month, day, hours, minutes).getTime();
+      const timestamp = new Date(year, month, day, hours, minutes).getTime();
+      
+      const monthsArr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const dayStr = day < 10 ? `0${day}` : `${day}`;
+      const formattedDate = `${dayStr} ${monthsArr[month]} ${year} at ${time} ${ampm}`;
+      
+      return { timestamp, formattedDate };
     } catch (e) {
-      return 0;
+      return { timestamp: 0, formattedDate: dateStr };
     }
   };
 
-  const sortedAppointments = [...appointments].sort((a, b) => {
-    const dateA = parseDateString(a.date);
-    const dateB = parseDateString(b.date);
-    return dateB - dateA; // Descending order
+  const enhancedAppointments = appointments.map((appt: any) => {
+    const { timestamp, formattedDate } = formatAndParseDate(appt.date);
+    return { ...appt, timestamp, displayDate: formattedDate };
   });
+
+  const sortedAppointments = [...enhancedAppointments].sort((a, b) => b.timestamp - a.timestamp);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -95,7 +121,7 @@ export default function MyAppointmentsScreen() {
 
               <View style={styles.timeRow}>
                 <Ionicons name="calendar-outline" size={18} color={Colors.color555} />
-                <Text style={styles.timeText}>{appt.date}</Text>
+                <Text style={styles.timeText}>{appt.displayDate}</Text>
               </View>
 
               <View style={styles.timeRow}>
