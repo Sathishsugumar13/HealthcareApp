@@ -55,6 +55,37 @@ export default function PaymentGatewayModal({
 
   const renderSimContent = () => {
     switch (simStep) {
+      case 'saved_card_cvv':
+        return (
+          <View style={styles.simContent}>
+            <Text style={styles.simTitle}>Security Check</Text>
+            <Text style={styles.simSubtitle}>Enter the 3-digit CVV for your saved card.</Text>
+            <View style={styles.inputWrapper}>
+              <TextInput 
+                style={[styles.inputField, { textAlign: 'center', fontSize: 20, letterSpacing: 5 }]} 
+                placeholder="***" 
+                keyboardType="numeric"
+                maxLength={3}
+                secureTextEntry
+                value={cvv}
+                onChangeText={(t) => setCvv(t.replace(/[^0-9]/g, ''))}
+              />
+            </View>
+            <TouchableOpacity 
+              style={[styles.simPayBtn, (!cvv || cvv.length < 3) && { opacity: 0.5 }]} 
+              disabled={!cvv || cvv.length < 3}
+              onPress={() => {
+                setSimStep('processing');
+                setTimeout(() => {
+                  setSimStep('otp');
+                  setOtp('');
+                }, 1000);
+              }}
+            >
+              <Text style={styles.simPayBtnText}>Proceed to Pay</Text>
+            </TouchableOpacity>
+          </View>
+        );
       case 'upi_apps':
         return (
           <View style={styles.simContent}>

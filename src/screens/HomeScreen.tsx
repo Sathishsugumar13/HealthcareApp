@@ -12,6 +12,7 @@ import ArticleCard from '../components/Common/ArticleCard';
 import HospitalCard from '../components/Common/HospitalCard';
 import DoctorCard from '../components/Common/DoctorCard';
 import PharmacyListCard from '../components/Common/PharmacyListCard';
+import PharmacyBillModal from '../components/Common/PharmacyBillModal';
 import { ALL_DOCTORS } from '../components/HomeComponent/doctorsList/doctorsList';
 import { MOCK_PHARMACIES } from '../data/mockData';
 
@@ -33,6 +34,8 @@ export default function HomeScreen(props: any) {
   const { orders } = usePharmacy();
 
   const profileImageHook = useProfileImage(props.user);
+  const [selectedBillData, setSelectedBillData] = React.useState<any>(null);
+  const [isBillModalVisible, setIsBillModalVisible] = React.useState(false);
 
   const [isSeeAllModalOpen, setIsSeeAllModalOpen] = useState(false);
   const [seeAllModalTitle, setSeeAllModalTitle] = useState('');
@@ -41,6 +44,23 @@ export default function HomeScreen(props: any) {
   const openSeeAllPopup = (titleValue: string) => {
     setSeeAllModalTitle(titleValue);
     setIsSeeAllModalOpen(true);
+  };
+
+  
+  const handleOrderPress = (order: any) => {
+    if (order.items) {
+      setSelectedBillData({
+        pharmacyName: order.pharmacyName,
+        date: order.date,
+        items: order.items,
+        subtotal: order.subtotal,
+        gst: order.gst,
+        deliveryCharge: order.deliveryCharge,
+        total: order.totalAmount,
+        patientName: order.patientName
+      });
+      setIsBillModalVisible(true);
+    }
   };
 
   const handleServicePress = (service: any) => {
@@ -192,17 +212,22 @@ export default function HomeScreen(props: any) {
               {orders.length > 0 && (
                 <>
                   <SectionHeader title="Pharmacy Orders" onSeeAll={() => openSeeAllPopup('Pharmacy Orders')} />
-                  <PharmacyCard 
-                    medicine={orders[0].message} 
-                    dosage={orders[0].pharmacyName} 
-                    time={orders[0].date} 
-                    status="Ordered" 
-                    patientName={orders[0].patientName}
-                    phone={orders[0].phone}
-                    address={orders[0].address}
-                    paymentMethod={orders[0].paymentMethod}
-                    paymentStatus={orders[0].paymentStatus}
-                  />
+                  {orders.slice(0, 3).map((order: any, index: number) => (
+                    <View key={order.id} style={{ marginBottom: 12 }}>
+                      <PharmacyCard 
+                        medicine={order.message} 
+                        dosage={order.pharmacyName} 
+                        time={order.date} 
+                        status="Ordered" 
+                        patientName={order.patientName}
+                        phone={order.phone}
+                        address={order.address}
+                        paymentMethod={order.paymentMethod}
+                        paymentStatus={order.paymentStatus}
+                        onPress={() => handleOrderPress(order)}
+                      />
+                    </View>
+                  ))}
                 </>
               )}
 

@@ -5,24 +5,25 @@ import { useNavigation } from '@react-navigation/native';
 import { Colors } from '../../theme/colors';
 
 interface ContactActionButtonsProps {
+  hideVideo?: boolean;
   recipientName: string;
   phoneNumber?: string;
 }
 
-export default function ContactActionButtons({ recipientName, phoneNumber }: ContactActionButtonsProps) {
+export default function ContactActionButtons({ recipientName, phoneNumber, hideVideo }: ContactActionButtonsProps) {
   const navigation = useNavigation<any>();
 
   return (
     <View style={styles.contactButtonsRow}>
       <TouchableOpacity 
-        style={[styles.contactButton, { backgroundColor: Colors.colorE8F0FE, borderColor: Colors.colorE8F0FE, marginRight: 4 }]}
+        style={[styles.contactButton, { backgroundColor: Colors.colorE8F0FE, borderColor: '#ADCCF7', marginRight: 4 }]}
         onPress={() => navigation.navigate('Chat', { recipientName })}
       >
         <Ionicons name="chatbubble-ellipses-outline" size={18} color={Colors.color1A73E8} />
         <Text style={[styles.contactButtonText, { color: Colors.color1A73E8 }]}>Message</Text>
       </TouchableOpacity>
       <TouchableOpacity 
-        style={[styles.contactButton, { backgroundColor: Colors.colorE6F4EA, borderColor: Colors.colorE6F4EA, marginHorizontal: 4 }]}
+        style={[styles.contactButton, { backgroundColor: Colors.colorE6F4EA, borderColor: '#A8DAB5', marginHorizontal: 4 }]}
         onPress={() => {
           if (phoneNumber) {
             Linking.openURL(`tel:${phoneNumber}`);
@@ -34,13 +35,15 @@ export default function ContactActionButtons({ recipientName, phoneNumber }: Con
         <Ionicons name="call-outline" size={18} color={Colors.color137333} />
         <Text style={[styles.contactButtonText, { color: Colors.color137333 }]}>Call</Text>
       </TouchableOpacity>
+      {!hideVideo && (
       <TouchableOpacity 
-        style={[styles.contactButton, { backgroundColor: '#FCE8E6', borderColor: '#FCE8E6', marginLeft: 4 }]}
+        style={[styles.contactButton, { backgroundColor: '#FCE8E6', borderColor: '#F6B2B5', marginLeft: 4 }]}
         onPress={() => Alert.alert('Video Call', `Starting video call with ${phoneNumber || recipientName}...`)}
       >
         <Ionicons name="videocam-outline" size={18} color="#D93025" />
         <Text style={[styles.contactButtonText, { color: '#D93025' }]}>Video</Text>
       </TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -59,6 +62,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 12,
     borderWidth: 1,
+      borderColor: '#D1D5DB',
   },
   contactButtonText: {
     fontSize: 15,

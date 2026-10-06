@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Modal, FlatList, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -6,12 +7,20 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { useAppointment } from '../../../context/AppointmentContext';
 import BackButton from '../../Common/BackButton';
 import AttachmentUploadModal from '../../Common/AttachmentUploadModal';
+import CustomDropdown from '../../Common/CustomDropdown';
 import ReusableDropdownModal from '../../Common/ReusableDropdownModal';
 import DateTimePickerModal from '../../Common/DateTimePickerModal';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 
 import { SPECIALIZATIONS, DOCTORS, STATES, DISTRICTS, HOSPITALS } from '../../../data/mockData';
+const APPOINTMENT_TYPES = [
+  { id: '1', name: 'General Consultation', fee: 500, icon: 'medkit' },
+  { id: '2', name: 'Reporting Discussion', fee: 300, icon: 'document-text' },
+  { id: '3', name: 'Health Check up', fee: 800, icon: 'fitness' },
+  { id: '4', name: 'First time appointment', fee: 600, icon: 'person-add' },
+  { id: '5', name: 'Regular Check up', fee: 400, icon: 'calendar' },
+];
 import { Colors } from '../../../theme/colors';
 
 export default function AppointmentsComponent() {
@@ -66,6 +75,7 @@ export default function AppointmentsComponent() {
   const [selectedSpecialization, setSelectedSpecialization] = useState<any>(null);
   const [selectedDoctor, setSelectedDoctor] = useState<any>(null);
   const [consultationMode, setConsultationMode] = useState<'offline' | 'online'>('offline');
+  const [selectedApptType, setSelectedApptType] = useState<any>(null);
   const [isPreFilled, setIsPreFilled] = useState(false);
 
   
@@ -75,6 +85,31 @@ export default function AppointmentsComponent() {
 
   
   const [oldReports, setOldReports] = useState<string[]>([]);
+  const [savedProfiles, setSavedProfiles] = useState<any[]>([]);
+  const [selectedProfileName, setSelectedProfileName] = useState('');
+
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      try {
+        const data = await AsyncStorage.getItem('my_details_list');
+        if (data) {
+          setSavedProfiles(JSON.parse(data));
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchProfiles();
+  }, []);
+
+  const handleProfileSelect = (name: string) => {
+    setSelectedProfileName(name);
+    const profile = savedProfiles.find(p => p.name === name);
+    if (profile) {
+      setPatientName(profile.name || '');
+      setPhone(profile.phone || '');
+    }
+  };
 
   useEffect(() => {
     if (route.params?.doctor) {
@@ -260,10 +295,12 @@ export default function AppointmentsComponent() {
       setSelectedDistrict(item);
       setSelectedHospital(null); 
     } else if (modalType === 'hospital') {
-      setSelectedHospital(item);
-      setSelectedSpecialization(null); 
-      setSelectedDoctor(null); 
-    }
+        setSelectedHospital(item);
+        setSelectedSpecialization(null); 
+        setSelectedDoctor(null); 
+      } else if (modalType === 'apptType') {
+        setSelectedApptType(item);
+      }
     setIsModalVisible(false);
   };
 
@@ -276,12 +313,12 @@ export default function AppointmentsComponent() {
       Alert.alert('Error', 'Phone number must be exactly 10 digits.');
       return;
     }
-    if (appointmentType === 'doctor' && (!selectedSpecialization || !selectedDoctor)) {
-      Alert.alert('Error', 'Please select a Specialization and Doctor.');
+    if (appointmentType === 'doctor' && (!selectedSpecialization || !selectedDoctor || !selectedApptType)) {
+      Alert.alert('Error', 'Please select Specialization, Doctor, and Reason for Appointment.');
       return;
     }
-    if (appointmentType === 'hospital' && (!selectedState || !selectedDistrict || !selectedHospital || !selectedSpecialization || !selectedDoctor)) {
-      Alert.alert('Error', 'Please select State, District, Hospital, Specialization, and Doctor.');
+    if (appointmentType === 'hospital' && (!selectedState || !selectedDistrict || !selectedHospital || !selectedSpecialization || !selectedDoctor || !selectedApptType)) {
+      Alert.alert('Error', 'Please select all fields including Reason for Appointment.');
       return;
     }
 
@@ -298,6 +335,9 @@ export default function AppointmentsComponent() {
         doctorName: selectedDoctor.name,
         specialization: selectedSpecialization.name,
         date: date,
+        consultationMode: consultationMode,
+          appointmentType: selectedApptType.name,
+          fee: selectedApptType.fee,
         image: route.params?.doctor?.image || null
       };
     } else if (appointmentType === 'hospital') {
@@ -310,6 +350,9 @@ export default function AppointmentsComponent() {
         doctorName: selectedDoctor.name + ' (' + selectedHospital.name + ')',
         specialization: selectedSpecialization.name,
         date: date,
+        consultationMode: consultationMode,
+          appointmentType: selectedApptType.name,
+          fee: selectedApptType.fee,
         image: route.params?.hospital?.image || null
       };
     }
@@ -337,6 +380,17 @@ export default function AppointmentsComponent() {
             <Ionicons name="person-circle-outline" size={24} color={Colors.color3C72F2} />
             <Text style={styles.sectionTitle}>Patient Information</Text>
           </View>
+          
+          {savedProfiles.length > 0 && (
+            <View style={{ marginBottom: 16 }}>
+              <CustomDropdown
+                value={selectedProfileName}
+                options={savedProfiles.map(p => p.name)}
+                onSelect={handleProfileSelect}
+                placeholder="Select Saved Profile (Optional)"
+              />
+            </View>
+          )}
           
           <View style={styles.inputContainer}>
             <View style={styles.iconCircle}>
@@ -379,23 +433,10 @@ export default function AppointmentsComponent() {
               keyboardType="numbers-and-punctuation"
             />
             {date.length >= 15 && (
-              <TouchableOpacity onPress={toggleAmPm} style={styles.amPmButton}>
-                <Text style={styles.amPmText}>{date.includes(' PM') ? 'AM' : 'PM'}</Text>
+              <TouchableOpacity onPress={() => setIsCalendarVisible(true)} style={styles.calendarButton}>
+                <Ionicons name="calendar-clear-outline" size={24} color={Colors.color8B5CF6} />
               </TouchableOpacity>
             )}
-            <TouchableOpacity onPress={() => {
-              let parts = date.split(' at ')[0].split('/');
-              let parsedTime = date.split(' at ')[1];
-              if (parts.length === 3) {
-                setTempDate(new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0])));
-              } else {
-                setTempDate(new Date());
-              }
-              setTempTime(parsedTime || null);
-              setIsCalendarVisible(true);
-            }} style={styles.calendarButton}>
-              <Ionicons name="calendar-clear-outline" size={24} color={Colors.color8B5CF6} />
-            </TouchableOpacity>
           </View>
 
           {!isPreFilled && (
@@ -526,19 +567,11 @@ export default function AppointmentsComponent() {
                 </Text>
                 <Ionicons name="chevron-down" size={24} color={Colors.color777} />
               </TouchableOpacity>
-
+              
               <Text style={styles.label}>Specialization</Text>
-              <TouchableOpacity 
-                style={[styles.dropdownSelector, !selectedHospital && styles.dropdownDisabled]} 
-                onPress={() => {
-                  if (!selectedHospital) return;
-                  let availableSpIds = selectedHospital.doctors.map((d: any) => d.spId);
-                  openDropdown('specialization', SPECIALIZATIONS.filter(sp => availableSpIds.includes(sp.id)));
-                }}
-                activeOpacity={!selectedHospital ? 1 : 0.7}
-              >
+              <TouchableOpacity style={styles.dropdownSelector} onPress={() => openDropdown('specialization', SPECIALIZATIONS)}>
                 <Text style={selectedSpecialization ? styles.dropdownTextSelected : styles.dropdownTextPlaceholder}>
-                  {selectedSpecialization ? selectedSpecialization.name : (selectedHospital ? 'Select Specialization' : 'Select Hospital First')}
+                  {selectedSpecialization ? selectedSpecialization.name : 'Select Specialization'}
                 </Text>
                 <Ionicons name="chevron-down" size={24} color={Colors.color777} />
               </TouchableOpacity>
@@ -548,7 +581,7 @@ export default function AppointmentsComponent() {
                 style={[styles.dropdownSelector, !selectedSpecialization && styles.dropdownDisabled]} 
                 onPress={() => {
                   if (!selectedSpecialization) return;
-                  openDropdown('doctor', selectedHospital.doctors.filter((d: any) => d.spId === selectedSpecialization.id));
+                  openDropdown('doctor', DOCTORS.filter(d => d.spId === selectedSpecialization.id));
                 }}
                 activeOpacity={!selectedSpecialization ? 1 : 0.7}
               >
@@ -562,8 +595,38 @@ export default function AppointmentsComponent() {
 
           <View style={styles.divider} />
           
-          <View style={styles.sectionHeader}>
-            <Ionicons name="folder-open-outline" size={24} color={Colors.color3C72F2} />
+          <Text style={styles.label}>Reason for Appointment</Text>
+          <View style={styles.radioGrid}>
+            {APPOINTMENT_TYPES.map((type) => (
+              <TouchableOpacity 
+                  key={type.id} 
+                  style={[styles.uniqueTypeCard, selectedApptType?.id === type.id && styles.uniqueTypeCardSelected]} 
+                  onPress={() => setSelectedApptType(type)}
+                  activeOpacity={0.8}
+                >
+                  <View style={[styles.uniqueIconContainer, selectedApptType?.id === type.id && styles.uniqueIconContainerSelected]}>
+                    <Ionicons name={type.icon as any} size={24} color={selectedApptType?.id === type.id ? Colors.colorFFF : Colors.color3C72F2} />
+                  </View>
+                  <View style={{ flex: 1, marginLeft: 12 }}>
+                    <Text style={[styles.uniqueTypeName, selectedApptType?.id === type.id && styles.uniqueTypeNameSelected]}>
+                      {type.name}
+                    </Text>
+                    <View style={styles.uniqueFeeBadge}>
+                      <Text style={[styles.uniqueFeeText, selectedApptType?.id === type.id && styles.uniqueFeeTextSelected]}>₹{type.fee}</Text>
+                    </View>
+                  </View>
+                  {selectedApptType?.id === type.id && (
+                    <View style={styles.uniqueCheckmark}>
+                      <Ionicons name="checkmark-circle" size={24} color={Colors.color3C72F2} />
+                    </View>
+                  )}
+                </TouchableOpacity>
+              ))}
+            </View>
+
+
+            <View style={styles.sectionHeader}>
+              <Ionicons name="folder-open-outline" size={24} color={Colors.color3C72F2} />
             <Text style={styles.sectionTitle}>Old Reports (Optional)</Text>
           </View>
 
@@ -626,6 +689,72 @@ export default function AppointmentsComponent() {
 }
 
 const styles = StyleSheet.create({
+    
+    radioGrid: {
+      marginTop: 8,
+      marginBottom: 20,
+      flexDirection: 'column',
+    },
+    uniqueTypeCard: {
+      width: '100%',
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: Colors.white,
+      borderWidth: 1.5,
+      borderColor: Colors.colorEBEBEB,
+      borderRadius: 16,
+      padding: 12,
+      
+      position: 'relative',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.05,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    uniqueTypeCardSelected: {
+      borderColor: Colors.color3C72F2,
+      backgroundColor: '#F8FAFF',
+    },
+    uniqueIconContainer: {
+      width: 48,
+      height: 48,
+      borderRadius: 12,
+      backgroundColor: '#F0F5FF',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 12,
+    },
+    uniqueIconContainerSelected: {
+      backgroundColor: Colors.color3C72F2,
+    },
+    uniqueTypeName: {
+      fontSize: 15,
+      fontWeight: '600',
+      color: Colors.color333,
+      marginBottom: 4,
+    },
+    uniqueTypeNameSelected: {
+      color: Colors.color3C72F2,
+    },
+    uniqueFeeBadge: {
+      backgroundColor: '#F5F5F5',
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: 8,
+      alignSelf: 'flex-start',
+    },
+    uniqueFeeText: {
+      fontSize: 13,
+      fontWeight: '700',
+      color: Colors.color555,
+    },
+    uniqueFeeTextSelected: {
+      color: Colors.color3C72F2,
+    },
+    uniqueCheckmark: {
+      marginLeft: 8,
+    },
   spacerWidth48: { width: 48 },
   inlineMarginleftAuto: { marginLeft: 'auto' },
 

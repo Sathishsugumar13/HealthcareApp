@@ -11,6 +11,13 @@ export interface PharmacyOrder {
   address?: string;
   paymentMethod?: string;
   paymentStatus?: string;
+  
+  // Billing details
+  items?: { name: string; price: number }[];
+  subtotal?: number;
+  gst?: number;
+  deliveryCharge?: number;
+  totalAmount?: number;
 }
 
 interface PharmacyContextType {

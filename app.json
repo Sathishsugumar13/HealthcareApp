@@ -4,11 +4,10 @@
     "slug": "HealthcareApp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/images/common/new-app-icon.jpg",
+    "icon": "./src/assets/images/common/app-icon-final.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": false,
     "splash": {
-      "image": "./src/assets/images/common/new-app-icon.jpg",
+      "image": "./src/assets/images/common/app-icon-final.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -18,7 +17,7 @@
     "android": {
       "package": "com.sathishsugumar.healthcareapp",
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/images/common/new-app-icon.jpg",
+        "foregroundImage": "./src/assets/images/common/app-icon-final.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
@@ -40,7 +39,8 @@
           "cameraPermission": "The app accesses your camera to let you take a profile picture."
         }
       ],
-      "expo-font"
+      "expo-font",
+      "@react-native-community/datetimepicker"
     ],
     "owner": "sathishsugumar"
   }

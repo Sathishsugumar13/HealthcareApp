@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Linking, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { Doctor } from '../HomeComponent/doctorsList/doctorsList';
@@ -43,7 +43,15 @@ export default function DoctorCard({ item, onPress, onChatPress }: DoctorCardPro
             >
               <Ionicons name="chatbubble-ellipses-outline" size={16} color={Colors.color8B5CF6} />
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.actionIconButton, { marginTop: 8, backgroundColor: Colors.colorE6F9F0 }]}>
+            <TouchableOpacity style={[styles.actionIconButton, { marginTop: 8, backgroundColor: Colors.colorE6F9F0 }]} onPress={() => {
+                if (item.phone) {
+                  Linking.openURL(`tel:${item.phone}`).catch((err) => {
+                    Alert.alert('Error', 'Could not open phone dialer');
+                  });
+                } else {
+                  Alert.alert('No Phone', 'Phone number not available for this doctor.');
+                }
+              }}>
               <Ionicons name="call-outline" size={16} color={Colors.color00C473} />
             </TouchableOpacity>
           </View>

@@ -1,61 +1,49 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BackButton from '../components/Common/BackButton';
 import { Colors } from '../theme/colors';
 
 export default function MyDetailsScreen() {
   const navigation = useNavigation<any>();
-  
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [address, setAddress] = useState('');
-  const [isSaving, setIsSaving] = useState(false);
+  const [persons, setPersons] = useState<any[]>([]);
 
-  useEffect(() => {
-    const fetchUserDetails = async () => {
-      try {
-        const userDataString = await AsyncStorage.getItem('my_details');
-        if (userDataString) {
-          const userObj = JSON.parse(userDataString);
-          setName(userObj.name || '');
-          setEmail(userObj.email || '');
-          setPhone(userObj.phone || '');
-          setAddress(userObj.address || '');
+  useFocusEffect(
+    useCallback(() => {
+      const fetchPersons = async () => {
+        try {
+          const data = await AsyncStorage.getItem('my_details_list');
+          if (data) {
+            setPersons(JSON.parse(data));
+          }
+        } catch (error) {
+          console.error("Error fetching details list", error);
         }
-      } catch (error) {
-        console.error("Error fetching user details", error);
-      }
-    };
-    fetchUserDetails();
-  }, []);
-
-  const handleSave = async () => {
-    setIsSaving(true);
-    try {
-      const userDataString = await AsyncStorage.getItem('my_details');
-      let userObj = userDataString ? JSON.parse(userDataString) : {};
-      
-      userObj = {
-        ...userObj,
-        name,
-        email,
-        phone,
-        address
       };
+      fetchPersons();
+    }, [])
+  );
 
-      await AsyncStorage.setItem('my_details', JSON.stringify(userObj));
-      Alert.alert('Success', 'Your details have been saved successfully.');
-    } catch (error) {
-      Alert.alert('Error', 'Failed to save details.');
-      console.error(error);
-    } finally {
-      setIsSaving(false);
-    }
+  const deletePerson = async (id: string) => {
+    Alert.alert('Delete', 'Are you sure you want to remove this person?', [
+      { text: 'Cancel', style: 'cancel' },
+      { 
+        text: 'Delete', 
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            const updated = persons.filter(p => p.id !== id);
+            await AsyncStorage.setItem('my_details_list', JSON.stringify(updated));
+            setPersons(updated);
+          } catch (e) {
+            console.error(e);
+          }
+        }
+      }
+    ]);
   };
 
   return (
@@ -67,69 +55,61 @@ export default function MyDetailsScreen() {
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.formContainer}>
-          
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Full Name</Text>
-            <View style={styles.inputWrapper}>
-              <Ionicons name="person-outline" size={20} color={Colors.color666} style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                value={name}
-                onChangeText={setName}
-                placeholder="Enter your full name"
-              />
-            </View>
+        {persons.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <Ionicons name="people-outline" size={60} color={Colors.colorA0AAB5} />
+            <Text style={styles.emptyText}>No persons added yet.</Text>
           </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Email Address</Text>
-            <View style={styles.inputWrapper}>
-              <Ionicons name="mail-outline" size={20} color={Colors.color666} style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                value={email}
-                onChangeText={setEmail}
-                placeholder="Enter your email"
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
-            </View>
+        ) : (
+          <View style={styles.listContainer}>
+            {persons.map((person) => (
+              <View key={person.id} style={styles.card}>
+                <View style={styles.cardHeader}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <View style={styles.avatar}>
+                      <Ionicons name="person" size={20} color={Colors.primary} />
+                    </View>
+                    <View style={{ marginLeft: 12 }}>
+                      <Text style={styles.cardName}>{person.name}</Text>
+                      {person.bloodGroup ? <Text style={styles.cardBlood}>Blood: {person.bloodGroup}</Text> : null}
+                    </View>
+                  </View>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <TouchableOpacity onPress={() => navigation.navigate('AddPerson', { editPerson: person })} style={{ marginRight: 16 }}>
+                      <Ionicons name="pencil-outline" size={20} color={Colors.color3C72F2} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => deletePerson(person.id)}>
+                      <Ionicons name="trash-outline" size={20} color="red" />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                
+                <View style={styles.cardDivider} />
+                
+                <View style={styles.cardInfoRow}>
+                  <Ionicons name="call-outline" size={16} color={Colors.color666} />
+                  <Text style={styles.cardInfoText}>{person.phone}</Text>
+                </View>
+                
+                {person.city ? (
+                  <View style={[styles.cardInfoRow, { marginTop: 6 }]}>
+                    <Ionicons name="location-outline" size={16} color={Colors.color666} />
+                    <Text style={styles.cardInfoText}>{person.city}, {person.stateName}</Text>
+                  </View>
+                ) : null}
+              </View>
+            ))}
           </View>
+        )}
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Phone Number</Text>
-            <View style={styles.inputWrapper}>
-              <Ionicons name="call-outline" size={20} color={Colors.color666} style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                value={phone}
-                onChangeText={(text) => setPhone(text.replace(/[^0-9]/g, ''))}
-                placeholder="Enter your phone number"
-                keyboardType="numeric"
-                maxLength={10}
-              />
-            </View>
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Delivery Address (For Pharmacy)</Text>
-            <View style={[styles.inputWrapper, { height: 100, alignItems: 'flex-start', paddingTop: 12 }]}>
-              <Ionicons name="location-outline" size={20} color={Colors.color666} style={styles.inputIcon} />
-              <TextInput
-                style={[styles.input, { height: 80, textAlignVertical: 'top' }]}
-                value={address}
-                onChangeText={setAddress}
-                placeholder="Enter your full address"
-                multiline
-              />
-            </View>
-          </View>
-
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave} disabled={isSaving}>
-            <Text style={styles.saveButtonText}>{isSaving ? 'Saving...' : 'Save Details'}</Text>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity 
+            style={styles.addButton} 
+            onPress={() => navigation.navigate('AddPerson')}
+          >
+            <Ionicons name="add-circle-outline" size={20} color={Colors.white} style={{ marginRight: 8 }} />
+            <Text style={styles.addButtonText}>Add Person</Text>
           </TouchableOpacity>
-
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -148,59 +128,93 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
-  headerTitle: { fontSize: 18, fontWeight: 'bold', color: Colors.color333 },
-  content: { flex: 1 },
-  formContainer: {
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: Colors.color101623,
+  },
+  content: {
+    flex: 1,
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 100,
+  },
+  emptyText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: Colors.colorA0AAB5,
+  },
+  listContainer: {
     padding: 20,
+  },
+  card: {
     backgroundColor: Colors.white,
-    margin: 16,
-    borderRadius: 16,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
     borderWidth: 1,
     borderColor: Colors.border,
-    shadowColor: Colors.black,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,
     elevation: 2,
   },
-  inputGroup: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: Colors.color333,
-    marginBottom: 8,
-  },
-  inputWrapper: {
+  cardHeader: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: Colors.border,
-    borderRadius: 12,
-    backgroundColor: Colors.colorF8F9FA,
-    paddingHorizontal: 12,
-    height: 50,
   },
-  inputIcon: {
-    marginRight: 10,
-  },
-  input: {
-    flex: 1,
-    fontSize: 15,
-    color: Colors.color333,
-  },
-  saveButton: {
-    backgroundColor: Colors.color3C72F2,
-    borderRadius: 12,
-    paddingVertical: 16,
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#F0F5FF',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 10,
   },
-  saveButtonText: {
+  cardName: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: Colors.color101623,
+  },
+  cardBlood: {
+    fontSize: 12,
+    color: Colors.primary,
+    marginTop: 2,
+  },
+  cardDivider: {
+    height: 1,
+    backgroundColor: Colors.border,
+    marginVertical: 12,
+  },
+  cardInfoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  cardInfoText: {
+    marginLeft: 8,
+    fontSize: 14,
+    color: Colors.color555,
+  },
+  buttonContainer: {
+    padding: 20,
+    paddingTop: 0,
+    paddingBottom: 40,
+  },
+  addButton: {
+    backgroundColor: Colors.primary,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 12,
+    paddingVertical: 16,
+  },
+  addButtonText: {
     color: Colors.white,
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600',
   }
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
@@ -13,15 +13,16 @@ export interface PharmacyCardProps {
   address?: string;
   paymentMethod?: string;
   paymentStatus?: string;
+  onPress?: () => void;
 }
 
 export default function PharmacyCard({ 
   medicine, dosage, time, status, 
-  patientName, phone, address, paymentMethod, paymentStatus 
+  patientName, phone, address, paymentMethod, paymentStatus, onPress
 }: PharmacyCardProps) {
   
   return (
-    <View style={pharmacyCardStyles.container}>
+    <TouchableOpacity style={pharmacyCardStyles.container} onPress={onPress} activeOpacity={0.7} disabled={!onPress}>
       <View style={pharmacyCardStyles.headerRow}>
         <View style={pharmacyCardStyles.iconContainer}>
           <Ionicons name="medkit-outline" size={24} color={Colors.primary} />
@@ -89,7 +90,7 @@ export default function PharmacyCard({
           </View>
         </View>
       )}
-    </View>
+    </TouchableOpacity>
   );
 }
 

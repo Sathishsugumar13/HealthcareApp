@@ -10,7 +10,7 @@ export default function SignIn(props: any) {
 
   const handleBackButtonClick = () => {
     console.log("going back from sign in");
-    props.navigation.goBack();
+    props.navigation.navigate('Onboarding');
   };
 
   const loginSuccess = (data: any) => {

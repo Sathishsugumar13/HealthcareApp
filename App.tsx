@@ -28,6 +28,7 @@ import PaymentScreen from './src/screens/PaymentScreen';
 import SavedScreen from './src/screens/SavedScreen';
 import MyAppointmentsScreen from './src/screens/MyAppointmentsScreen';
 import MyDetailsScreen from './src/screens/MyDetailsScreen';
+import AddPersonScreen from './src/screens/AddPersonScreen';
 import PaymentMethodsScreen from './src/screens/PaymentMethodsScreen';
 
 const Stack = createNativeStackNavigator();
@@ -69,6 +70,7 @@ export default function App() {
               <Stack.Screen name="Saved" component={SavedScreen} />
               <Stack.Screen name="MyAppointments" component={MyAppointmentsScreen} />
               <Stack.Screen name="MyDetails" component={MyDetailsScreen} />
+                <Stack.Screen name="AddPerson" component={AddPersonScreen} />
               <Stack.Screen name="PaymentMethods" component={PaymentMethodsScreen} />
               <Stack.Screen name="MainTab" component={MainTabNavigator} />
             </Stack.Navigator>

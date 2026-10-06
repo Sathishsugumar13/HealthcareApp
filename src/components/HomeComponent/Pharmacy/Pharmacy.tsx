@@ -22,13 +22,51 @@ export default function PharmacyComponent() {
   const [selectedPharmacy, setSelectedPharmacy] = useState<PharmacyData | null>(null);
   
   
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState('1. ');
+  const [selectedTablets, setSelectedTablets] = useState<string[]>([]);
+  
+
+  const handleMessageChange = (text: string) => {
+    // If text was cleared
+    if (text.length === 0) {
+      setMessage('1. ');
+      return;
+    }
+    
+    // First character typed
+    if (message.length === 0 && text.length === 1) {
+      setMessage('1. ' + text);
+      return;
+    }
+
+    // User pressed enter (added a newline)
+    if (text.length > message.length && text.endsWith('\n')) {
+      const lines = text.split('\n');
+      const nextNum = lines.length;
+      setMessage(text + nextNum + '. ');
+      return;
+    }
+
+    setMessage(text);
+  };
 
   const handleBack = () => {
     if (selectedPharmacy) {
       setSelectedPharmacy(null);
+      setSelectedTablets([]);
+      setMessage('');
+      setHasUploadedPrescription(false);
+      setHasUploadedTabletImage(false);
     } else {
       navigation.goBack();
+    }
+  };
+
+  const handleTabletSelect = (tablet: string) => {
+    if (selectedTablets.includes(tablet)) {
+      setSelectedTablets(selectedTablets.filter(t => t !== tablet));
+    } else {
+      setSelectedTablets([...selectedTablets, tablet]);
     }
   };
 
@@ -38,6 +76,8 @@ export default function PharmacyComponent() {
 
   const [isUploadModalVisible, setIsUploadModalVisible] = useState(false);
   const [uploadType, setUploadType] = useState<'prescription' | 'tablet' | null>(null);
+  const [hasUploadedPrescription, setHasUploadedPrescription] = useState(false);
+  const [hasUploadedTabletImage, setHasUploadedTabletImage] = useState(false);
 
   const handleUploadPrescription = () => {
     setUploadType('prescription');
@@ -51,9 +91,22 @@ export default function PharmacyComponent() {
 
   const handleBuy = () => {
     if (selectedPharmacy) {
+      if (
+        selectedTablets.length === 0 && 
+        message.replace(/^\d+\.\s*/g, '').trim() === '' && 
+        !hasUploadedPrescription && 
+        !hasUploadedTabletImage
+      ) {
+        Alert.alert(
+          'Missing Information', 
+          'Please select at least one tablet, or enter medicines, or upload a prescription/image to proceed.'
+        );
+        return;
+      }
       navigation.navigate('Payment', {
         pharmacy: selectedPharmacy,
-        message: message
+        message: message,
+        selectedTablets: selectedTablets
       });
     } else {
       Alert.alert('Error', 'Please select a pharmacy first.');
@@ -98,7 +151,26 @@ export default function PharmacyComponent() {
           
           <ScrollView style={styles.detailsContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
             
-            <ContactActionButtons recipientName={selectedPharmacy.name} />
+            
+            <View style={{ backgroundColor: Colors.white, padding: 16, borderRadius: 16, marginBottom: 16, borderWidth: 1, borderColor: '#E5E7EB', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.03, shadowRadius: 4, elevation: 1 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+                <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: '#F0F5FF', alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
+                  <Ionicons name="location-outline" size={20} color={Colors.color3C72F2} />
+                </View>
+                <Text style={{ fontSize: 14, color: Colors.color555, flex: 1, lineHeight: 20 }}>{selectedPharmacy.address} ({selectedPharmacy.distance})</Text>
+              </View>
+
+              {selectedPharmacy.phone && (
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: '#F0F5FF', alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
+                    <Ionicons name="call-outline" size={20} color={Colors.color3C72F2} />
+                  </View>
+                  <Text style={{ fontSize: 15, fontWeight: '600', color: Colors.color333 }}>{selectedPharmacy.phone}</Text>
+                </View>
+              )}
+            </View>
+
+            <ContactActionButtons recipientName={selectedPharmacy.name} phoneNumber={selectedPharmacy.phone} hideVideo={true} />
 
             <View style={styles.divider} />
 
@@ -109,9 +181,28 @@ export default function PharmacyComponent() {
             
             <View style={styles.tabletsContainer}>
               {selectedPharmacy.availableTablets.map((tablet, index) => (
-                <View key={index} style={styles.tabletPill}>
-                  <Text style={styles.tabletText}>{tablet}</Text>
-                </View>
+                
+                <TouchableOpacity 
+                  key={index} 
+                  style={[
+                    styles.tabletPill, 
+                    selectedTablets.includes(tablet) && styles.tabletPillSelected
+                  ]}
+                  onPress={() => handleTabletSelect(tablet)}
+                  activeOpacity={0.7}
+                  >
+                    {(() => {
+                      const price = 120 + (tablet.length * 10);
+                      return (
+                        <Text style={[
+                          styles.tabletText,
+                          selectedTablets.includes(tablet) && styles.tabletTextSelected
+                        ]}>
+                          {tablet} (₹{price})
+                        </Text>
+                      );
+                    })()}
+                  </TouchableOpacity>
               ))}
             </View>
 
@@ -128,15 +219,15 @@ export default function PharmacyComponent() {
                 placeholder="Type tablet names or describe your health issue..."
                 placeholderTextColor={Colors.colorA0AAB5}
                 value={message}
-                onChangeText={setMessage}
+                onChangeText={handleMessageChange}
                 multiline
-                numberOfLines={4}
+                numberOfLines={5}
                 textAlignVertical="top"
               />
             </View>
 
             <View style={styles.uploadButtonsContainer}>
-              <TouchableOpacity style={[styles.uploadButton, { backgroundColor: Colors.colorFFF5EB, borderColor: Colors.colorFFD6B3 }]} onPress={handleUploadPrescription}>
+              <TouchableOpacity style={[styles.uploadButton, { backgroundColor: Colors.colorFFF5EB, borderColor: '#D1D5DB' }]} onPress={handleUploadPrescription}>
                 <View style={[styles.uploadIconWrapper, { backgroundColor: Colors.colorFFE4CC }]}>
                   <Ionicons name="document-text-outline" size={24} color={Colors.colorFF7A00} />
                 </View>
@@ -144,7 +235,7 @@ export default function PharmacyComponent() {
                 <Text style={styles.uploadButtonSub}>Tap to upload</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={[styles.uploadButton, { backgroundColor: Colors.colorF0FDF4, borderColor: Colors.colorBBF7D0 }]} onPress={handleUploadTabletImage}>
+              <TouchableOpacity style={[styles.uploadButton, { backgroundColor: Colors.colorF0FDF4, borderColor: '#D1D5DB' }]} onPress={handleUploadTabletImage}>
                 <View style={[styles.uploadIconWrapper, { backgroundColor: Colors.colorDCFCE7 }]}>
                   <Ionicons name="camera-outline" size={24} color={Colors.color16A34A} />
                 </View>
@@ -166,7 +257,11 @@ export default function PharmacyComponent() {
         isVisible={isUploadModalVisible} 
         onClose={() => setIsUploadModalVisible(false)} 
         title={uploadType === 'prescription' ? 'Upload Prescription' : 'Upload Tablet Image'} 
-        onUploadSuccess={() => Alert.alert('Success', 'Attached successfully!')} 
+        onUploadSuccess={() => {
+          if (uploadType === 'prescription') setHasUploadedPrescription(true);
+          else if (uploadType === 'tablet') setHasUploadedTabletImage(true);
+          Alert.alert('Success', 'Attached successfully!');
+        }} 
         allowDocument={uploadType === 'prescription'}
       />
 
@@ -365,18 +460,31 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   tabletPill: {
-    backgroundColor: Colors.colorF0F4F8,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    marginRight: 10,
-    marginBottom: 10,
-    shadowColor: Colors.color000,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
-  },
+      backgroundColor: Colors.colorF0F4F8,
+      paddingVertical: 10,
+      paddingHorizontal: 16,
+      borderRadius: 12,
+      marginRight: 10,
+      marginBottom: 10,
+      borderWidth: 1,
+      borderColor: '#E5E7EB', // clear border
+      shadowColor: Colors.color000,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.05,
+      shadowRadius: 2,
+      elevation: 1,
+    },
+
+    tabletPillSelected: {
+      backgroundColor: '#EBF4FF',
+      borderColor: Colors.color3C72F2,
+      borderWidth: 1,
+    },
+    tabletTextSelected: {
+      color: Colors.color3C72F2,
+      fontWeight: '700',
+    },
+
   tabletText: {
     fontSize: 14,
     color: Colors.color3C72F2,
@@ -388,13 +496,13 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   inputContainer: {
-    backgroundColor: Colors.white,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
+      backgroundColor: Colors.white,
+      borderRadius: 12,
+      padding: 16,
+      marginBottom: 20,
+      borderWidth: 1,
+      borderColor: '#D1D5DB', // slightly darker so it's visible
+    },
   textInput: {
     fontSize: 15,
     color: Colors.color333,
@@ -406,14 +514,15 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   uploadButton: {
-    flex: 1,
-    borderRadius: 20,
-    padding: 16,
-    alignItems: 'center',
-    marginHorizontal: 6,
-    borderWidth: 1.5,
-    borderStyle: 'solid',
-  },
+      flex: 1,
+      borderRadius: 20,
+      padding: 16,
+      alignItems: 'center',
+      marginHorizontal: 6,
+      borderWidth: 1,
+      borderColor: '#E5E7EB',
+      borderStyle: 'solid',
+    },
   uploadIconWrapper: {
     width: 50,
     height: 50,

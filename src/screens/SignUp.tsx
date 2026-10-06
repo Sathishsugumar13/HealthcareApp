@@ -21,7 +21,7 @@ export default function SignUp(props: any) {
 
   const handleBack = () => {
     console.log("user pressed back button in signup");
-    props.navigation.goBack();
+    props.navigation.navigate('Onboarding');
   };
 
   const goToSignIn = () => {
