@@ -322,6 +322,7 @@ export default function PaymentScreen() {
                 <TextInput
                   style={styles.textInput}
                   placeholder="Enter your name"
+                  placeholderTextColor={Colors.secondaryText}
                   value={patientName}
                   onChangeText={setPatientName}
                 />
@@ -332,6 +333,7 @@ export default function PaymentScreen() {
                 <TextInput
                   style={styles.textInput}
                   placeholder="Enter phone number"
+                  placeholderTextColor={Colors.secondaryText}
                   keyboardType="numeric"
                   maxLength={10}
                   value={phone}
@@ -347,6 +349,7 @@ export default function PaymentScreen() {
                   <TextInput
                     style={styles.textInput}
                     placeholder="Door No, Flat, Building"
+                    placeholderTextColor={Colors.secondaryText}
                     value={addressLine1}
                     onChangeText={setAddressLine1}
                   />
@@ -357,6 +360,7 @@ export default function PaymentScreen() {
                     <TextInput
                       style={styles.textInput}
                       placeholder="Street, Area"
+                      placeholderTextColor={Colors.secondaryText}
                       value={addressLine2}
                       onChangeText={setAddressLine2}
                     />
@@ -366,6 +370,7 @@ export default function PaymentScreen() {
                     <TextInput
                       style={styles.textInput}
                       placeholder="Landmark / Locality (Optional)"
+                      placeholderTextColor={Colors.secondaryText}
                       value={addressLine3}
                       onChangeText={setAddressLine3}
                     />
@@ -387,6 +392,7 @@ export default function PaymentScreen() {
                     <TextInput
                       style={styles.textInput}
                       placeholder="Pincode"
+                      placeholderTextColor={Colors.secondaryText}
                       value={pincode}
                       onChangeText={(text) => setPincode(text.replace(/[^0-9]/g, ''))}
                       keyboardType="numeric"

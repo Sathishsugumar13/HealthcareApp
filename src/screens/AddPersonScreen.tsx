@@ -216,7 +216,13 @@ export default function AddPersonScreen() {
             <Text style={styles.label}>Full Name</Text>
             <View style={styles.inputWrapper}>
               <Ionicons name="person-outline" size={20} color={Colors.color666} style={styles.inputIcon} />
-              <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="Enter your full name" />
+              <TextInput 
+                style={styles.input} 
+                value={name} 
+                onChangeText={setName} 
+                placeholder="Enter your full name" 
+                placeholderTextColor={Colors.secondaryText}
+              />
             </View>
           </View>
 
@@ -224,7 +230,15 @@ export default function AddPersonScreen() {
             <Text style={styles.label}>Email Address</Text>
             <View style={styles.inputWrapper}>
               <Ionicons name="mail-outline" size={20} color={Colors.color666} style={styles.inputIcon} />
-              <TextInput style={styles.input} value={email} onChangeText={setEmail} placeholder="Enter your email" keyboardType="email-address" autoCapitalize="none" />
+              <TextInput 
+                style={styles.input} 
+                value={email} 
+                onChangeText={setEmail} 
+                placeholder="Enter your email" 
+                placeholderTextColor={Colors.secondaryText}
+                keyboardType="email-address" 
+                autoCapitalize="none" 
+              />
             </View>
           </View>
 
@@ -232,7 +246,15 @@ export default function AddPersonScreen() {
             <Text style={styles.label}>Phone Number</Text>
             <View style={styles.inputWrapper}>
               <Ionicons name="call-outline" size={20} color={Colors.color666} style={styles.inputIcon} />
-              <TextInput style={styles.input} value={phone} onChangeText={(text) => setPhone(text.replace(/[^0-9]/g, ''))} placeholder="Enter your phone number" keyboardType="numeric" maxLength={10} />
+              <TextInput 
+                style={styles.input} 
+                value={phone} 
+                onChangeText={(text) => setPhone(text.replace(/[^0-9]/g, ''))} 
+                placeholder="Enter your phone number" 
+                placeholderTextColor={Colors.secondaryText}
+                keyboardType="numeric" 
+                maxLength={10} 
+              />
             </View>
           </View>
 
@@ -255,6 +277,7 @@ export default function AddPersonScreen() {
                     setDob(cleaned.substring(0, 10));
                   }} 
                   placeholder="DD/MM/YYYY" 
+                  placeholderTextColor={Colors.secondaryText}
                   keyboardType="numeric"
                   maxLength={10}
                 />
@@ -273,7 +296,7 @@ export default function AddPersonScreen() {
                 value={bloodGroup}
                 options={BLOOD_GROUPS}
                 onSelect={setBloodGroup}
-                placeholder="Select Blood Group"
+                placeholder="Blood Group"
                 leftIcon={<Ionicons name="water-outline" size={20} color={Colors.color666} />}
               />
             </View>
@@ -287,7 +310,13 @@ export default function AddPersonScreen() {
             <Text style={styles.label}>Flat / Door No</Text>
             <View style={styles.inputWrapper}>
               <Ionicons name="home-outline" size={20} color={Colors.color666} style={styles.inputIcon} />
-              <TextInput style={styles.input} value={flatNo} onChangeText={setFlatNo} placeholder="Enter Flat / Door No" />
+              <TextInput 
+                style={styles.input} 
+                value={flatNo} 
+                onChangeText={setFlatNo} 
+                placeholder="Enter Flat / Door No" 
+                placeholderTextColor={Colors.secondaryText}
+              />
             </View>
           </View>
 
@@ -295,7 +324,13 @@ export default function AddPersonScreen() {
             <Text style={styles.label}>Street / Area (Line 1)</Text>
             <View style={styles.inputWrapper}>
               <Ionicons name="map-outline" size={20} color={Colors.color666} style={styles.inputIcon} />
-              <TextInput style={styles.input} value={street} onChangeText={setStreet} placeholder="Enter Street / Area" />
+              <TextInput 
+                style={styles.input} 
+                value={street} 
+                onChangeText={setStreet} 
+                placeholder="Enter Street / Area" 
+                placeholderTextColor={Colors.secondaryText}
+              />
             </View>
           </View>
 
@@ -303,7 +338,13 @@ export default function AddPersonScreen() {
             <Text style={styles.label}>Street / Area (Line 2)</Text>
             <View style={styles.inputWrapper}>
               <Ionicons name="map-outline" size={20} color={Colors.color666} style={styles.inputIcon} />
-              <TextInput style={styles.input} value={street2} onChangeText={setStreet2} placeholder="Landmark / Locality (Optional)" />
+              <TextInput 
+                style={styles.input} 
+                value={street2} 
+                onChangeText={setStreet2} 
+                placeholder="Landmark / Locality (Optional)" 
+                placeholderTextColor={Colors.secondaryText}
+              />
             </View>
           </View>
 
@@ -322,7 +363,15 @@ export default function AddPersonScreen() {
               <Text style={styles.label}>Pincode</Text>
               <View style={styles.inputWrapper}>
                 <Ionicons name="location-outline" size={20} color={Colors.color666} style={styles.inputIcon} />
-                <TextInput style={styles.input} value={pincode} onChangeText={(text) => setPincode(text.replace(/[^0-9]/g, ''))} placeholder="Pincode" keyboardType="numeric" maxLength={6} />
+                <TextInput 
+                  style={styles.input} 
+                  value={pincode} 
+                  onChangeText={(text) => setPincode(text.replace(/[^0-9]/g, ''))} 
+                  placeholder="Pincode" 
+                  placeholderTextColor={Colors.secondaryText}
+                  keyboardType="numeric" 
+                  maxLength={6} 
+                />
               </View>
             </View>
           </View>

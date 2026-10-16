@@ -85,6 +85,7 @@ export default function PaymentGatewayModal({
               <TextInput 
                 style={[styles.inputField, { textAlign: 'center', fontSize: 20, letterSpacing: 5 }]} 
                 placeholder="***" 
+                placeholderTextColor={Colors.secondaryText}
                 keyboardType="numeric"
                 maxLength={3}
                 secureTextEntry
@@ -193,6 +194,7 @@ export default function PaymentGatewayModal({
               <TextInput 
                 style={styles.inputField} 
                 placeholder="Name on card" 
+                placeholderTextColor={Colors.secondaryText}
                 value={cardHolder}
                 onChangeText={setCardHolder}
                 autoCapitalize="characters"
@@ -203,6 +205,7 @@ export default function PaymentGatewayModal({
               <TextInput 
                 style={styles.inputField} 
                 placeholder="XXXX XXXX XXXX XXXX" 
+                placeholderTextColor={Colors.secondaryText}
                 keyboardType="numeric"
                 maxLength={19}
                 value={cardNumber}
@@ -215,6 +218,7 @@ export default function PaymentGatewayModal({
                 <TextInput 
                   style={[styles.inputField, expiryError ? { borderColor: Colors.colorEF4444, borderWidth: 1 } : null]} 
                   placeholder="MM/YY" 
+                  placeholderTextColor={Colors.secondaryText}
                   keyboardType="numeric"
                   maxLength={5}
                   value={expiry}
@@ -227,6 +231,7 @@ export default function PaymentGatewayModal({
                 <TextInput 
                   style={styles.inputField} 
                   placeholder="123" 
+                  placeholderTextColor={Colors.secondaryText}
                   keyboardType="numeric" 
                   maxLength={3}
                   secureTextEntry
@@ -260,6 +265,7 @@ export default function PaymentGatewayModal({
               <TextInput 
                 style={[styles.inputField, { textAlign: 'center', fontSize: 20, letterSpacing: 5 }]} 
                 placeholder="----" 
+                placeholderTextColor={Colors.secondaryText}
                 keyboardType="numeric"
                 maxLength={4}
                 value={otp}
@@ -309,11 +315,11 @@ export default function PaymentGatewayModal({
             <Text style={styles.simSubtitle}>Login to authorize payment of ₹{amount}</Text>
             <View style={styles.inputWrapper}>
               <Text style={styles.inputLabel}>Customer ID / User ID</Text>
-              <TextInput style={styles.inputField} placeholder="Enter User ID" />
+              <TextInput style={styles.inputField} placeholder="Enter User ID" placeholderTextColor={Colors.secondaryText} />
             </View>
             <View style={styles.inputWrapper}>
               <Text style={styles.inputLabel}>Password</Text>
-              <TextInput style={styles.inputField} placeholder="Enter Password" secureTextEntry />
+              <TextInput style={styles.inputField} placeholder="Enter Password" placeholderTextColor={Colors.secondaryText} secureTextEntry />
             </View>
             <TouchableOpacity style={styles.simPayBtn} onPress={processMockPayment}>
               <Text style={styles.simPayBtnText}>Login & Pay</Text>

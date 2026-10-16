@@ -63,7 +63,7 @@ export default function CustomDropdown({ label, value, options, onSelect, placeh
           <Text numberOfLines={1} style={[
             styles.dropdownButtonText, 
             variant === 'pill' && { fontSize: 16 },
-            !value && { color: Colors.colorA0AAB5 }, 
+            !value && { color: Colors.secondaryText }, 
             { flex: 1 }, 
             centered && { textAlign: 'center' },
             highlightSelected && value ? { color: Colors.color3C72F2, fontWeight: 'bold' } : null
@@ -138,10 +138,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: Colors.border,
-    borderRadius: 8,
+    borderRadius: 12,
     padding: 12,
     backgroundColor: Colors.white,
-    height: 48,
+    height: 50,
   },
   dropdownButtonText: {
     fontSize: 14,

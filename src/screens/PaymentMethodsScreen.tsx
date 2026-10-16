@@ -178,51 +178,55 @@ export default function PaymentMethodsScreen() {
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Cardholder Name</Text>
-              <TextInput 
-                style={styles.input} 
-                placeholder="Enter cardholder name"
-                value={cardName}
-                onChangeText={setCardName}
-              />
-            </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Card Number</Text>
-              <TextInput 
-                style={styles.input} 
-                placeholder="XXXX XXXX XXXX XXXX"
-                keyboardType="numeric"
-                maxLength={19}
-                value={formatCardNumber(cardNumber)}
-                onChangeText={(text) => setCardNumber(text.replace(/\s/g, ''))}
-              />
-            </View>
-
-            <View style={styles.row}>
-              <View style={[styles.inputGroup, { flex: 1, marginRight: 10 }]}>
-                <Text style={styles.label}>Expiry Date</Text>
-                <TextInput 
-                  style={[styles.input, expiryError ? { borderColor: Colors.colorEF4444, borderWidth: 1 } : null]} 
-                  placeholder="MM/YY"
-                  keyboardType="numeric"
-                  maxLength={5}
-                  value={expiry}
-                  onChangeText={(text) => setExpiry(formatExpiry(text))}
-                />
-                {expiryError ? <Text style={styles.errorText}>{expiryError}</Text> : null}
-              </View>
-              <View style={[styles.inputGroup, { flex: 1, marginLeft: 10 }]}>
-                <Text style={styles.label}>CVV</Text>
-                <TextInput 
-                  style={styles.input} 
-                  placeholder="123"
-                  keyboardType="numeric"
-                  maxLength={3}
-                  secureTextEntry
-                  value={cvv}
-                  onChangeText={setCvv}
-                />
+               <Text style={styles.label}>Cardholder Name</Text>
+               <TextInput 
+                 style={styles.input} 
+                 placeholder="Enter cardholder name"
+                 placeholderTextColor={Colors.secondaryText}
+                 value={cardName}
+                 onChangeText={setCardName}
+               />
+             </View>
+ 
+             <View style={styles.inputGroup}>
+               <Text style={styles.label}>Card Number</Text>
+               <TextInput 
+                 style={styles.input} 
+                 placeholder="XXXX XXXX XXXX XXXX"
+                 placeholderTextColor={Colors.secondaryText}
+                 keyboardType="numeric"
+                 maxLength={19}
+                 value={formatCardNumber(cardNumber)}
+                 onChangeText={(text) => setCardNumber(text.replace(/\s/g, ''))}
+               />
+             </View>
+ 
+             <View style={styles.row}>
+               <View style={[styles.inputGroup, { flex: 1, marginRight: 10 }]}>
+                 <Text style={styles.label}>Expiry Date</Text>
+                 <TextInput 
+                   style={[styles.input, expiryError ? { borderColor: Colors.colorEF4444, borderWidth: 1 } : null]} 
+                   placeholder="MM/YY"
+                   placeholderTextColor={Colors.secondaryText}
+                   keyboardType="numeric"
+                   maxLength={5}
+                   value={expiry}
+                   onChangeText={(text) => setExpiry(formatExpiry(text))}
+                 />
+                 {expiryError ? <Text style={styles.errorText}>{expiryError}</Text> : null}
+               </View>
+               <View style={[styles.inputGroup, { flex: 1, marginLeft: 10 }]}>
+                 <Text style={styles.label}>CVV</Text>
+                 <TextInput 
+                   style={styles.input} 
+                   placeholder="123"
+                   placeholderTextColor={Colors.secondaryText}
+                   keyboardType="numeric"
+                   maxLength={3}
+                   secureTextEntry
+                   value={cvv}
+                   onChangeText={setCvv}
+                 />
               </View>
             </View>
 
