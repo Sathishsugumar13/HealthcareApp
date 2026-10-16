@@ -67,7 +67,7 @@ export default function ProfileModal({
   if (!isProfileModalOpen) return null;
 
   return (
-    <Modal visible={isProfileModalOpen} transparent={true} animationType="fade" onRequestClose={handleClose}>
+    <Modal visible={isProfileModalOpen} transparent={true} animationType="fade" statusBarTranslucent={true} onRequestClose={handleClose}>
       <View style={styles.profileModalOverlay}>
         <View style={styles.profileModalContent}>
           <View style={styles.profileModalHeader}>

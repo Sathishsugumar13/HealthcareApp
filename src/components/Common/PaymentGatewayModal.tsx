@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, TextInput, ActivityIndicator, ScrollView, KeyboardAvoidingView, Platform, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, TextInput, ActivityIndicator, ScrollView, KeyboardAvoidingView, Platform, Image, Keyboard } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
+import { images } from '../../assets/images';
 
 interface PaymentGatewayModalProps {
   isVisible: boolean;
@@ -30,11 +31,27 @@ export default function PaymentGatewayModal({
   const [selectedBank, setSelectedBank] = React.useState('');
   const [upiPin, setUpiPin] = React.useState('');
   const [selectedUpiApp, setSelectedUpiApp] = React.useState('');
+  const [keyboardHeight, setKeyboardHeight] = React.useState(0);
+
+  React.useEffect(() => {
+    const showSub = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      (e) => setKeyboardHeight(e.endCoordinates.height)
+    );
+    const hideSub = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      () => setKeyboardHeight(0)
+    );
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   const upiApps = [
-    { name: 'Google Pay', color: '#4285F4' },
-    { name: 'PhonePe', color: '#5F259F' },
-    { name: 'Paytm', color: '#002970' }
+    { name: 'Google Pay', logo: images.common.gpay },
+    { name: 'PhonePe', logo: images.common.phonepe },
+    { name: 'Paytm', logo: images.common.paytm }
   ];
   const banks = ['State Bank of India', 'HDFC Bank', 'ICICI Bank', 'Axis Bank'];
 
@@ -115,8 +132,8 @@ export default function PaymentGatewayModal({
             <Text style={styles.simSubtitle}>Select UPI App to complete payment of ₹{amount}</Text>
             {upiApps.map((app, idx) => (
               <TouchableOpacity key={idx} style={styles.upiAppBtn} onPress={() => { setSelectedUpiApp(app.name); setUpiPin(''); setSimStep('upi_pin'); }}>
-                <View style={[styles.upiIcon, { backgroundColor: app.color }]}>
-                  <Text style={{ color: '#ffffff', fontWeight: 'bold', fontSize: 18 }}>{app.name[0]}</Text>
+                <View style={styles.upiIcon}>
+                  <Image source={app.logo} style={styles.upiLogoImage} />
                 </View>
                 <Text style={styles.upiText}>{app.name}</Text>
                 <Ionicons name="chevron-forward" size={20} color={Colors.color999} />
@@ -126,9 +143,16 @@ export default function PaymentGatewayModal({
         );
 
       case 'upi_pin':
+        const selectedAppObj = upiApps.find(a => a.name === selectedUpiApp);
         return (
           <View style={[styles.simContent, { paddingHorizontal: 0, marginTop: -20 }]}>
-            <View style={[styles.upiHeader, { justifyContent: 'flex-end' }]}>
+            <View style={styles.upiHeader}>
+              <View style={styles.upiHeaderLeft}>
+                {selectedAppObj && (
+                  <Image source={selectedAppObj.logo} style={styles.upiHeaderLogo} />
+                )}
+                <Text style={styles.upiHeaderText}>{selectedUpiApp || 'UPI'}</Text>
+              </View>
               <TouchableOpacity onPress={() => setSimStep('upi_apps')}>
                 <Ionicons name="close" size={24} color="#666" />
               </TouchableOpacity>
@@ -350,12 +374,28 @@ export default function PaymentGatewayModal({
     }
   };
 
+  if (!isVisible) return null;
+
   return (
-    <Modal visible={isVisible} transparent animationType="slide">
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.modalOverlay}>
+    <Modal visible={isVisible} transparent animationType="slide" onRequestClose={onClose} statusBarTranslucent={true}>
+      <View style={[styles.modalOverlay, { paddingBottom: keyboardHeight }]}>
+        <TouchableOpacity 
+          style={StyleSheet.absoluteFill} 
+          activeOpacity={1} 
+          onPress={() => {
+            Keyboard.dismiss();
+            onClose();
+          }} 
+        />
         <View style={styles.modalContainer}>
           {(simStep !== 'processing' && simStep !== 'success') && (
-            <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
+            <TouchableOpacity 
+              style={styles.closeBtn} 
+              onPress={() => {
+                Keyboard.dismiss();
+                onClose();
+              }}
+            >
               <Ionicons name="close" size={24} color={Colors.color333} />
             </TouchableOpacity>
           )}
@@ -365,9 +405,16 @@ export default function PaymentGatewayModal({
             <Text style={styles.gwHeaderText}>Secure Payment Gateway</Text>
           </View>
 
-          {renderSimContent()}
+          <ScrollView 
+            keyboardShouldPersistTaps="handled" 
+            showsVerticalScrollIndicator={false}
+            bounces={false}
+            contentContainerStyle={{ flexGrow: 1 }}
+          >
+            {renderSimContent()}
+          </ScrollView>
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 }
@@ -380,7 +427,12 @@ const styles = StyleSheet.create({
     flex: 1, backgroundColor: Colors.overlay50, justifyContent: 'flex-end'
   },
   modalContainer: {
-    backgroundColor: Colors.colorFFF, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40, minHeight: 400
+    backgroundColor: Colors.colorFFF, 
+    borderTopLeftRadius: 24, 
+    borderTopRightRadius: 24, 
+    padding: 24, 
+    paddingBottom: 24, 
+    maxHeight: '85%',
   },
   closeBtn: { position: 'absolute', top: 20, right: 20, zIndex: 10 },
   gwHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 20, paddingBottom: 15, borderBottomWidth: 1, borderBottomColor: Colors.colorEEE },
@@ -389,15 +441,17 @@ const styles = StyleSheet.create({
   simTitle: { fontSize: 20, fontWeight: '700', color: Colors.color333, marginBottom: 8 },
   simSubtitle: { fontSize: 14, color: Colors.color666, marginBottom: 20 },
   
-  upiAppBtn: { flexDirection: 'row', alignItems: 'center', padding: 16, borderWidth: 1, borderColor: Colors.colorEEE, borderRadius: 12, marginBottom: 12 },
-  upiIcon: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', marginRight: 16 },
-  upiText: { flex: 1, fontSize: 16, fontWeight: '500' },
+  upiAppBtn: { flexDirection: 'row', alignItems: 'center', padding: 14, borderWidth: 1, borderColor: Colors.colorEEE, borderRadius: 14, marginBottom: 12, backgroundColor: Colors.colorFFF },
+  upiIcon: { width: 44, height: 44, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginRight: 16, backgroundColor: '#F8F9FA', borderWidth: 1, borderColor: Colors.colorEEE },
+  upiLogoImage: { width: 32, height: 32, resizeMode: 'contain' },
+  upiHeaderLogo: { width: 26, height: 26, resizeMode: 'contain' },
+  upiText: { flex: 1, fontSize: 16, fontWeight: '600', color: Colors.color333 },
   
   inputWrapper: { marginBottom: 16 },
   rowInputs: { flexDirection: 'row', justifyContent: 'space-between' },
   inputLabel: { fontSize: 12, color: Colors.color666, marginBottom: 6, fontWeight: '500' },
   errorText: { color: Colors.colorEF4444, fontSize: 12, marginTop: 4 },
-  inputField: { borderWidth: 1, borderColor: Colors.colorDDD, borderRadius: 8, padding: 12, fontSize: 16, backgroundColor: Colors.colorF9F9F9 },
+  inputField: { borderWidth: 1, borderColor: Colors.colorDDD, borderRadius: 8, padding: 12, fontSize: 16, backgroundColor: Colors.colorF9F9F9, color: Colors.color333 },
   
 
   keypadContainer: { marginTop: 40, paddingHorizontal: 10 },

@@ -147,11 +147,16 @@ export default function App() {
             <NotificationProvider>
               <PharmacyProvider>
                 <AppointmentProvider>
-                  <StatusBar style="auto" translucent={true} backgroundColor="transparent" />
+                  <StatusBar style="dark" translucent={true} backgroundColor="transparent" />
                   <CustomAlertModal />
                   <NavigationContainer>
                     <Stack.Navigator 
-                      screenOptions={{ headerShown: false, freezeOnBlur: false }} 
+                      screenOptions={{ 
+                        headerShown: false, 
+                        freezeOnBlur: false,
+                        statusBarStyle: 'dark',
+                        statusBarTranslucent: true,
+                      }} 
                       initialRouteName="Splash"
                     >
                       <Stack.Screen name="Splash" component={Splash} />

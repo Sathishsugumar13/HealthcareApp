@@ -12,6 +12,9 @@ export const images = {
     homeDoctor: require('./common/home_doctor.png'),
     noData: require('./common/no_data.png'),
     splashNew: require('./common/splash-new.png'),
+    gpay: require('./common/gpay.png'),
+    phonepe: require('./common/phonepe.png'),
+    paytm: require('./common/paytm.png'),
   },
   doctors: {
     doctor1: require('./doctors/doctor_1.jpg'),

@@ -33,7 +33,7 @@ export default function DateTimePickerModal({
   };
   
   return (
-    <Modal visible={isVisible} transparent animationType="fade" onRequestClose={onClose}>
+    <Modal visible={isVisible} transparent animationType="fade" statusBarTranslucent={true} onRequestClose={onClose}>
       <TouchableOpacity style={styles.calendarModalOverlay} activeOpacity={1} onPress={onClose}>
         <TouchableOpacity style={styles.calendarModalContainer} activeOpacity={1} onPress={() => {}}>
           

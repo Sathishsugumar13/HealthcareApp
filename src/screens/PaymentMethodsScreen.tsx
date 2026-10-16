@@ -1,16 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, TextInput, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, TextInput, Alert, Keyboard, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BackButton from '../components/Common/BackButton';
+import SuccessModal from '../components/Common/SuccessModal';
 import { Colors } from '../theme/colors';
 
 export default function PaymentMethodsScreen() {
   const navigation = useNavigation<any>();
   const [savedCards, setSavedCards] = useState<any[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+  useEffect(() => {
+    const showSub = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      (e) => setKeyboardHeight(e.endCoordinates.height)
+    );
+    const hideSub = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      () => setKeyboardHeight(0)
+    );
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
   
   // New Card State
   const [cardName, setCardName] = useState('');
@@ -59,7 +77,7 @@ export default function PaymentMethodsScreen() {
       setExpiry('');
       setCvv('');
       
-      Alert.alert('Success', 'Card added successfully!');
+      setShowSuccessModal(true);
     } catch (e) {
       Alert.alert('Error', 'Could not save the card.');
     }
@@ -167,75 +185,107 @@ export default function PaymentMethodsScreen() {
       </ScrollView>
 
       {/* Add Card Modal */}
-      <Modal visible={isAddModalOpen} transparent animationType="slide">
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Add New Card</Text>
-              <TouchableOpacity onPress={() => setIsAddModalOpen(false)}>
-                <Ionicons name="close" size={24} color={Colors.color333} />
-              </TouchableOpacity>
-            </View>
+      {isAddModalOpen && (
+        <Modal 
+          visible={isAddModalOpen} 
+          transparent 
+          animationType="slide"
+          statusBarTranslucent={true}
+          onRequestClose={() => {
+            Keyboard.dismiss();
+            setIsAddModalOpen(false);
+          }}
+        >
+          <View style={[styles.modalOverlay, { paddingBottom: keyboardHeight }]}>
+            <TouchableOpacity 
+              style={StyleSheet.absoluteFill} 
+              activeOpacity={1} 
+              onPress={() => {
+                Keyboard.dismiss();
+                setIsAddModalOpen(false);
+              }} 
+            />
+            <View style={styles.modalContent}>
+              <ScrollView 
+                keyboardShouldPersistTaps="handled" 
+                showsVerticalScrollIndicator={false}
+                bounces={false}
+              >
+                <View style={styles.modalHeader}>
+                  <Text style={styles.modalTitle}>Add New Card</Text>
+                  <TouchableOpacity onPress={() => { Keyboard.dismiss(); setIsAddModalOpen(false); }}>
+                    <Ionicons name="close" size={24} color={Colors.color333} />
+                  </TouchableOpacity>
+                </View>
 
-            <View style={styles.inputGroup}>
-               <Text style={styles.label}>Cardholder Name</Text>
-               <TextInput 
-                 style={styles.input} 
-                 placeholder="Enter cardholder name"
-                 placeholderTextColor={Colors.secondaryText}
-                 value={cardName}
-                 onChangeText={setCardName}
-               />
-             </View>
- 
-             <View style={styles.inputGroup}>
-               <Text style={styles.label}>Card Number</Text>
-               <TextInput 
-                 style={styles.input} 
-                 placeholder="XXXX XXXX XXXX XXXX"
-                 placeholderTextColor={Colors.secondaryText}
-                 keyboardType="numeric"
-                 maxLength={19}
-                 value={formatCardNumber(cardNumber)}
-                 onChangeText={(text) => setCardNumber(text.replace(/\s/g, ''))}
-               />
-             </View>
- 
-             <View style={styles.row}>
-               <View style={[styles.inputGroup, { flex: 1, marginRight: 10 }]}>
-                 <Text style={styles.label}>Expiry Date</Text>
-                 <TextInput 
-                   style={[styles.input, expiryError ? { borderColor: Colors.colorEF4444, borderWidth: 1 } : null]} 
-                   placeholder="MM/YY"
-                   placeholderTextColor={Colors.secondaryText}
-                   keyboardType="numeric"
-                   maxLength={5}
-                   value={expiry}
-                   onChangeText={(text) => setExpiry(formatExpiry(text))}
-                 />
-                 {expiryError ? <Text style={styles.errorText}>{expiryError}</Text> : null}
-               </View>
-               <View style={[styles.inputGroup, { flex: 1, marginLeft: 10 }]}>
-                 <Text style={styles.label}>CVV</Text>
-                 <TextInput 
-                   style={styles.input} 
-                   placeholder="123"
-                   placeholderTextColor={Colors.secondaryText}
-                   keyboardType="numeric"
-                   maxLength={3}
-                   secureTextEntry
-                   value={cvv}
-                   onChangeText={setCvv}
-                 />
-              </View>
-            </View>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.label}>Cardholder Name</Text>
+                  <TextInput 
+                    style={styles.input} 
+                    placeholder="Enter cardholder name"
+                    placeholderTextColor={Colors.secondaryText}
+                    value={cardName}
+                    onChangeText={setCardName}
+                  />
+                </View>
 
-            <TouchableOpacity style={styles.saveBtn} onPress={handleSaveCard}>
-              <Text style={styles.saveBtnText}>Save Card</Text>
-            </TouchableOpacity>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.label}>Card Number</Text>
+                  <TextInput 
+                    style={styles.input} 
+                    placeholder="XXXX XXXX XXXX XXXX"
+                    placeholderTextColor={Colors.secondaryText}
+                    keyboardType="numeric"
+                    maxLength={19}
+                    value={formatCardNumber(cardNumber)}
+                    onChangeText={(text) => setCardNumber(text.replace(/\s/g, ''))}
+                  />
+                </View>
+
+                <View style={styles.row}>
+                  <View style={[styles.inputGroup, { flex: 1, marginRight: 10 }]}>
+                    <Text style={styles.label}>Expiry Date</Text>
+                    <TextInput 
+                      style={[styles.input, expiryError ? { borderColor: Colors.colorEF4444, borderWidth: 1 } : null]} 
+                      placeholder="MM/YY"
+                      placeholderTextColor={Colors.secondaryText}
+                      keyboardType="numeric"
+                      maxLength={5}
+                      value={expiry}
+                      onChangeText={(text) => setExpiry(formatExpiry(text))}
+                    />
+                    {expiryError ? <Text style={styles.errorText}>{expiryError}</Text> : null}
+                  </View>
+                  <View style={[styles.inputGroup, { flex: 1, marginLeft: 10 }]}>
+                    <Text style={styles.label}>CVV</Text>
+                    <TextInput 
+                      style={styles.input} 
+                      placeholder="123"
+                      placeholderTextColor={Colors.secondaryText}
+                      keyboardType="numeric"
+                      maxLength={3}
+                      secureTextEntry
+                      value={cvv}
+                      onChangeText={setCvv}
+                    />
+                  </View>
+                </View>
+
+                <TouchableOpacity style={styles.saveBtn} onPress={handleSaveCard}>
+                  <Text style={styles.saveBtnText}>Save Card</Text>
+                </TouchableOpacity>
+              </ScrollView>
+            </View>
           </View>
-        </View>
-      </Modal>
+        </Modal>
+      )}
+
+      <SuccessModal
+        visible={showSuccessModal}
+        title="Success"
+        message="Card added successfully!"
+        onClose={() => setShowSuccessModal(false)}
+      />
 
     </SafeAreaView>
   );
@@ -304,6 +354,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 24,
+    maxHeight: '85%',
   },
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
   modalTitle: { fontSize: 20, fontWeight: 'bold', color: Colors.color333 },
@@ -318,6 +369,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     fontSize: 16,
     backgroundColor: Colors.colorF8F9FA,
+    color: Colors.color333,
   },
   errorText: {
     color: Colors.colorEF4444,

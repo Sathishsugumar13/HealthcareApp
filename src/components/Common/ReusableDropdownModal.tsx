@@ -24,7 +24,7 @@ export default function ReusableDropdownModal({
   onSelect 
 }: ReusableDropdownModalProps) {
   return (
-    <Modal visible={isVisible} transparent animationType="slide" onRequestClose={onClose}>
+    <Modal visible={isVisible} transparent animationType="slide" statusBarTranslucent={true} onRequestClose={onClose}>
       <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={onClose}>
         <TouchableOpacity style={styles.modalContainer} activeOpacity={1} onPress={() => {}}>
           <View style={styles.modalHeader}>

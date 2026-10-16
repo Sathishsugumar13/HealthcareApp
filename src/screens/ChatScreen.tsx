@@ -1542,6 +1542,7 @@ export default function ChatScreen() {
       <Modal
         visible={showDeleteModal}
         transparent
+        statusBarTranslucent={true}
         animationType="fade"
         onRequestClose={() => setShowDeleteModal(false)}
       >
@@ -1592,6 +1593,7 @@ export default function ChatScreen() {
       <Modal
         visible={showForwardModal}
         transparent
+        statusBarTranslucent={true}
         animationType="slide"
         onRequestClose={() => {
           setShowForwardModal(false);
@@ -1647,6 +1649,7 @@ export default function ChatScreen() {
       <Modal
         visible={showOverflowMenu}
         transparent
+        statusBarTranslucent={true}
         animationType="fade"
         onRequestClose={() => setShowOverflowMenu(false)}
       >
@@ -1764,6 +1767,7 @@ export default function ChatScreen() {
       <Modal
         visible={showContactInfoModal}
         transparent
+        statusBarTranslucent={true}
         animationType="slide"
         onRequestClose={() => setShowContactInfoModal(false)}
       >
@@ -1863,6 +1867,7 @@ export default function ChatScreen() {
       <Modal
         visible={showMediaModal}
         transparent
+        statusBarTranslucent={true}
         animationType="slide"
         onRequestClose={() => setShowMediaModal(false)}
       >

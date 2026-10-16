@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Modal, TextInput, ActivityIndicator, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Modal, TextInput, ActivityIndicator, Image, Keyboard, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -112,6 +112,22 @@ export default function PaymentScreen() {
   const [country] = useState('India');
   const [pincode, setPincode] = useState('');
   const [savedCards, setSavedCards] = useState<any[]>([]);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+  useEffect(() => {
+    const showSub = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      (e) => setKeyboardHeight(e.endCoordinates.height)
+    );
+    const hideSub = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      () => setKeyboardHeight(0)
+    );
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -293,9 +309,18 @@ export default function PaymentScreen() {
         <View style={styles.spacerWidth48} />
       </View>
 
-      <ScrollView style={styles.container}>
-        <View style={styles.summaryCard}>
-          <Text style={styles.summaryTitle}>{pharmacy ? 'Pharmacy Order Details' : 'Consultation Details'}</Text>
+      <KeyboardAvoidingView 
+        style={[{ flex: 1 }, Platform.OS === 'android' && keyboardHeight > 0 ? { paddingBottom: keyboardHeight } : null]} 
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <ScrollView 
+          style={styles.container}
+          contentContainerStyle={{ paddingBottom: 40 }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.summaryCard}>
+            <Text style={styles.summaryTitle}>{pharmacy ? 'Pharmacy Order Details' : 'Consultation Details'}</Text>
           
           {pharmacy ? (
             <>
@@ -525,6 +550,7 @@ export default function PaymentScreen() {
           </Text>
         </TouchableOpacity>
       </View>
+    </KeyboardAvoidingView>
 
       <PaymentGatewayModal 
         isVisible={showSimModal}

@@ -29,7 +29,7 @@ export default function PharmacyBillModal({ isVisible, onClose, billData }: Phar
   if (!isVisible) return null;
 
   return (
-    <Modal visible={isVisible} transparent animationType="slide">
+    <Modal visible={isVisible} transparent animationType="slide" statusBarTranslucent={true}>
       <View style={styles.overlay}>
         <View style={styles.container}>
           

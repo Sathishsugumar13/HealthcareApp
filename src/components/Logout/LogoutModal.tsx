@@ -13,7 +13,7 @@ export default function LogoutModal({ isVisible, onCancel, onConfirm }: LogoutMo
   if (!isVisible) return null;
 
   return (
-    <Modal visible={isVisible} transparent={true} animationType="fade" onRequestClose={onCancel}>
+    <Modal visible={isVisible} transparent={true} animationType="fade" statusBarTranslucent={true} onRequestClose={onCancel}>
       <View style={styles.overlay}>
         <View style={styles.modalContent}>
           <View style={styles.iconContainer}>

@@ -1,4 +1,4 @@
-﻿
+
 import React from 'react';
 import { Colors } from '../../theme/colors';
 import { Modal, View, Text, Pressable, StyleSheet } from 'react-native';
@@ -17,11 +17,13 @@ export default function SuccessModal({
   message,
   onClose
 }: SuccessModalProps) {
+  if (!visible) return null;
   return (
     <Modal
       visible={visible}
       transparent
       animationType="fade"
+      statusBarTranslucent={true}
       onRequestClose={onClose}
     >
       <View style={styles.overlay}>

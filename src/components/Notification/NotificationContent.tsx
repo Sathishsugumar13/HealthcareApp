@@ -62,6 +62,7 @@ export default function NotificationContent() {
       <Modal
         animationType="slide"
         transparent={true}
+        statusBarTranslucent={true}
         visible={!!selectedNotification}
         onRequestClose={() => setSelectedNotification(null)}
       >
@@ -107,6 +108,7 @@ export default function NotificationContent() {
       <Modal
         animationType="fade"
         transparent={true}
+        statusBarTranslucent={true}
         visible={!!deleteConfirmId}
         onRequestClose={() => setDeleteConfirmId(null)}
       >

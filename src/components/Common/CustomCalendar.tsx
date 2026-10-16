@@ -96,7 +96,7 @@ export default function CustomCalendar({ visible, onClose, onSelectDate, initial
   };
 
   return (
-    <Modal visible={visible} transparent={true} animationType="fade" onRequestClose={onClose}>
+    <Modal visible={visible} transparent={true} animationType="fade" statusBarTranslucent={true} onRequestClose={onClose}>
       <View style={styles.overlay}>
         <View style={styles.modalContent}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}>

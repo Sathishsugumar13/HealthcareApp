@@ -30,7 +30,7 @@ export default function SeeAllModal({
   if (!isSeeAllModalOpen) return null;
 
   return (
-    <Modal visible={isSeeAllModalOpen} animationType="slide" transparent={true} onRequestClose={() => setIsSeeAllModalOpen(false)}>
+    <Modal visible={isSeeAllModalOpen} animationType="slide" transparent={true} statusBarTranslucent={true} onRequestClose={() => setIsSeeAllModalOpen(false)}>
       <View style={styles.seeAllModalOverlay}>
         <View style={styles.seeAllModalContent}>
           <View style={styles.seeAllModalHeader}>

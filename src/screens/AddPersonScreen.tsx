@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import BackButton from '../components/Common/BackButton';
 import CustomDropdown from '../components/Common/CustomDropdown';
 import CustomCalendar from '../components/Common/CustomCalendar';
+import SuccessModal from '../components/Common/SuccessModal';
 import { Colors } from '../theme/colors';
 import DateTimePicker from '@react-native-community/datetimepicker';
 const STATE_CITY_MAP: Record<string, string[]> = {
@@ -44,6 +45,8 @@ export default function AddPersonScreen() {
   const [isSaving, setIsSaving] = useState(false);
   const route = useRoute<any>();
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successModalMessage, setSuccessModalMessage] = useState('');
 
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
@@ -180,8 +183,8 @@ export default function AddPersonScreen() {
       }
 
       await AsyncStorage.setItem('my_details_list', JSON.stringify(usersList));
-      Alert.alert('Success', editingId ? 'Person updated successfully.' : 'Person added successfully.');
-      navigation.goBack();
+      setSuccessModalMessage(editingId ? 'Person updated successfully.' : 'Person added successfully.');
+      setShowSuccessModal(true);
     } catch (error) {
       Alert.alert('Error', 'Failed to save details.');
       console.error(error);
@@ -404,6 +407,16 @@ export default function AddPersonScreen() {
         </View>
       </ScrollView>
       </KeyboardAvoidingView>
+
+      <SuccessModal
+        visible={showSuccessModal}
+        title="Success"
+        message={successModalMessage}
+        onClose={() => {
+          setShowSuccessModal(false);
+          navigation.goBack();
+        }}
+      />
     </SafeAreaView>
   );
 }

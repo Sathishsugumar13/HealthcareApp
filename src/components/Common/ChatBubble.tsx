@@ -594,6 +594,7 @@ export default function ChatBubble({
         <Modal
           visible={showFullImage}
           transparent
+          statusBarTranslucent={true}
           animationType="fade"
           onRequestClose={() => setShowFullImage(false)}
         >

@@ -46,7 +46,7 @@ export default function CustomAlertModal() {
   }
 
   return (
-    <Modal transparent visible animationType="fade" onRequestClose={() => handlePress()}>
+    <Modal transparent visible animationType="fade" statusBarTranslucent={true} onRequestClose={() => handlePress()}>
       <View style={styles.overlay}>
         <View style={styles.alertBox}>
           
