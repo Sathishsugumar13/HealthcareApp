@@ -29,7 +29,7 @@ export default function HomeHeader({ profileImageHook, user }: HomeHeaderProps) 
         <Text style={styles.nameText}>{user?.name || 'User'}</Text>
         <Text style={styles.greetingText}>How are you feeling today ?</Text>
       </View>
-      <View style={styles.doctorImageWrapper}>
+      <View style={styles.doctorImageWrapper} pointerEvents="none">
          <Image source={images.common.homeDoctor} style={styles.largeDoctorImage} />
       </View>
     </SafeAreaView>
@@ -87,8 +87,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
     bottom: 0,
-    zIndex: 10,
-    elevation: 10,
     opacity: 0.9,
   },
   largeDoctorImage: {

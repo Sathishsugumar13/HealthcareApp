@@ -14,7 +14,7 @@ export default function CustomInput({ icon, isPassword = false, ...props }: Cust
 
   return (
     <View style={styles.inputContainer}>
-      <Ionicons name={icon} size={20} color={Colors.secondaryText} style={styles.icon} />
+      <Ionicons name={icon as any} size={20} color={Colors.secondaryText} style={styles.icon} />
       <TextInput
         style={styles.input}
         placeholderTextColor={Colors.secondaryText}

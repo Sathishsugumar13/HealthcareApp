@@ -149,6 +149,7 @@ export default function SignUpForm(props: any) {
         hasSmallLetter={hasSmallLetter}
         hasNumber={hasNumber}
         hasSpecialCharacter={hasSpecialCharacter}
+        passwordsMatch={userPassword !== '' && userPassword === confirmPassword}
       />
 
       <CustomButton 

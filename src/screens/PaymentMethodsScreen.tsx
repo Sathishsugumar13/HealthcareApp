@@ -84,8 +84,29 @@ export default function PaymentMethodsScreen() {
     return num;
   };
 
+  const [expiryError, setExpiryError] = useState('');
+
   const formatExpiry = (text: string) => {
     const cleaned = text.replace(/\D/g, '');
+    let errorMessage = '';
+    
+    if (cleaned.length >= 2) {
+      const month = parseInt(cleaned.slice(0, 2), 10);
+      if (month < 1 || month > 12) {
+        errorMessage = 'Invalid month (01-12)';
+      }
+    }
+
+    if (cleaned.length === 4 && !errorMessage) {
+      const year = parseInt(cleaned.slice(2, 4), 10);
+      const currentYear = new Date().getFullYear() % 100; // e.g., 26
+      if (year < currentYear) {
+        errorMessage = 'Card expired';
+      }
+    }
+
+    setExpiryError(errorMessage);
+
     if (cleaned.length >= 3) {
       return cleaned.slice(0, 2) + '/' + cleaned.slice(2, 4);
     }
@@ -117,8 +138,8 @@ export default function PaymentMethodsScreen() {
                   size={24} 
                   color={Colors.color3C72F2} 
                 />
-                <TouchableOpacity onPress={() => deleteCard(card.id)}>
-                  <Ionicons name="trash-outline" size={20} color={Colors.colorEF4444} />
+                <TouchableOpacity onPress={() => deleteCard(card.id)} style={{ backgroundColor: '#FFE6E6', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 15 }}>
+                  <Text style={{ color: Colors.colorEF4444, fontSize: 12, fontWeight: 'bold' }}>Delete</Text>
                 </TouchableOpacity>
               </View>
               <Text style={styles.cardNumber}>**** **** **** {card.number.slice(-4)}</Text>
@@ -160,7 +181,7 @@ export default function PaymentMethodsScreen() {
               <Text style={styles.label}>Cardholder Name</Text>
               <TextInput 
                 style={styles.input} 
-                placeholder="John Doe"
+                placeholder="Enter cardholder name"
                 value={cardName}
                 onChangeText={setCardName}
               />
@@ -170,7 +191,7 @@ export default function PaymentMethodsScreen() {
               <Text style={styles.label}>Card Number</Text>
               <TextInput 
                 style={styles.input} 
-                placeholder="0000 0000 0000 0000"
+                placeholder="XXXX XXXX XXXX XXXX"
                 keyboardType="numeric"
                 maxLength={19}
                 value={formatCardNumber(cardNumber)}
@@ -182,13 +203,14 @@ export default function PaymentMethodsScreen() {
               <View style={[styles.inputGroup, { flex: 1, marginRight: 10 }]}>
                 <Text style={styles.label}>Expiry Date</Text>
                 <TextInput 
-                  style={styles.input} 
+                  style={[styles.input, expiryError ? { borderColor: Colors.colorEF4444, borderWidth: 1 } : null]} 
                   placeholder="MM/YY"
                   keyboardType="numeric"
                   maxLength={5}
                   value={expiry}
                   onChangeText={(text) => setExpiry(formatExpiry(text))}
                 />
+                {expiryError ? <Text style={styles.errorText}>{expiryError}</Text> : null}
               </View>
               <View style={[styles.inputGroup, { flex: 1, marginLeft: 10 }]}>
                 <Text style={styles.label}>CVV</Text>
@@ -196,7 +218,7 @@ export default function PaymentMethodsScreen() {
                   style={styles.input} 
                   placeholder="123"
                   keyboardType="numeric"
-                  maxLength={4}
+                  maxLength={3}
                   secureTextEntry
                   value={cvv}
                   onChangeText={setCvv}
@@ -292,6 +314,11 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     fontSize: 16,
     backgroundColor: Colors.colorF8F9FA,
+  },
+  errorText: {
+    color: Colors.colorEF4444,
+    fontSize: 12,
+    marginTop: 4,
   },
   saveBtn: {
     backgroundColor: Colors.color3C72F2,

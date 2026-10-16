@@ -16,6 +16,8 @@ export default function PharmacyBillModal({ isVisible, onClose, billData }: Phar
 
   if (!billData) return null;
 
+  const modalTotalQty = billData.items.reduce((sum, item) => sum + (item.count || 1), 0);
+
   const handleDownload = async () => {
     await generatePharmacyBill(billData);
   };
@@ -24,13 +26,15 @@ export default function PharmacyBillModal({ isVisible, onClose, billData }: Phar
     onClose();
   };
 
+  if (!isVisible) return null;
+
   return (
     <Modal visible={isVisible} transparent animationType="slide">
       <View style={styles.overlay}>
         <View style={styles.container}>
           
           <View style={styles.successHeader}>
-            <Ionicons name="checkmark-circle" size={60} color={Colors.color00C473} />
+            <Ionicons name="checkmark-circle" size={60} color={Colors.color3C72F2} />
             <Text style={styles.successTitle}>Order Confirmed!</Text>
             <Text style={styles.successSub}>Your medicines will be delivered soon.</Text>
           </View>
@@ -43,29 +47,45 @@ export default function PharmacyBillModal({ isVisible, onClose, billData }: Phar
             
             <View style={styles.divider} />
             
+            <View style={styles.billTableHeader}>
+              <Text style={styles.billHeaderMedicine}>Medicine</Text>
+              <Text style={styles.billHeaderQty}>Qty</Text>
+              <Text style={styles.billHeaderPrice}>Price</Text>
+            </View>
             <ScrollView style={styles.itemsList} showsVerticalScrollIndicator={false}>
               {billData.items.map((item, idx) => (
                 <View key={idx} style={styles.itemRow}>
-                  <Text style={styles.itemName}>{item.name}</Text>
+                  <Text style={styles.itemName} numberOfLines={1}>{item.name}</Text>
+                  <Text style={styles.itemQtyText}>{item.count || 1}</Text>
                   <Text style={styles.itemPrice}>₹{item.price}</Text>
                 </View>
               ))}
             </ScrollView>
 
+            <View style={[styles.itemRow, { borderTopWidth: 1, borderTopColor: '#EEEEEE', paddingTop: 8, marginTop: 4, marginBottom: 8 }]}>
+              <Text style={[styles.itemName, { fontWeight: '700', color: Colors.color333 }]}>
+                Product Total:
+              </Text>
+              <Text style={[styles.itemQtyText, { fontWeight: '700', color: Colors.color333 }]}>
+                {modalTotalQty}
+              </Text>
+              <Text style={[styles.itemPrice, { fontWeight: '700', color: Colors.color333 }]}>
+                ₹{billData.subtotal}
+              </Text>
+            </View>
+
             <View style={styles.divider} />
             
             <View style={styles.totalsContainer}>
-              <View style={styles.totalRow}>
-                <Text style={styles.totalLabel}>Subtotal</Text>
-                <Text style={styles.totalValue}>₹{billData.subtotal}</Text>
-              </View>
               <View style={styles.totalRow}>
                 <Text style={styles.totalLabel}>GST (5%)</Text>
                 <Text style={styles.totalValue}>₹{billData.gst}</Text>
               </View>
               <View style={styles.totalRow}>
                 <Text style={styles.totalLabel}>Delivery Charge</Text>
-                <Text style={styles.totalValue}>{billData.deliveryCharge === 0 ? 'FREE' : `₹${billData.deliveryCharge}`}</Text>
+                <Text style={[styles.totalValue, billData.deliveryCharge === 0 && { color: Colors.color00C473, fontWeight: '700' }]}>
+                  {billData.deliveryCharge === 0 ? 'FREE' : `₹${billData.deliveryCharge}`}
+                </Text>
               </View>
               <View style={styles.grandTotalRow}>
                 <Text style={styles.grandTotalLabel}>Total Amount</Text>
@@ -161,24 +181,64 @@ const styles = StyleSheet.create({
     backgroundColor: '#EEEEEE',
     marginVertical: 12,
   },
+  billTableHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: 8,
+    marginBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EEEEEE',
+  },
+  billHeaderMedicine: {
+    flex: 2,
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#666',
+    textTransform: 'uppercase',
+  },
+  billHeaderQty: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#666',
+    textTransform: 'uppercase',
+  },
+  billHeaderPrice: {
+    flex: 1,
+    textAlign: 'right',
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#666',
+    textTransform: 'uppercase',
+  },
   itemsList: {
     maxHeight: 150,
   },
   itemRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 8,
   },
   itemName: {
     fontSize: 14,
-    color: Colors.color444,
+    color: '#444',
+    flex: 2,
+    marginRight: 8,
+  },
+  itemQtyText: {
     flex: 1,
+    textAlign: 'center',
+    fontSize: 14,
+    color: Colors.color555,
   },
   itemPrice: {
+    flex: 1,
+    textAlign: 'right',
     fontSize: 14,
     color: Colors.color333,
     fontWeight: '500',
-    marginLeft: 10,
   },
   totalsContainer: {
     marginTop: 4,
@@ -194,7 +254,7 @@ const styles = StyleSheet.create({
   },
   totalValue: {
     fontSize: 13,
-    color: Colors.color444,
+    color: '#444',
     fontWeight: '500',
   },
   grandTotalRow: {
@@ -204,7 +264,7 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     borderTopWidth: 1,
     borderTopColor: '#EEEEEE',
-    borderTopStyle: 'dashed',
+    borderStyle: 'dashed',
   },
   grandTotalLabel: {
     fontSize: 16,
@@ -212,10 +272,10 @@ const styles = StyleSheet.create({
     color: Colors.color333,
   },
   grandTotalValue: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: Colors.color00C473,
-  },
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: Colors.color3C72F2,
+    },
   actionsContainer: {
     paddingHorizontal: 20,
     marginTop: 10,

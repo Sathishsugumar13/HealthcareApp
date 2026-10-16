@@ -12,7 +12,7 @@ export function useProfileImage(user: any) {
       if (user?.email) {
         loadProfileImage(user.email);
       }
-    }, [user])
+    }, [user?.email])
   );
 
   const loadProfileImage = async (email: string) => {

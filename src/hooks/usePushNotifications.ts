@@ -1,19 +1,25 @@
 import { useState, useEffect, useRef } from 'react';
-import { Platform, Alert } from 'react-native';
+import { Platform } from 'react-native';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
-import Constants from 'expo-constants';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { Colors } from '../theme/colors';
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
+const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+
+try {
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+      shouldShowBanner: true,
+      shouldShowList: true,
+    }),
+  });
+} catch (e) {
+  console.log('Error configuring notification handler:', e);
+}
 
 export interface PushNotificationState {
   expoPushToken?: Notifications.ExpoPushToken;
@@ -31,79 +37,103 @@ export const usePushNotifications = (): PushNotificationState => {
   async function registerForPushNotificationsAsync() {
     let token;
 
-    if (Platform.OS === 'android') {
-      await Notifications.setNotificationChannelAsync('default', {
-        name: 'default',
-        importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: Colors.colorFF231F7C,
-      });
-    }
+    try {
+      // In Expo Go on SDK 53+, remote push tokens and native channels are not supported on Android
+      if (isExpoGo) {
+        console.log('Skipping remote push token registration in Expo Go (not supported in SDK 53+)');
+        return undefined;
+      }
 
-    if (Device.isDevice) {
-      const { status: existingStatus } = await Notifications.getPermissionsAsync();
-      let finalStatus = existingStatus;
-      if (existingStatus !== 'granted') {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
+      if (Platform.OS === 'android') {
+        await Notifications.setNotificationChannelAsync('default', {
+          name: 'default',
+          importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
+          lightColor: Colors.colorFF231F7C,
+        });
       }
-      if (finalStatus !== 'granted') {
-        console.log('Failed to get push token for push notification!');
-        return;
-      }
-      
-      try {
+
+      if (Device.isDevice) {
+        const { status: existingStatus } = await Notifications.getPermissionsAsync();
+        let finalStatus = existingStatus;
+        if (existingStatus !== 'granted') {
+          const { status } = await Notifications.requestPermissionsAsync();
+          finalStatus = status;
+        }
+        if (finalStatus !== 'granted') {
+          console.log('Push notification permission not granted');
+          return undefined;
+        }
+        
         const projectId =
           Constants?.expoConfig?.extra?.eas?.projectId ??
           Constants?.easConfig?.projectId ?? "27238de2-cd8c-445f-ad5c-db22da1d219a";
           
-        token = await Notifications.getExpoPushTokenAsync({
-          projectId: projectId,
-        });
-        console.log('Expo Push Token:', token?.data);
-        
-        
-      } catch (e: any) {
-        console.log('Error getting push token:', e.message);
+        const tokenPromise = Notifications.getExpoPushTokenAsync({ projectId });
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Push token timeout')), 4000)
+        );
+
+        token = await Promise.race([tokenPromise, timeoutPromise]) as Notifications.ExpoPushToken;
+        console.log('Expo Push Token obtained:', token?.data);
       }
-    } else {
-      console.log('Must use physical device for Push Notifications');
+    } catch (e: any) {
+      console.log('Notice: Push token not available in current environment:', e.message);
     }
 
     return token;
   }
 
   useEffect(() => {
+    let isMounted = true;
+
     registerForPushNotificationsAsync().then((token) => {
-      setExpoPushToken(token);
-    });
-
-    notificationListener.current = Notifications.addNotificationReceivedListener(
-      (notification) => {
-        setNotifications((prev) => [notification, ...prev]);
+      if (isMounted && token) {
+        setExpoPushToken(token);
       }
-    );
+    }).catch(() => {});
 
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(
-      (response) => {
-        console.log('Notification Response:', response);
-        setNotifications((prev) => {
-          const exists = prev.find((n) => n.request.identifier === response.notification.request.identifier);
-          if (!exists) {
-            return [response.notification, ...prev];
+    try {
+      notificationListener.current = Notifications.addNotificationReceivedListener(
+        (notification) => {
+          if (isMounted) {
+            setNotifications((prev) => [notification, ...prev]);
           }
-          return prev;
-        });
-      }
-    );
+        }
+      );
+    } catch (err) {
+      console.log('Failed to add notificationListener:', err);
+    }
+
+    try {
+      responseListener.current = Notifications.addNotificationResponseReceivedListener(
+        (response) => {
+          if (!isMounted) return;
+          setNotifications((prev) => {
+            const exists = prev.find((n) => n.request.identifier === response.notification.request.identifier);
+            if (!exists) {
+              return [response.notification, ...prev];
+            }
+            return prev;
+          });
+        }
+      );
+    } catch (err) {
+      console.log('Failed to add responseListener:', err);
+    }
 
     return () => {
-      if (notificationListener.current) {
-        notificationListener.current.remove();
-      }
-      if (responseListener.current) {
-        responseListener.current.remove();
-      }
+      isMounted = false;
+      try {
+        if (notificationListener.current) {
+          notificationListener.current.remove();
+        }
+      } catch (e) {}
+      try {
+        if (responseListener.current) {
+          responseListener.current.remove();
+        }
+      } catch (e) {}
     };
   }, []);
 

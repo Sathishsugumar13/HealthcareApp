@@ -10,20 +10,25 @@ interface CustomDropdownProps {
   onSelect: (val: string) => void;
   placeholder: string;
   disabled?: boolean;
+  leftIcon?: React.ReactNode;
+  centered?: boolean;
+  highlightSelected?: boolean;
+  variant?: 'default' | 'pill';
+  menuMaxHeight?: number;
 }
 
-export default function CustomDropdown({ label, value, options, onSelect, placeholder, disabled = false }: CustomDropdownProps) {
+export default function CustomDropdown({ label, value, options, onSelect, placeholder, disabled = false, leftIcon, centered = false, highlightSelected = false, variant = 'default', menuMaxHeight = 350 }: CustomDropdownProps) {
   const [modalVisible, setModalVisible] = useState(false);
   const [dropdownStyle, setDropdownStyle] = useState<any>({});
-  const buttonRef = useRef<TouchableOpacity>(null);
+  const buttonRef = useRef<any>(null);
 
   const openDropdown = () => {
-    buttonRef.current?.measure((fx, fy, width, height, px, py) => {
+    buttonRef.current?.measure((fx: number, fy: number, width: number, height: number, px: number, py: number) => {
       const screenHeight = Dimensions.get('window').height;
       const spaceBelow = screenHeight - (py + height);
       
-      // If space below is less than maxHeight (220) and space above is greater than space below
-      if (spaceBelow < 220 && py > spaceBelow) {
+      // If space below is less than maxHeight and space above is greater than space below
+      if (spaceBelow < menuMaxHeight && py > spaceBelow) {
         // Open upwards
         setDropdownStyle({ bottom: screenHeight - py + 1, left: px, width: width });
       } else {
@@ -40,49 +45,79 @@ export default function CustomDropdown({ label, value, options, onSelect, placeh
       {label && <Text style={styles.label}>{label}</Text>}
       <TouchableOpacity 
         ref={buttonRef}
-        style={[styles.dropdownButton, disabled && { opacity: 0.5, backgroundColor: '#F0F0F0' }]}
+        style={[
+          styles.dropdownButton, 
+          variant === 'pill' && { borderRadius: 30, backgroundColor: '#F8F9FA', borderWidth: 0, height: 56 },
+          disabled && { opacity: 0.5, backgroundColor: '#F0F0F0' },
+          highlightSelected && value ? { 
+            backgroundColor: variant === 'pill' ? '#EBF1FF' : '#F0F5FF', 
+            borderColor: Colors.color3C72F2, 
+            borderWidth: variant === 'pill' ? 0 : 1.5 
+          } : null
+        ]}
         onPress={openDropdown}
         disabled={disabled}
       >
-        <Text style={[styles.dropdownButtonText, !value && { color: Colors.colorA0AAB5 }]}>
-          {value || placeholder}
-        </Text>
-        <Ionicons name="chevron-down-outline" size={18} color={Colors.color555} />
+        <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: 8 }}>
+          {leftIcon && <View style={{ marginRight: 10 }}>{leftIcon}</View>}
+          <Text numberOfLines={1} style={[
+            styles.dropdownButtonText, 
+            variant === 'pill' && { fontSize: 16 },
+            !value && { color: Colors.colorA0AAB5 }, 
+            { flex: 1 }, 
+            centered && { textAlign: 'center' },
+            highlightSelected && value ? { color: Colors.color3C72F2, fontWeight: 'bold' } : null
+          ]}>
+            {value || placeholder}
+          </Text>
+        </View>
+        <Ionicons name="chevron-down-outline" size={18} color={highlightSelected && value ? Colors.color3C72F2 : Colors.color555} />
       </TouchableOpacity>
 
-      <Modal
-        visible={modalVisible}
-        transparent={true}
-        animationType="fade"
-        statusBarTranslucent={true}
-        onRequestClose={() => setModalVisible(false)}
-      >
+      {modalVisible && (
+        <Modal
+          visible={modalVisible}
+          transparent={true}
+          animationType="fade"
+          statusBarTranslucent={true}
+          onRequestClose={() => setModalVisible(false)}
+        >
         <TouchableOpacity 
           style={styles.modalOverlay} 
           activeOpacity={1} 
           onPress={() => setModalVisible(false)}
         >
-          <View style={[styles.dropdownMenu, dropdownStyle]}>
+          <View style={[
+            styles.dropdownMenu, 
+            dropdownStyle, 
+            variant === 'pill' && { paddingVertical: 8, borderRadius: 16 },
+            { maxHeight: menuMaxHeight }
+          ]}>
             <FlatList
               data={options}
               keyExtractor={(item, index) => index.toString()}
               showsVerticalScrollIndicator={false}
               renderItem={({ item }) => (
                 <TouchableOpacity 
-                  style={[styles.optionItem, value === item && styles.optionItemSelected]}
+                  style={[
+                    styles.optionItem, 
+                    variant === 'pill' && { borderBottomWidth: 0, borderRadius: 24, marginHorizontal: 8, marginVertical: 2, paddingVertical: 10 },
+                    value === item && styles.optionItemSelected
+                  ]}
                   onPress={() => {
                     onSelect(item);
                     setModalVisible(false);
                   }}
                 >
-                  <Text style={[styles.optionText, value === item && styles.optionTextSelected]}>{item}</Text>
-                  {value === item && <Ionicons name="checkmark-circle" size={18} color={Colors.color3C72F2} />}
+                  <Text style={[styles.optionText, value === item && styles.optionTextSelected, centered && { textAlign: 'center', flex: 1 }, variant === 'pill' && { fontSize: 16 }]}>{item}</Text>
+                  {value === item && !centered && <Ionicons name="checkmark-circle" size={18} color={Colors.color3C72F2} />}
                 </TouchableOpacity>
               )}
             />
           </View>
         </TouchableOpacity>
       </Modal>
+      )}
     </View>
   );
 }

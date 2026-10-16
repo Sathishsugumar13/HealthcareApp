@@ -11,7 +11,7 @@ export interface CustomButtonProps {
   textStyle?: StyleProp<TextStyle>;
   leftIcon?: string;
   rightIcon?: string;
-  iconFamily?: 'Ionicons';
+  iconFamily?: 'Ionicons' | 'MaterialCommunityIcons';
   iconSize?: number;
   iconColor?: string;
   isLoading?: boolean;
@@ -27,7 +27,7 @@ export default function CustomButton({
   textStyle,
   leftIcon,
   rightIcon,
-  iconFamily = 'MaterialCommunityIcons',
+  iconFamily = 'Ionicons',
   iconSize = 20,
   iconColor,
   isLoading = false,
@@ -79,13 +79,7 @@ export default function CustomButton({
 
   const renderIcon = (iconName: string) => {
     const finalColor = iconColor || getTextColor();
-    if (iconFamily === 'Ionicons') {
-      return <Ionicons name={iconName} size={iconSize} color={finalColor} />;
-    }
-    if (iconFamily === 'Ionicons') {
-      return <Ionicons name={iconName} size={iconSize} color={finalColor} />;
-    }
-    return <Ionicons name={iconName} size={iconSize} color={finalColor} />;
+    return <Ionicons name={iconName as any} size={iconSize} color={finalColor} />;
   };
 
   return (

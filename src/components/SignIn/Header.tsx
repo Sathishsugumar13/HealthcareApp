@@ -15,7 +15,7 @@ export default function Header({ title, onBackPress }: HeaderProps) {
     <View style={styles.header}>
       {onBackPress ? (
         <View style={styles.backBtn}>
-          <BackButton iconFamily="Ionicons" onPress={onBackPress} size={32} color={Colors.text} style={styles.inlineMarginleft10} />
+          <BackButton onPress={onBackPress} size={32} color={Colors.text} style={styles.inlineMarginleft10} />
         </View>
       ) : (
         <View style={styles.backBtn} />

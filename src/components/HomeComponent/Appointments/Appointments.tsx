@@ -127,7 +127,7 @@ export default function AppointmentsComponent() {
       
       let doc = DOCTORS.find(d => d.name === incomingDoctor.name);
       if (!doc) {
-        doc = { id: incomingDoctor.id, name: incomingDoctor.name, spId: spec.id };
+        doc = { id: incomingDoctor.id, name: incomingDoctor.name, spId: spec.id, phone: (incomingDoctor as any).phone || '+91 9876543201' };
         DOCTORS.push(doc);
       }
       setSelectedDoctor(doc);
@@ -147,7 +147,7 @@ export default function AppointmentsComponent() {
 
       let hosp = HOSPITALS.find(h => h.id === incomingHospital.id);
       if (!hosp) {
-        hosp = { id: incomingHospital.id, name: incomingHospital.name, districtId: dist.id };
+        hosp = { id: incomingHospital.id, name: incomingHospital.name, districtId: dist.id, doctors: (incomingHospital as any).doctors || [] };
         HOSPITALS.push(hosp);
       }
       setSelectedHospital(hosp);
@@ -644,9 +644,9 @@ export default function AppointmentsComponent() {
               <View style={styles.uploadedFilesList}>
                 {oldReports.map((fileName, index) => (
                   <View key={index} style={styles.uploadedFileItem}>
-                    <Ionicons name={fileName.endsWith('.jpg') ? "file-image-outline" : "file-document-outline"} size={20} color={Colors.color00C473} />
+                    <Ionicons name={(fileName.endsWith('.jpg') ? "image-outline" : "document-text-outline") as any} size={20} color={Colors.color00C473} />
                     <Text style={styles.uploadedFileName}>{fileName}</Text>
-                    <Ionicons name="checkmark-circle" size={18} color={Colors.color00C473} style={styles.inlineMarginleftAuto} />
+                    <Ionicons name="checkmark-circle" size={18} color={Colors.color3C72F2} style={styles.inlineMarginleftAuto} />
                   </View>
                 ))}
               </View>

@@ -1,4 +1,4 @@
-
+﻿
 import React from 'react';
 import { Colors } from '../../theme/colors';
 import { Modal, View, Text, Pressable, StyleSheet } from 'react-native';
@@ -27,7 +27,7 @@ export default function SuccessModal({
       <View style={styles.overlay}>
         <View style={styles.modalContainer}>
           <View style={styles.iconContainer}>
-            <Ionicons name="checkmark" size={40} color={Colors.success} />
+            <Ionicons name="checkmark" size={40} color='#3C72F2' />
           </View>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.message}>{message}</Text>
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 35,
-    backgroundColor: Colors.successBg,
+    backgroundColor: '#EBF1FF',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,

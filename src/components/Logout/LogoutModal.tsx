@@ -10,6 +10,8 @@ interface LogoutModalProps {
 }
 
 export default function LogoutModal({ isVisible, onCancel, onConfirm }: LogoutModalProps) {
+  if (!isVisible) return null;
+
   return (
     <Modal visible={isVisible} transparent={true} animationType="fade" onRequestClose={onCancel}>
       <View style={styles.overlay}>

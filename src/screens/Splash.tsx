@@ -5,22 +5,44 @@ import {
   ImageBackground,
   StyleSheet,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Logo from '../components/Common/Logo';
 import { images } from '../assets/images';
 import { Colors } from '../theme/colors';
 
 export default function Splash(props: any) {
-
-  
   useEffect(() => {
-    
-    const myTimer = setTimeout(() => {
-      console.log("5 seconds over, going to Onboarding screen");
-      props.navigation.replace('Onboarding');
-    }, 5000);
+    let isMounted = true;
 
-    
-    return () => clearTimeout(myTimer);
+    const navigateNext = async () => {
+      try {
+        const [userStr, isLoggedIn] = await Promise.all([
+          AsyncStorage.getItem('user'),
+          AsyncStorage.getItem('isLoggedIn'),
+          new Promise((resolve) => setTimeout(resolve, 1500))
+        ]);
+
+        if (!isMounted) return;
+
+        // If user data exists and user hasn't explicitly logged out
+        if (userStr && isLoggedIn !== 'false') {
+          const userObj = JSON.parse(userStr);
+          props.navigation.replace('MainTab', { user: userObj });
+        } else {
+          props.navigation.replace('Onboarding');
+        }
+      } catch (e) {
+        if (isMounted) {
+          props.navigation.replace('Onboarding');
+        }
+      }
+    };
+
+    navigateNext();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   

@@ -45,6 +45,7 @@ export default function SignInForm(props: any) {
         } else {
           
           console.log('Login success for user: ', savedUserObject.email);
+          await AsyncStorage.setItem('isLoggedIn', 'true');
           props.onLogin(savedUserObject);
         }
       }

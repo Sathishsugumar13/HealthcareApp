@@ -12,6 +12,7 @@ import PaymentGatewayModal from '../components/Common/PaymentGatewayModal';
 import PharmacyBillModal from '../components/Common/PharmacyBillModal';
 import PaymentMethodSelector from '../components/Common/PaymentMethodSelector';
 import { Colors } from '../theme/colors';
+import { getTabletPrice } from '../utils/pricing';
 
 
 const STATE_CITY_MAP: Record<string, string[]> = {
@@ -41,25 +42,34 @@ export default function PaymentScreen() {
   // Dynamic Pricing Logic for Pharmacy
   const selectedTablets = route.params?.selectedTablets || [];
   let subtotal = 0;
-  let tabletPrices: {name: string, price: number}[] = [];
+  let tabletPrices: {name: string, count?: number, price: number}[] = [];
   
   if (pharmacy) {
     if (selectedTablets.length > 0) {
+      // Group tablets by name and count duplicates
+      const tabletCountMap: Record<string, number> = {};
       selectedTablets.forEach((t: string) => {
-        // Deterministic dummy price based on name length
-        const price = 120 + (t.length * 10);
-        subtotal += price;
-        tabletPrices.push({ name: t, price });
+        tabletCountMap[t] = (tabletCountMap[t] || 0) + 1;
+      });
+      Object.entries(tabletCountMap).forEach(([name, count]) => {
+        const unitPrice = getTabletPrice(name);
+        const totalPrice = unitPrice * count;
+        subtotal += totalPrice;
+        tabletPrices.push({ name, count, price: totalPrice });
       });
     } else if (route.params?.message) {
       const lines = route.params.message.split('\n').map((l: string) => l.trim()).filter((l: string) => l.length > 2);
       if (lines.length > 0) {
         lines.forEach((l: string) => {
-           // Extract just the tablet name (remove "1. ")
-           const name = l.replace(/^\d+\.\s*/, '');
-           const price = 120 + (name.length * 10);
-           subtotal += price;
-           tabletPrices.push({ name: name, price });
+           const qtyMatch = l.match(/-\s*(\d+)\s*(?:qty|count|strips|nos)?/i) || l.match(/\((\d+)\s*(?:qty|count|strips|nos)?\)/i);
+           const qty = qtyMatch ? parseInt(qtyMatch[1], 10) : 1;
+           const rawName = l.replace(/^\d+\.\s*/, '');
+           const cleanName = rawName.replace(/-\s*\d+.*$/, '').replace(/\(.*?\)/g, '').trim();
+           const unitPrice = getTabletPrice(cleanName || rawName);
+           const linePrice = unitPrice * qty;
+           subtotal += linePrice;
+           const displayName = qty > 1 ? `${cleanName || rawName} (x${qty})` : (cleanName || rawName);
+           tabletPrices.push({ name: displayName, price: linePrice });
         });
       } else {
         subtotal = 350;
@@ -70,10 +80,12 @@ export default function PaymentScreen() {
     }
   }
 
+  const totalQty = tabletPrices.reduce((sum, item) => sum + (item.count || 1), 0);
   const gst = pharmacy ? Math.round(subtotal * 0.05) : 0;
-  const deliveryCharge = pharmacy ? (subtotal > 500 ? 0 : 40) : 0;
+  const productAndGstTotal = subtotal + gst;
+  const deliveryCharge = pharmacy ? (productAndGstTotal >= 500 ? 0 : 40) : 0;
   
-  const finalPharmacyTotal = subtotal + gst + deliveryCharge;
+  const finalPharmacyTotal = productAndGstTotal + deliveryCharge;
   const totalAmount = pharmacy ? finalPharmacyTotal : (apptDetails?.fee || 500);
   const [simStep, setSimStep] = useState<string>(''); // 'upi_apps', 'processing', 'card_form', 'otp', 'bank_list', 'bank_login', 'success'
   const [loading, setLoading] = useState(false);
@@ -287,6 +299,13 @@ export default function PaymentScreen() {
           
           {pharmacy ? (
             <>
+              {route.params?.prescriptionUri && (
+                <View style={{ marginBottom: 16, padding: 10, backgroundColor: '#FFF7ED', borderRadius: 12, borderWidth: 1, borderColor: '#FDBA74' }}>
+                  <Text style={{ fontSize: 13, fontWeight: '700', color: '#C2410C', marginBottom: 6 }}>Attached Prescription:</Text>
+                  <Image source={{ uri: route.params.prescriptionUri }} style={{ width: '100%', height: 120, borderRadius: 8 }} resizeMode="cover" />
+                </View>
+              )}
+
               {savedProfiles.length > 0 && (
                 <View style={{ marginBottom: 16 }}>
                   <CustomDropdown
@@ -407,18 +426,38 @@ export default function PaymentScreen() {
                   <Text style={styles.summaryValue}>{pharmacy.name}</Text>
                 </View>
                 {tabletPrices.length > 0 ? (
-                  tabletPrices.map((t, idx) => (
-                    <View style={styles.summaryRow} key={idx}>
-                      <Text style={styles.summaryLabel}>{t.name}:</Text>
-                      <Text style={styles.summaryValue}>₹{t.price}</Text>
+                  <View style={styles.normalBillSection}>
+                    <View style={styles.normalHeaderRow}>
+                      <Text style={styles.normalHeaderMedicine}>Medicine</Text>
+                      <Text style={styles.normalHeaderQty}>Qty</Text>
+                      <Text style={styles.normalHeaderPrice}>Price</Text>
                     </View>
-                  ))
+                    {tabletPrices.map((t, idx) => (
+                      <View style={styles.normalItemRow} key={idx}>
+                        <Text style={styles.normalMedicineText} numberOfLines={1}>{t.name}</Text>
+                        <Text style={styles.normalQtyText}>{t.count || 1}</Text>
+                        <Text style={styles.normalPriceText}>₹{t.price}</Text>
+                      </View>
+                    ))}
+                  </View>
                 ) : (
                   <View style={styles.summaryRow}>
                     <Text style={styles.summaryLabel}>Custom Order Estimate:</Text>
                     <Text style={styles.summaryValue}>₹{subtotal}</Text>
                   </View>
                 )}
+
+                <View style={[styles.normalItemRow, { borderTopWidth: 1, borderTopColor: Colors.colorE0E0E0, paddingTop: 8, marginTop: 4, marginBottom: 8 }]}>
+                  <Text style={[styles.normalMedicineText, { fontWeight: '700', color: Colors.color333 }]}>
+                    Product Total:
+                  </Text>
+                  <Text style={[styles.normalQtyText, { fontWeight: '700', color: Colors.color333 }]}>
+                    {totalQty}
+                  </Text>
+                  <Text style={[styles.normalPriceText, { fontWeight: '700', color: Colors.color333 }]}>
+                    ₹{subtotal}
+                  </Text>
+                </View>
 
                 <View style={styles.summaryRow}>
                   <Text style={styles.summaryLabel}>GST (5%):</Text>
@@ -471,8 +510,6 @@ export default function PaymentScreen() {
           selectedMethod={selectedMethod}
           onSelect={setSelectedMethod}
         />
-
-        <View style={styles.spacerHeight80} />
       </ScrollView>
 
       <View style={styles.footer}>
@@ -490,6 +527,7 @@ export default function PaymentScreen() {
         setSimStep={setSimStep}
         processMockPayment={processMockPayment}
         amount={totalAmount}
+        payeeName={(pharmacy ? pharmacy.name : apptDetails?.doctorName)?.toUpperCase() || 'HEALTHCARE APP'}
       />
       <PharmacyBillModal 
         isVisible={showBillModal} 
@@ -538,9 +576,77 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     color: Colors.color333
   },
-  summaryRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
-  summaryLabel: { fontSize: 14, color: Colors.color666 },
+  summaryRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
+  summaryLabel: { fontSize: 14, color: Colors.color666, flex: 1, marginRight: 6 },
   summaryValue: { fontSize: 14, color: Colors.color333, fontWeight: '500' },
+  qtyBadge: {
+    backgroundColor: '#EBF4FF',
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    marginHorizontal: 8,
+    minWidth: 32,
+    alignItems: 'center',
+  },
+  qtyBadgeText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: Colors.color3C72F2,
+  },
+  normalBillSection: {
+    marginVertical: 6,
+  },
+  normalHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 6,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.colorE0E0E0,
+    marginBottom: 6,
+  },
+  normalHeaderMedicine: {
+    flex: 2,
+    fontSize: 14,
+    fontWeight: '700',
+    color: Colors.color333,
+  },
+  normalHeaderQty: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 14,
+    fontWeight: '700',
+    color: Colors.color333,
+  },
+  normalHeaderPrice: {
+    flex: 1,
+    textAlign: 'right',
+    fontSize: 14,
+    fontWeight: '700',
+    color: Colors.color333,
+  },
+  normalItemRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 5,
+  },
+  normalMedicineText: {
+    flex: 2,
+    fontSize: 14,
+    color: Colors.color555,
+  },
+  normalQtyText: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 14,
+    color: Colors.color555,
+  },
+  normalPriceText: {
+    flex: 1,
+    textAlign: 'right',
+    fontSize: 14,
+    fontWeight: '500',
+    color: Colors.color333,
+  },
   divider: { height: 1, backgroundColor: Colors.colorE0E0E0, marginVertical: 12 },
   feeValue: { fontSize: 16, color: Colors.color00C473, fontWeight: '700' },
   methodTitle: { fontSize: 16, fontWeight: '700', color: Colors.color333, marginBottom: 16 },

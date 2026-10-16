@@ -272,6 +272,7 @@ export default function ForgotPasswordForm(props: any) {
             hasSmallLetter={hasSmallLetter}
             hasNumber={hasNumber}
             hasSpecialCharacter={hasSpecialCharacter}
+            passwordsMatch={newPasswordValue !== '' && newPasswordValue === confirmPasswordValue}
             style={styles.inlineMargintop15Marginbottom0}
           />
         </>

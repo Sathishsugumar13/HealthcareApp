@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Pressable, Image, Modal, TextInput } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, Feather } from '@expo/vector-icons';
 import { Colors } from '../../theme/colors';
 
 interface ProfileModalProps {
@@ -64,6 +64,8 @@ export default function ProfileModal({
     setModalView('info');
   };
 
+  if (!isProfileModalOpen) return null;
+
   return (
     <Modal visible={isProfileModalOpen} transparent={true} animationType="fade" onRequestClose={handleClose}>
       <View style={styles.profileModalOverlay}>
@@ -92,19 +94,19 @@ export default function ProfileModal({
               {/* Name Section */}
               <View style={styles.fieldContainer}>
                 {isEditingName ? (
-                  <View style={styles.editInlineRow}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%' }}>
                     <TextInput 
-                      style={styles.inlineInput} 
+                      style={[styles.inlineInput, { flex: 1, height: 40, minHeight: 40, paddingHorizontal: 8, paddingVertical: 0 }]} 
                       value={editName} 
                       onChangeText={setEditName} 
                       placeholder="Enter your name"
                     />
-                    <View style={styles.inlineActions}>
-                      <Pressable style={styles.iconBtn} onPress={() => setIsEditingName(false)}>
-                        <Ionicons name="close-circle" size={24} color={Colors.error} />
+                    <View style={{ flexDirection: 'row', marginLeft: 8 }}>
+                      <Pressable style={{ backgroundColor: '#F0F0F0', borderRadius: 15, paddingHorizontal: 10, paddingVertical: 6, marginRight: 6, justifyContent: 'center', alignItems: 'center' }} onPress={() => setIsEditingName(false)}>
+                        <Text style={{ color: '#666', fontSize: 12, fontWeight: 'bold' }}>Cancel</Text>
                       </Pressable>
-                      <Pressable style={styles.iconBtn} onPress={handleSaveName}>
-                        <Ionicons name="checkmark-circle" size={24} color={Colors.success} />
+                      <Pressable style={{ backgroundColor: Colors.success, borderRadius: 15, paddingHorizontal: 12, paddingVertical: 6, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} onPress={handleSaveName}>
+                        <Text style={{ color: '#FFF', fontSize: 12, fontWeight: 'bold' }}>Save</Text>
                       </Pressable>
                     </View>
                   </View>
@@ -112,8 +114,8 @@ export default function ProfileModal({
                   <View style={styles.infoRow}>
                     <Text style={styles.profileModalNameText}>{user?.name || 'User'}</Text>
                     <View style={styles.editIconContainer}>
-                      <Pressable onPress={() => setIsEditingName(true)} style={styles.editIconBtn}>
-                        <Ionicons name="pencil" size={18} color={Colors.color3C72F2} />
+                      <Pressable onPress={() => setIsEditingName(true)} style={[styles.editIconBtn, { width: 'auto', paddingHorizontal: 12 }]}>
+                        <Text style={{ color: Colors.color3C72F2, fontSize: 14, fontWeight: 'bold' }}>Edit</Text>
                       </Pressable>
                     </View>
                   </View>
@@ -123,21 +125,21 @@ export default function ProfileModal({
               {/* Email Section */}
               <View style={styles.fieldContainer}>
                 {isEditingEmail ? (
-                  <View style={styles.editInlineRow}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%' }}>
                     <TextInput 
-                      style={styles.inlineInput} 
+                      style={[styles.inlineInput, { flex: 1, height: 40, minHeight: 40, paddingHorizontal: 8, paddingVertical: 0 }]} 
                       value={editEmail} 
                       onChangeText={setEditEmail} 
                       placeholder="Enter your email"
                       keyboardType="email-address"
                       autoCapitalize="none"
                     />
-                    <View style={styles.inlineActions}>
-                      <Pressable style={styles.iconBtn} onPress={() => setIsEditingEmail(false)}>
-                        <Ionicons name="close-circle" size={24} color={Colors.error} />
+                    <View style={{ flexDirection: 'row', marginLeft: 8 }}>
+                      <Pressable style={{ backgroundColor: '#F0F0F0', borderRadius: 15, paddingHorizontal: 10, paddingVertical: 6, marginRight: 6, justifyContent: 'center', alignItems: 'center' }} onPress={() => setIsEditingEmail(false)}>
+                        <Text style={{ color: '#666', fontSize: 12, fontWeight: 'bold' }}>Cancel</Text>
                       </Pressable>
-                      <Pressable style={styles.iconBtn} onPress={handleSaveEmail}>
-                        <Ionicons name="checkmark-circle" size={24} color={Colors.success} />
+                      <Pressable style={{ backgroundColor: Colors.success, borderRadius: 15, paddingHorizontal: 12, paddingVertical: 6, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} onPress={handleSaveEmail}>
+                        <Text style={{ color: '#FFF', fontSize: 12, fontWeight: 'bold' }}>Save</Text>
                       </Pressable>
                     </View>
                   </View>
@@ -145,8 +147,8 @@ export default function ProfileModal({
                   <View style={styles.infoRow}>
                     <Text style={styles.profileModalEmailText}>{user?.email || 'user@example.com'}</Text>
                     <View style={styles.editIconContainer}>
-                      <Pressable onPress={() => setIsEditingEmail(true)} style={styles.editIconBtn}>
-                        <Ionicons name="pencil" size={18} color={Colors.color3C72F2} />
+                      <Pressable onPress={() => setIsEditingEmail(true)} style={[styles.editIconBtn, { width: 'auto', paddingHorizontal: 12 }]}>
+                        <Text style={{ color: Colors.color3C72F2, fontSize: 14, fontWeight: 'bold' }}>Edit</Text>
                       </Pressable>
                     </View>
                   </View>

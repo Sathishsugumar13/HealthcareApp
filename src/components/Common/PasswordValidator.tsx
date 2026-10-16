@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { View, Text, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 
 export interface PasswordValidatorProps {
@@ -7,6 +7,7 @@ export interface PasswordValidatorProps {
   hasSmallLetter: boolean;
   hasNumber: boolean;
   hasSpecialCharacter: boolean;
+  passwordsMatch?: boolean;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -16,25 +17,31 @@ export default function PasswordValidator({
   hasSmallLetter,
   hasNumber,
   hasSpecialCharacter,
+  passwordsMatch,
   style
 }: PasswordValidatorProps) {
   return (
     <View style={[styles.conditionsWrapper, style]}>
-      <Text style={[styles.conditionText, { color: isValidLength ? 'green' : 'gray' }]}>
+      <Text style={[styles.conditionText, { color: isValidLength ? 'green' : 'red' }]}>
         • Minimum 8 to 15 letters
       </Text>
-      <Text style={[styles.conditionText, { color: hasCapitalLetter ? 'green' : 'gray' }]}>
+      <Text style={[styles.conditionText, { color: hasCapitalLetter ? 'green' : 'red' }]}>
         • Minimum 1 capital letter
       </Text>
-      <Text style={[styles.conditionText, { color: hasSmallLetter ? 'green' : 'gray' }]}>
+      <Text style={[styles.conditionText, { color: hasSmallLetter ? 'green' : 'red' }]}>
         • Minimum 1 small letter
       </Text>
-      <Text style={[styles.conditionText, { color: hasNumber ? 'green' : 'gray' }]}>
+      <Text style={[styles.conditionText, { color: hasNumber ? 'green' : 'red' }]}>
         • Minimum 1 number
       </Text>
-      <Text style={[styles.conditionText, { color: hasSpecialCharacter ? 'green' : 'gray' }]}>
+      <Text style={[styles.conditionText, { color: hasSpecialCharacter ? 'green' : 'red' }]}>
         • Minimum 1 special character
       </Text>
+      {passwordsMatch !== undefined && (
+        <Text style={[styles.conditionText, { color: passwordsMatch ? 'green' : 'red' }]}>
+          • Passwords match
+        </Text>
+      )}
     </View>
   );
 }

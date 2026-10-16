@@ -5,6 +5,7 @@ import { Colors } from '../theme/colors';
 
 export interface BillItem {
   name: string;
+  count?: number;
   price: number;
 }
 
@@ -21,9 +22,11 @@ export interface BillData {
 
 export const generatePharmacyBill = async (data: BillData) => {
   try {
+    const totalQty = data.items.reduce((sum, item) => sum + (item.count || 1), 0);
     const itemsHtml = data.items.map(item => `
       <tr>
         <td style="padding: 12px; border-bottom: 1px solid #eee;">${item.name}</td>
+        <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: center; color: #555;">${item.count || 1}</td>
         <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">₹${item.price}</td>
       </tr>
     `).join('');
@@ -73,6 +76,7 @@ export const generatePharmacyBill = async (data: BillData) => {
             <thead>
               <tr>
                 <th>Item Description</th>
+                <th class="right" style="text-align:center;">Qty</th>
                 <th class="right">Amount</th>
               </tr>
             </thead>
@@ -82,9 +86,9 @@ export const generatePharmacyBill = async (data: BillData) => {
           </table>
 
           <div style="float: right; width: 300px;">
-            <div class="totals-row">
-              <div class="totals-label">Subtotal:</div>
-              <div class="totals-value">₹${data.subtotal}</div>
+            <div class="totals-row" style="font-weight: bold; color: #333;">
+              <div class="totals-label" style="font-weight: bold; color: #333;">Product Total${totalQty > 0 ? ` (Qty: ${totalQty})` : ''}:</div>
+              <div class="totals-value" style="font-weight: bold; color: #333;">₹${data.subtotal}</div>
             </div>
             <div class="totals-row">
               <div class="totals-label">GST (5%):</div>

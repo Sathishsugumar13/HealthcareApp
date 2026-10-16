@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, Feather } from '@expo/vector-icons';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BackButton from '../components/Common/BackButton';
@@ -75,11 +75,11 @@ export default function MyDetailsScreen() {
                     </View>
                   </View>
                   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <TouchableOpacity onPress={() => navigation.navigate('AddPerson', { editPerson: person })} style={{ marginRight: 16 }}>
-                      <Ionicons name="pencil-outline" size={20} color={Colors.color3C72F2} />
+                    <TouchableOpacity onPress={() => navigation.navigate('AddPerson', { editPerson: person })} style={{ marginRight: 12, backgroundColor: '#F0F5FF', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 15 }}>
+                      <Text style={{ color: Colors.color3C72F2, fontSize: 12, fontWeight: 'bold' }}>Edit</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => deletePerson(person.id)}>
-                      <Ionicons name="trash-outline" size={20} color="red" />
+                    <TouchableOpacity onPress={() => deletePerson(person.id)} style={{ backgroundColor: '#FFE6E6', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 15 }}>
+                      <Text style={{ color: 'red', fontSize: 12, fontWeight: 'bold' }}>Delete</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.color101623,
+    color: '#101623',
   },
   content: {
     flex: 1,
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
   cardName: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.color101623,
+    color: '#101623',
   },
   cardBlood: {
     fontSize: 12,

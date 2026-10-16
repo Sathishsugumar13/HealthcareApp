@@ -20,18 +20,19 @@ export default function PaymentMethodSelector({ methods, selectedMethod, onSelec
     <View>
       <Text style={styles.methodTitle}>Select Payment Method</Text>
 
-      {methods.map((method) => (
+      {methods.map((method, index) => (
         <TouchableOpacity
           key={method.id}
           style={[
             styles.methodCard,
             selectedMethod === method.id && styles.methodCardSelected,
+            index === methods.length - 1 && { marginBottom: 40 },
           ]}
           onPress={() => onSelect(method.id)}
         >
           <View style={styles.methodIcon}>
             <Ionicons 
-              name={method.icon} 
+              name={method.icon as any} 
               size={24} 
               color={selectedMethod === method.id ? Colors.color3C72F2 : Colors.color666} 
             />

@@ -68,7 +68,7 @@ export const MOCK_PHARMACIES = [
   { 
     id: 'p1', name: 'Apollo Pharmacy', address: '123 Main Street, Salem', rating: '4.8', distance: '1.2 km', 
     image: images.hospitals.hospitalCity,
-    availableTablets: ['Paracetamol', 'Dolo 650', 'Amoxicillin', 'Cetirizine', 'Azithromycin'], phone: '+91 9876543201'
+    availableTablets: ['Paracetamol (500mg)', 'Dolo 650', 'Amoxicillin', 'Cetirizine', 'Azithromycin'], phone: '+91 9876543201'
   },
   { 
     id: 'p2', name: 'MedPlus', address: '45 Second Avenue, Salem', rating: '4.5', distance: '2.5 km', 
@@ -93,7 +93,7 @@ export const MOCK_PHARMACIES = [
   { 
     id: 'p6', name: 'Sanjivani Pharmacy', address: '33 Sixth Main Road, Salem', rating: '4.4', distance: '5.5 km', 
     image: images.hospitals.hospitalSks,
-    availableTablets: ['Montair LC', 'Zifi 200', 'Shelcal 500', 'Pan D', 'Thyronorm'], phone: '+91 9876543206'
+    availableTablets: ['Montek LC', 'Zifi 200', 'Shelcal 500', 'Pan D', 'Thyronorm'], phone: '+91 9876543206'
   },
 ];
 

@@ -1,72 +1,55 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, TextInput, KeyboardAvoidingView, Platform, ScrollView, Alert, Modal } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Platform, ScrollView, Alert, KeyboardAvoidingView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { usePharmacy } from '../../../context/PharmacyContext';
 import BackButton from '../../Common/BackButton';
 import ContactActionButtons from '../../Common/ContactActionButtons';
-import AttachmentUploadModal from '../../Common/AttachmentUploadModal';
 import PharmacyListCard from '../../Common/PharmacyListCard';
-import * as ImagePicker from 'expo-image-picker';
-import * as DocumentPicker from 'expo-document-picker';
-
-
+import SearchBox from '../../Common/SearchBox';
 
 import { MOCK_PHARMACIES, PharmacyData } from '../../../data/mockData';
 import { Colors } from '../../../theme/colors';
+import { getTabletPrice } from '../../../utils/pricing';
+
+const getTabletImage = (name: string) => {
+  const images = [
+    'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=200&h=200&fit=crop',
+    'https://images.unsplash.com/photo-1550572017-ed2616f7311f?w=200&h=200&fit=crop',
+    'https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?w=200&h=200&fit=crop',
+    'https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=200&h=200&fit=crop',
+    'https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?w=200&h=200&fit=crop'
+  ];
+  const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  return images[hash % images.length];
+};
 
 export default function PharmacyComponent() {
   const navigation = useNavigation<any>();
-  const { addOrder } = usePharmacy();
   const [selectedPharmacy, setSelectedPharmacy] = useState<PharmacyData | null>(null);
-  
-  
-  const [message, setMessage] = useState('1. ');
   const [selectedTablets, setSelectedTablets] = useState<string[]>([]);
-  
-
-  const handleMessageChange = (text: string) => {
-    // If text was cleared
-    if (text.length === 0) {
-      setMessage('1. ');
-      return;
-    }
-    
-    // First character typed
-    if (message.length === 0 && text.length === 1) {
-      setMessage('1. ' + text);
-      return;
-    }
-
-    // User pressed enter (added a newline)
-    if (text.length > message.length && text.endsWith('\n')) {
-      const lines = text.split('\n');
-      const nextNum = lines.length;
-      setMessage(text + nextNum + '. ');
-      return;
-    }
-
-    setMessage(text);
-  };
+  const [tabletSearch, setTabletSearch] = useState('');
 
   const handleBack = () => {
     if (selectedPharmacy) {
       setSelectedPharmacy(null);
       setSelectedTablets([]);
-      setMessage('');
-      setHasUploadedPrescription(false);
-      setHasUploadedTabletImage(false);
+      setTabletSearch('');
     } else {
       navigation.goBack();
     }
   };
 
-  const handleTabletSelect = (tablet: string) => {
-    if (selectedTablets.includes(tablet)) {
-      setSelectedTablets(selectedTablets.filter(t => t !== tablet));
-    } else {
-      setSelectedTablets([...selectedTablets, tablet]);
+  const handleTabletAdd = (tablet: string) => {
+    setSelectedTablets(prev => [...prev, tablet]);
+  };
+
+  const handleTabletRemove = (tablet: string) => {
+    const index = selectedTablets.indexOf(tablet);
+    if (index > -1) {
+      const newTablets = [...selectedTablets];
+      newTablets.splice(index, 1);
+      setSelectedTablets(newTablets);
     }
   };
 
@@ -74,40 +57,20 @@ export default function PharmacyComponent() {
     setSelectedPharmacy(pharmacy);
   };
 
-  const [isUploadModalVisible, setIsUploadModalVisible] = useState(false);
-  const [uploadType, setUploadType] = useState<'prescription' | 'tablet' | null>(null);
-  const [hasUploadedPrescription, setHasUploadedPrescription] = useState(false);
-  const [hasUploadedTabletImage, setHasUploadedTabletImage] = useState(false);
-
-  const handleUploadPrescription = () => {
-    setUploadType('prescription');
-    setIsUploadModalVisible(true);
-  };
-
-  const handleUploadTabletImage = () => {
-    setUploadType('tablet');
-    setIsUploadModalVisible(true);
-  };
-
   const handleBuy = () => {
     if (selectedPharmacy) {
-      if (
-        selectedTablets.length === 0 && 
-        message.replace(/^\d+\.\s*/g, '').trim() === '' && 
-        !hasUploadedPrescription && 
-        !hasUploadedTabletImage
-      ) {
-        Alert.alert(
-          'Missing Information', 
-          'Please select at least one tablet, or enter medicines, or upload a prescription/image to proceed.'
-        );
+      if (selectedTablets.length > 0) {
+        navigation.navigate('Payment', {
+          pharmacy: selectedPharmacy,
+          selectedTablets: selectedTablets,
+        });
         return;
       }
-      navigation.navigate('Payment', {
-        pharmacy: selectedPharmacy,
-        message: message,
-        selectedTablets: selectedTablets
-      });
+
+      Alert.alert(
+        'Missing Information',
+        'Please select at least one tablet from the available list to proceed.'
+      );
     } else {
       Alert.alert('Error', 'Please select a pharmacy first.');
     }
@@ -135,6 +98,7 @@ export default function PharmacyComponent() {
       <KeyboardAvoidingView 
         style={styles.container} 
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}
       >
         {!selectedPharmacy ? (
           
@@ -149,7 +113,11 @@ export default function PharmacyComponent() {
           </View>
         ) : (
           
-          <ScrollView style={styles.detailsContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+          <ScrollView 
+            style={styles.detailsContent} 
+            contentContainerStyle={styles.detailsContentContainer}
+            showsVerticalScrollIndicator={false} 
+          >
             
             
             <View style={{ backgroundColor: Colors.white, padding: 16, borderRadius: 16, marginBottom: 16, borderWidth: 1, borderColor: '#E5E7EB', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.03, shadowRadius: 4, elevation: 1 }}>
@@ -178,71 +146,86 @@ export default function PharmacyComponent() {
               <Ionicons name="medkit-outline" size={22} color={Colors.color3C72F2} />
               <Text style={styles.sectionTitle}>Available Tablets</Text>
             </View>
+
+            {/* Search box for Available Tablets */}
+            <SearchBox
+              value={tabletSearch}
+              onChangeText={setTabletSearch}
+              placeholder="Search tablets..."
+              style={styles.tabletSearchBox}
+            />
             
             <View style={styles.tabletsContainer}>
-              {selectedPharmacy.availableTablets.map((tablet, index) => (
+              {selectedPharmacy.availableTablets.filter(tablet =>
+                tablet.toLowerCase().includes(tabletSearch.toLowerCase())
+              ).length === 0 && tabletSearch.length > 0 ? (
+                <View style={styles.noSearchResult}>
+                  <Ionicons name="alert-circle-outline" size={28} color={Colors.colorA0AAB5} />
+                  <Text style={styles.noSearchResultText}>No tablets found for "{tabletSearch}"</Text>
+                </View>
+              ) : null}
+              {selectedPharmacy.availableTablets.filter(tablet =>
+                tablet.toLowerCase().includes(tabletSearch.toLowerCase())
+              ).map((tablet, index) => {
+                const qty = selectedTablets.filter(t => t === tablet).length;
+                const price = getTabletPrice(tablet);
                 
-                <TouchableOpacity 
-                  key={index} 
-                  style={[
-                    styles.tabletPill, 
-                    selectedTablets.includes(tablet) && styles.tabletPillSelected
-                  ]}
-                  onPress={() => handleTabletSelect(tablet)}
-                  activeOpacity={0.7}
+                return (
+                  <View 
+                    key={index} 
+                    style={[
+                      styles.premiumCard, 
+                      qty > 0 && styles.premiumCardSelected,
+                      { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, paddingHorizontal: 16 }
+                    ]}
                   >
-                    {(() => {
-                      const price = 120 + (tablet.length * 10);
-                      return (
-                        <Text style={[
-                          styles.tabletText,
-                          selectedTablets.includes(tablet) && styles.tabletTextSelected
-                        ]}>
-                          {tablet} (₹{price})
-                        </Text>
-                      );
-                    })()}
-                  </TouchableOpacity>
-              ))}
+                    <View style={[styles.premiumIconWrap, qty > 0 && styles.premiumIconWrapSelected, { marginRight: 12, marginBottom: 0 }]}>
+                      <Image source={tablet === 'Paracetamol (500mg)' ? require('../../../assets/images/tablets_images/paracetamol.png') : tablet === 'Dolo 650' ? require('../../../assets/images/tablets_images/dolo650.jpg') : tablet === 'Amoxicillin' ? require('../../../assets/images/tablets_images/amoxicillin.png') : tablet === 'Cetirizine' ? require('../../../assets/images/tablets_images/cetirizine.png') : tablet === 'Azithromycin' ? require('../../../assets/images/tablets_images/azithromycin.webp') : tablet === 'Crocin' || tablet === 'Crocine' ? require('../../../assets/images/tablets_images/crocin.png') : tablet === 'Aspirin' ? require('../../../assets/images/tablets_images/aspirin.png') : tablet === 'Vitamin C' ? require('../../../assets/images/tablets_images/vitaminc.jpg') : tablet === 'Zincovit' ? require('../../../assets/images/tablets_images/zincovit.jpg') : tablet === 'Pantoprazole' ? require('../../../assets/images/tablets_images/pantoprazole.jpg') : tablet === 'Ibuprofen' ? require('../../../assets/images/tablets_images/ibuprofen.png') : tablet === 'Metformin' ? require('../../../assets/images/tablets_images/metformin.png') : tablet === 'Amlodipine' ? require('../../../assets/images/tablets_images/amlodipine.png') : tablet === 'Omeprazole' ? require('../../../assets/images/tablets_images/omeprazole.png') : tablet === 'Atorvastatin' ? require('../../../assets/images/tablets_images/atorvastatin.png') : tablet === 'Diclofenac' ? require('../../../assets/images/tablets_images/diclofenac.png') : tablet === 'Tramadol' ? require('../../../assets/images/tablets_images/tramadol.png') : tablet === 'Ambroxol' ? require('../../../assets/images/tablets_images/ambroxol.png') : tablet === 'B-Complex' ? require('../../../assets/images/tablets_images/bcomplex.png') : tablet === 'Liv52' || tablet === 'Liv25' ? require('../../../assets/images/tablets_images/liv52.png') : tablet === 'Azel' ? require('../../../assets/images/tablets_images/azel.png') : tablet === 'Augmentin' ? require('../../../assets/images/tablets_images/augmentin.png') : tablet === 'Allegra' ? require('../../../assets/images/tablets_images/allegra.jpg') : tablet === 'Becosules' ? require('../../../assets/images/tablets_images/becosules.jpg') : tablet === 'Montek LC' || tablet === 'Montair LC' ? require('../../../assets/images/tablets_images/monteklc.png') : tablet === 'Zifi 200' ? require('../../../assets/images/tablets_images/zifi200.png') : tablet === 'Shelcal 500' ? require('../../../assets/images/tablets_images/shelcal500.png') : tablet === 'Pan D' || tablet === 'Pen D' ? require('../../../assets/images/tablets_images/pand.png') : tablet === 'Thyronorm' ? require('../../../assets/images/tablets_images/thyronorm.png') : { uri: getTabletImage(tablet) }} style={{ width: 52, height: 52, borderRadius: 16 }} />
+                    </View>
+                    
+                    <View style={{ flex: 1, paddingRight: 8 }}>
+                      <Text style={[styles.premiumName, qty > 0 && styles.premiumNameSelected, { marginBottom: 4, fontSize: 16 }]} numberOfLines={1}>{tablet}</Text>
+                      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <Text style={[styles.premiumPrice, qty > 0 && styles.premiumPriceSelected, { fontSize: 16 }]}>₹{price}</Text>
+                        <Text style={[styles.premiumPerStrip, { marginTop: 0, marginLeft: 4 }]}>/strip</Text>
+                      </View>
+                    </View>
+                    
+                    <View style={[styles.actionContainer, { minWidth: 80, alignItems: 'flex-end' }]}>
+                      {qty === 0 ? (
+                        <TouchableOpacity 
+                          style={[styles.premiumAddBtn, { paddingHorizontal: 16, paddingVertical: 8 }]}
+                          onPress={() => handleTabletAdd(tablet)}
+                        >
+                          <Text style={styles.premiumAddBtnText}>+ ADD</Text>
+                        </TouchableOpacity>
+                      ) : (
+                        <View style={styles.premiumCounterBox}>
+                          <TouchableOpacity 
+                            style={styles.premiumCounterBtn}
+                            onPress={() => handleTabletRemove(tablet)}
+                          >
+                            <Text style={styles.premiumCounterIconText}>-</Text>
+                          </TouchableOpacity>
+                          <View style={styles.premiumQtyBox}>
+                            <Text style={styles.premiumQtyText}>{qty}</Text>
+                          </View>
+                          <TouchableOpacity 
+                            style={styles.premiumCounterBtn}
+                            onPress={() => handleTabletAdd(tablet)}
+                          >
+                            <Text style={styles.premiumCounterIconText}>+</Text>
+                          </TouchableOpacity>
+                        </View>
+                      )}
+                    </View>
+                  </View>
+                );
+              })}
             </View>
 
-            <View style={styles.divider} />
 
-            <View style={styles.sectionHeader}>
-              <Ionicons name="document-text-outline" size={22} color={Colors.color3C72F2} />
-              <Text style={styles.sectionTitle}>Order Medicines</Text>
-            </View>
-            
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.textInput}
-                placeholder="Type tablet names or describe your health issue..."
-                placeholderTextColor={Colors.colorA0AAB5}
-                value={message}
-                onChangeText={handleMessageChange}
-                multiline
-                numberOfLines={5}
-                textAlignVertical="top"
-              />
-            </View>
 
-            <View style={styles.uploadButtonsContainer}>
-              <TouchableOpacity style={[styles.uploadButton, { backgroundColor: Colors.colorFFF5EB, borderColor: '#D1D5DB' }]} onPress={handleUploadPrescription}>
-                <View style={[styles.uploadIconWrapper, { backgroundColor: Colors.colorFFE4CC }]}>
-                  <Ionicons name="document-text-outline" size={24} color={Colors.colorFF7A00} />
-                </View>
-                <Text style={styles.uploadButtonTitle}>Prescription</Text>
-                <Text style={styles.uploadButtonSub}>Tap to upload</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={[styles.uploadButton, { backgroundColor: Colors.colorF0FDF4, borderColor: '#D1D5DB' }]} onPress={handleUploadTabletImage}>
-                <View style={[styles.uploadIconWrapper, { backgroundColor: Colors.colorDCFCE7 }]}>
-                  <Ionicons name="camera-outline" size={24} color={Colors.color16A34A} />
-                </View>
-                <Text style={styles.uploadButtonTitle}>Tablet Image</Text>
-                <Text style={styles.uploadButtonSub}>Tap to upload</Text>
-              </TouchableOpacity>
-            </View>
 
             <TouchableOpacity style={styles.buyButton} onPress={handleBuy}>
               <Ionicons name="cart-outline" size={22} color={Colors.colorFFF} style={styles.buyIcon} />
@@ -253,17 +236,6 @@ export default function PharmacyComponent() {
         )}
       </KeyboardAvoidingView>
 
-      <AttachmentUploadModal 
-        isVisible={isUploadModalVisible} 
-        onClose={() => setIsUploadModalVisible(false)} 
-        title={uploadType === 'prescription' ? 'Upload Prescription' : 'Upload Tablet Image'} 
-        onUploadSuccess={() => {
-          if (uploadType === 'prescription') setHasUploadedPrescription(true);
-          else if (uploadType === 'tablet') setHasUploadedTabletImage(true);
-          Alert.alert('Success', 'Attached successfully!');
-        }} 
-        allowDocument={uploadType === 'prescription'}
-      />
 
     </SafeAreaView>
   );
@@ -424,6 +396,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 20,
   },
+  detailsContentContainer: {
+    paddingBottom: 40,
+  },
   contactButtonsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -454,10 +429,24 @@ const styles = StyleSheet.create({
     color: Colors.color2C3E50,
     marginLeft: 8,
   },
+  tabletSearchBox: {
+    marginBottom: 14,
+  },
   tabletsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: 'column',
     marginBottom: 16,
+    width: '100%',
+  },
+  noSearchResult: {
+    alignItems: 'center',
+    paddingVertical: 18,
+    paddingHorizontal: 12,
+  },
+  noSearchResultText: {
+    fontSize: 14,
+    color: Colors.colorA0AAB5,
+    marginTop: 6,
+    textAlign: 'center',
   },
   tabletPill: {
       backgroundColor: Colors.colorF0F4F8,
@@ -511,7 +500,7 @@ const styles = StyleSheet.create({
   uploadButtonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 32,
+    marginBottom: 16,
   },
   uploadButton: {
       flex: 1,
@@ -556,7 +545,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 10,
     elevation: 8,
-    marginBottom: 50,
+    marginBottom: 0,
   },
   buyIcon: {
     marginRight: 8,
@@ -604,8 +593,270 @@ const styles = StyleSheet.create({
     color: Colors.color333,
     marginLeft: 16,
     fontWeight: '500',
-  }
+  },
+  tabletCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.white,
+    borderRadius: 16,
+    padding: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+    width: '100%',
+  },
+  tabletCardSelected: {
+    borderColor: Colors.color3C72F2,
+    backgroundColor: '#F0F5FF',
+  },
+  tabletIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: '#F0F5FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  tabletIconContainerSelected: {
+    backgroundColor: Colors.color3C72F2,
+  },
+  tabletInfo: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  tabletName: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: Colors.color333,
+    marginBottom: 4,
+  },
+  tabletNameSelected: {
+    color: Colors.color3C72F2,
+  },
+  tabletPrice: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: Colors.color666,
+  },
+  tabletPriceSelected: {
+    color: Colors.color3C72F2,
+  },
+  actionContainer: {
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+  },
+  addButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    backgroundColor: Colors.white,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Colors.color3C72F2,
+  },
+  addButtonText: {
+    color: Colors.color3C72F2,
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  counterContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.white,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Colors.color3C72F2,
+  },
+  counterBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  counterBtnText: {
+    color: Colors.color3C72F2,
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  counterQtyText: {
+    paddingHorizontal: 8,
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: Colors.color3C72F2,
+  },
+  premiumCard: {
+    width: '100%',
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 1.5,
+    borderColor: '#F3F4F6',
+    shadowColor: '#6366F1',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    elevation: 3,
+  },
+  premiumCardSelected: {
+    borderColor: Colors.color3C72F2,
+    backgroundColor: '#F8FAFC',
+  },
+  premiumCardTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  premiumIconWrap: {
+    width: 52,
+    height: 52,
+    borderRadius: 16,
+    backgroundColor: '#EFF6FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 16,
+  },
+  premiumIconWrapSelected: {
+    backgroundColor: Colors.color3C72F2,
+  },
+  premiumInfo: {
+    flex: 1,
+  },
+  premiumName: {
+    fontSize: 17,
+    fontWeight: '800',
+    color: '#1F2937',
+    marginBottom: 6,
+  },
+  premiumNameSelected: {
+    color: Colors.color3C72F2,
+  },
+  premiumStockRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  stockDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#10B981',
+    marginRight: 6,
+  },
+  stockText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#6B7280',
+  },
+  stockDotSeparator: {
+    fontSize: 12,
+    color: '#D1D5DB',
+    marginHorizontal: 6,
+  },
+  premiumPriceWrap: {
+    alignItems: 'flex-end',
+  },
+  premiumPrice: {
+    fontSize: 18,
+    fontWeight: '900',
+    color: '#111827',
+  },
+  premiumPriceSelected: {
+    color: Colors.color3C72F2,
+  },
+  premiumPerStrip: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#9CA3AF',
+    marginTop: 2,
+  },
+  premiumCardBottom: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#F3F4F6',
+  },
+  premiumBrandWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ECFDF5',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  premiumBrandText: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#059669',
+    marginLeft: 4,
+  },
+  premiumAddBtn: {
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    backgroundColor: Colors.color3C72F2,
+    borderRadius: 12,
+    shadowColor: Colors.color3C72F2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  premiumAddBtnText: {
+    color: '#fff',
+    fontWeight: '900',
+    fontSize: 14,
+    letterSpacing: 0.5,
+  },
+  premiumCounterBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F3F4F6',
+    borderRadius: 12,
+    padding: 4,
+  },
+  premiumCounterBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: Colors.color3C72F2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: Colors.color3C72F2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  premiumQtyBox: {
+    minWidth: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  premiumQtyText: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#111827',
+  },
+  premiumInfoContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  premiumRowSpaceBetween: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 2,
+  },
+  premiumCounterIconText: {
+    color: '#fff',
+    fontSize: 22,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+  },
 });
-
-
-

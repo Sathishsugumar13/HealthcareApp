@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, Platform, KeyboardAvoidingView, ScrollView, Keyboard } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BackButton from '../components/Common/BackButton';
 import CustomDropdown from '../components/Common/CustomDropdown';
+import CustomCalendar from '../components/Common/CustomCalendar';
 import { Colors } from '../theme/colors';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Platform } from 'react-native';
-
 const STATE_CITY_MAP: Record<string, string[]> = {
   'Tamil Nadu': ['Chennai', 'Coimbatore', 'Madurai', 'Trichy', 'Salem', 'Erode', 'Tiruppur'],
   'Kerala': ['Thiruvananthapuram', 'Kochi', 'Kozhikode', 'Thrissur'],
@@ -19,6 +18,7 @@ const STATE_CITY_MAP: Record<string, string[]> = {
   'Delhi': ['New Delhi', 'North Delhi', 'South Delhi']
 };
 const AVAILABLE_STATES = Object.keys(STATE_CITY_MAP);
+const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
 
 export default function AddPersonScreen() {
@@ -31,6 +31,7 @@ export default function AddPersonScreen() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [dateValue, setDateValue] = useState(new Date());
   const [bloodGroup, setBloodGroup] = useState('');
+  const [dobError, setDobError] = useState('');
   
   const [flatNo, setFlatNo] = useState('');
   const [street, setStreet] = useState('');
@@ -43,6 +44,22 @@ export default function AddPersonScreen() {
   const [isSaving, setIsSaving] = useState(false);
   const route = useRoute<any>();
   const [editingId, setEditingId] = useState<string | null>(null);
+
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+  useEffect(() => {
+    if (Platform.OS !== 'android') return;
+    const showSubscription = Keyboard.addListener('keyboardDidShow', (e) => {
+      setKeyboardHeight(e.endCoordinates.height);
+    });
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardHeight(0);
+    });
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
 
   useEffect(() => {
     if (route.params?.editPerson) {
@@ -63,6 +80,33 @@ export default function AddPersonScreen() {
     }
   }, [route.params?.editPerson]);
 
+  useEffect(() => {
+    if (!dob) {
+      setDobError('');
+      return;
+    }
+    if (dob.length === 10) {
+      const dobRegex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+      if (!dobRegex.test(dob)) {
+        setDobError('Format must be DD/MM/YYYY');
+        return;
+      }
+      const [day, month, year] = dob.split('/').map(Number);
+      const dateObj = new Date(year, month - 1, day);
+      if (dateObj.getDate() !== day || dateObj.getMonth() !== month - 1 || dateObj.getFullYear() !== year) {
+        setDobError('Invalid calendar date');
+        return;
+      }
+      if (dateObj > new Date()) {
+        setDobError('DOB cannot be in the future');
+        return;
+      }
+      setDobError('');
+    } else if (dob.length > 0 && dob.length < 10) {
+      setDobError(''); // wait until they finish typing 10 chars
+    }
+  }, [dob]);
+
   const handleDateChange = (event: any, selectedDate?: Date) => {
     setShowDatePicker(Platform.OS === 'ios');
     if (selectedDate) {
@@ -81,6 +125,31 @@ export default function AddPersonScreen() {
       Alert.alert('Error', 'Name and Phone are required.');
       return;
     }
+
+    if (dobError) {
+      Alert.alert('Invalid Date', dobError);
+      return;
+    }
+
+    if (dob) {
+      const dobRegex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+      if (!dobRegex.test(dob)) {
+        Alert.alert('Invalid Date Format', 'Please enter date of birth in DD/MM/YYYY format.');
+        return;
+      }
+      
+      const [day, month, year] = dob.split('/').map(Number);
+      const dateObj = new Date(year, month - 1, day);
+      if (dateObj.getDate() !== day || dateObj.getMonth() !== month - 1 || dateObj.getFullYear() !== year) {
+        Alert.alert('Invalid Date', 'Please enter a valid calendar date.');
+        return;
+      }
+      if (dateObj > new Date()) {
+        Alert.alert('Invalid Date', 'Date of birth cannot be in the future.');
+        return;
+      }
+    }
+    
     setIsSaving(true);
     try {
       const userDataString = await AsyncStorage.getItem('my_details_list');
@@ -129,8 +198,15 @@ export default function AddPersonScreen() {
         <View style={{ width: 48 }} />
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.formContainer}>
+      <KeyboardAvoidingView 
+        style={[{ flex: 1 }, Platform.OS === 'android' && { paddingBottom: keyboardHeight }]} 
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <ScrollView 
+          style={styles.content} 
+          showsVerticalScrollIndicator={false}
+        >
+        <View style={[styles.formContainer, Platform.OS === 'android' && keyboardHeight > 0 && { transform: [{ translateY: -20 }], paddingBottom: 20 }]}>
           
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Personal Details</Text>
@@ -183,22 +259,23 @@ export default function AddPersonScreen() {
                   maxLength={10}
                 />
               </View>
-              {showDatePicker && (
-                <DateTimePicker
-                  value={dateValue}
-                  mode="date"
-                  display="default"
-                  onChange={handleDateChange}
-                  maximumDate={new Date()} // Can't be born in the future
-                />
-              )}
+              <CustomCalendar
+                visible={showDatePicker}
+                onClose={() => setShowDatePicker(false)}
+                onSelectDate={(date) => handleDateChange(null, date)}
+                initialDate={dateValue}
+              />
+              {dobError ? <Text style={{ color: 'red', fontSize: 12, marginTop: 4 }}>{dobError}</Text> : null}
             </View>
             <View style={[styles.inputGroup, { flex: 1 }]}>
               <Text style={styles.label}>Blood Group</Text>
-              <View style={styles.inputWrapper}>
-                <Ionicons name="water-outline" size={20} color={Colors.color666} style={styles.inputIcon} />
-                <TextInput style={styles.input} value={bloodGroup} onChangeText={setBloodGroup} placeholder="e.g. O+" />
-              </View>
+              <CustomDropdown
+                value={bloodGroup}
+                options={BLOOD_GROUPS}
+                onSelect={setBloodGroup}
+                placeholder="Select Blood Group"
+                leftIcon={<Ionicons name="water-outline" size={20} color={Colors.color666} />}
+              />
             </View>
           </View>
 
@@ -277,6 +354,7 @@ export default function AddPersonScreen() {
 
         </View>
       </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

@@ -28,7 +28,7 @@ export interface HospitalData {
   rating: string;
   districtId: string;
   image: any;
-  doctors: string[];
+  doctors: any[];
 }
 
 

@@ -30,13 +30,14 @@ export default function MainTabNavigator(props: any) {
     }
   }, []);
 
-  const doLogout = () => {
+  const doLogout = async () => {
     console.log("logout button clicked in tabs");
+    await AsyncStorage.setItem('isLoggedIn', 'false');
     props.navigation.reset({
       index: 0,
       routes: [{ name: 'SignIn' }],
     });
-  }
+  };
 
   const handleUpdateUser = async (updatedUser: any) => {
     setUserObj(updatedUser);
@@ -47,6 +48,7 @@ export default function MainTabNavigator(props: any) {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
+        freezeOnBlur: false,
         tabBarIcon: ({ focused, color, size }) => {
           let iconName = 'home';
 
@@ -79,9 +81,7 @@ export default function MainTabNavigator(props: any) {
         },
       })}
     >
-      <Tab.Screen name="Home">
-        {(screenProps) => <HomeScreen {...screenProps} user={userObj} onLogout={doLogout} onUpdateUser={handleUpdateUser} />}
-      </Tab.Screen>
+      <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Reports" component={ReportsScreen} />
       <Tab.Screen 
         name="Notification" 
@@ -91,9 +91,7 @@ export default function MainTabNavigator(props: any) {
           tabBarBadgeStyle: { backgroundColor: Colors.red, color: Colors.white },
         }}
       />
-      <Tab.Screen name="Profile">
-         {(screenProps) => <ProfileScreen {...screenProps} user={userObj} onLogout={doLogout} onUpdateUser={handleUpdateUser} />}
-      </Tab.Screen>
+      <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
 }

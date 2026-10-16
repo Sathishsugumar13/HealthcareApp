@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 import ProfileContent from '../components/Profile/ProfileContent';
 import { useProfileImage } from '../hooks/useProfileImage';
 import { Colors } from '../theme/colors';
@@ -9,7 +11,27 @@ import ProfileModal from '../components/Profile/ProfileModal';
 import LogoutModal from '../components/Logout/LogoutModal';
 
 export default function ProfileScreen(props: any) {
-  const { user, onLogout } = props;
+  const navigation = useNavigation<any>();
+  const [user, setUser] = useState<any>(props.user || props.route?.params?.user || null);
+
+  useEffect(() => {
+    if (!user) {
+      AsyncStorage.getItem('user').then(val => {
+        if (val) {
+          try {
+            setUser(JSON.parse(val));
+          } catch (e) {}
+        }
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (props.user) {
+      setUser(props.user);
+    }
+  }, [props.user]);
+
   const profileImageHook = useProfileImage(user);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
@@ -19,10 +41,24 @@ export default function ProfileScreen(props: any) {
     setIsLogoutModalOpen(true);
   };
 
-  const confirmLogout = () => {
+  const confirmLogout = async () => {
     setIsLogoutModalOpen(false);
-    if (onLogout) {
-      onLogout();
+    if (props.onLogout) {
+      props.onLogout();
+    } else {
+      await AsyncStorage.setItem('isLoggedIn', 'false');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'SignIn' }],
+      });
+    }
+  };
+
+  const handleUpdateUser = async (updatedUser: any) => {
+    setUser(updatedUser);
+    await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
+    if (props.onUpdateUser) {
+      props.onUpdateUser(updatedUser);
     }
   };
 
@@ -41,7 +77,7 @@ export default function ProfileScreen(props: any) {
         profileImageHook={profileImageHook}
         user={user}
         handleUserLogout={handleUserLogout}
-        onUpdateUser={props.onUpdateUser}
+        onUpdateUser={handleUpdateUser}
       />
 
       <LogoutModal 

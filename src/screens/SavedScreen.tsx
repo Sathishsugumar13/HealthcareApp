@@ -25,6 +25,17 @@ export default function SavedScreen() {
     };
     fetchSaved();
   }, []);
+
+  const removeSavedItem = async (id: string) => {
+    try {
+      const newItems = savedItems.filter(item => item.id !== id);
+      setSavedItems(newItems);
+      await AsyncStorage.setItem('@saved_articles', JSON.stringify(newItems));
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const navigation = useNavigation<any>();
 
   return (
@@ -48,7 +59,9 @@ export default function SavedScreen() {
               <View style={styles.savedDetails}>
                 <View style={styles.savedHeader}>
                   <Text style={styles.savedType}>{item.type}</Text>
-                  <Ionicons name="bookmark" size={22} color={Colors.color3C72F2} />
+                  <TouchableOpacity onPress={() => removeSavedItem(item.id)}>
+                    <Ionicons name="bookmark" size={22} color={Colors.color3C72F2} />
+                  </TouchableOpacity>
                 </View>
                 <Text style={styles.savedName}>{item.name}</Text>
                 

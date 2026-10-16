@@ -27,6 +27,8 @@ export default function SeeAllModal({
   ARTICLES,
   HOSPITALS,
 }: SeeAllModalProps) {
+  if (!isSeeAllModalOpen) return null;
+
   return (
     <Modal visible={isSeeAllModalOpen} animationType="slide" transparent={true} onRequestClose={() => setIsSeeAllModalOpen(false)}>
       <View style={styles.seeAllModalOverlay}>

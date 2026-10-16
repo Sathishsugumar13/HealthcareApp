@@ -72,7 +72,7 @@ export default function ReportsContent() {
     try {
       // 1. Create a dummy file to represent the report
       const fileName = reportName.replace(/[^a-zA-Z0-9]/g, '_') + '.txt';
-      const fileUri = FileSystem.documentDirectory + fileName;
+      const fileUri = ((FileSystem as any).documentDirectory || (FileSystem as any).cacheDirectory || '') + fileName;
       
       const fileContent = `=========================================
 APOLLO PHARMACY & HOSPITAL
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
   },
   dotSeparator: {
     marginHorizontal: 8,
-    color: Colors.colorAAA,
+    color: '#AAAAAA',
     fontSize: 16,
   },
   divider: {
