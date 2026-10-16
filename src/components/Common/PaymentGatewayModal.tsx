@@ -32,9 +32,9 @@ export default function PaymentGatewayModal({
   const [selectedUpiApp, setSelectedUpiApp] = React.useState('');
 
   const upiApps = [
-    { name: 'Google Pay', image: require('../../../assets/images/gpay.png') },
-    { name: 'PhonePe', image: require('../../../assets/images/phonepe.png') },
-    { name: 'Paytm', image: require('../../../assets/images/paytm.png') }
+    { name: 'Google Pay', color: '#4285F4' },
+    { name: 'PhonePe', color: '#5F259F' },
+    { name: 'Paytm', color: '#002970' }
   ];
   const banks = ['State Bank of India', 'HDFC Bank', 'ICICI Bank', 'Axis Bank'];
 
@@ -114,7 +114,9 @@ export default function PaymentGatewayModal({
             <Text style={styles.simSubtitle}>Select UPI App to complete payment of ₹{amount}</Text>
             {upiApps.map((app, idx) => (
               <TouchableOpacity key={idx} style={styles.upiAppBtn} onPress={() => { setSelectedUpiApp(app.name); setUpiPin(''); setSimStep('upi_pin'); }}>
-                <Image source={(app as any).image} style={{ width: 40, height: 40, marginRight: 16, borderRadius: 8 }} resizeMode="contain" />
+                <View style={[styles.upiIcon, { backgroundColor: app.color }]}>
+                  <Text style={{ color: '#ffffff', fontWeight: 'bold', fontSize: 18 }}>{app.name[0]}</Text>
+                </View>
                 <Text style={styles.upiText}>{app.name}</Text>
                 <Ionicons name="chevron-forward" size={20} color={Colors.color999} />
               </TouchableOpacity>
